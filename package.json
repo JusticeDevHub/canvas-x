@@ -1,5 +1,5 @@
 {
-  "name": "canvas-x",
+  "name": "@justicedevhub/canvas-x",
   "version": "1.0.0",
   "description": "Graphics rendering simplified for html canvas",
   "main": "index.js",
@@ -14,5 +14,16 @@
     "game"
   ],
   "author": "Justice Kawuma",
-  "license": "ISC"
+  "license": "ISC",
+  "directories": {
+    "lib": "lib"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JusticeDevHub/canvas-x.git"
+  },
+  "bugs": {
+    "url": "https://github.com/JusticeDevHub/canvas-x/issues"
+  },
+  "homepage": "https://github.com/JusticeDevHub/canvas-x#readme"
 }
