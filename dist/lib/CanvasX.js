@@ -50,7 +50,7 @@ class CanvasX {
             __classPrivateFieldGet(this, _CanvasX_ctx, "f").clearRect(0, 0, __classPrivateFieldGet(this, _CanvasX_width, "f"), __classPrivateFieldGet(this, _CanvasX_height, "f"));
             this.canvasObjects.forEach((canvasObject) => {
                 const sprite = canvasObject.getSprite();
-                const position = canvasObject.getPosition();
+                const position = { ...canvasObject.getPosition() };
                 const dimensions = canvasObject.getDimensions();
                 const backgroundColor = canvasObject.getBackgroundColor();
                 const positionOffset = this.canvasCamera.getPosition();

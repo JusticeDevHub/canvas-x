@@ -46,7 +46,7 @@ export default class CanvasX {
 
     this.canvasObjects.forEach((canvasObject) => {
       const sprite = canvasObject.getSprite();
-      const position = canvasObject.getPosition();
+      const position = { ...canvasObject.getPosition() };
       const dimensions = canvasObject.getDimensions();
       const backgroundColor = canvasObject.getBackgroundColor();
       const positionOffset = this.canvasCamera.getPosition();
