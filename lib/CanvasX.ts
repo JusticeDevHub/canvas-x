@@ -5,7 +5,7 @@ import Log from "./log.js";
 export default class CanvasX {
   #width = 0;
   #height = 0;
-  canvasCamera = new CanvasCamera();
+  canvasCamera: CanvasCamera;
   canvasObjects: CanvasObject[] = [];
   canvas: HTMLCanvasElement | null = null;
   #ctx: CanvasRenderingContext2D | null = null;
@@ -26,6 +26,14 @@ export default class CanvasX {
       Log(`No canvas with id ${canvasId} found`);
       return null;
     }
+  };
+
+  createCamera = (
+    onCreate: (_this: CanvasCamera) => void = () => {},
+    onUpdate: (_this: CanvasCamera) => void = () => {}
+  ) => {
+    this.canvasCamera = new CanvasCamera(onCreate, onUpdate);
+    return this;
   };
 
   #canvasUpdate = () => {
@@ -93,6 +101,13 @@ export default class CanvasX {
     this.setCanvasHeight(height);
   };
 
+  getCanvasSize = () => {
+    return {
+      width: this.#width,
+      height: this.#height,
+    };
+  };
+
   getCamera = (): CanvasCamera => {
     return this.canvasCamera;
   };
@@ -104,9 +119,9 @@ export default class CanvasX {
   };
 
   createObject = (
-    onCreate: Function = () => {},
-    onUpdate: Function = () => {},
-    onDestroy: Function = () => {}
+    onCreate: (_this: CanvasObject) => void = () => {},
+    onUpdate: (_this: CanvasObject) => void = () => {},
+    onDestroy: (_this: CanvasObject) => void = () => {}
   ) => {
     const newObj = new CanvasObject(
       ++this.#objectsCreated,

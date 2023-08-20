@@ -17,7 +17,6 @@ class CanvasX {
     constructor() {
         _CanvasX_width.set(this, 0);
         _CanvasX_height.set(this, 0);
-        this.canvasCamera = new CanvasCamera();
         this.canvasObjects = [];
         this.canvas = null;
         _CanvasX_ctx.set(this, null);
@@ -38,6 +37,10 @@ class CanvasX {
                 Log(`No canvas with id ${canvasId} found`);
                 return null;
             }
+        };
+        this.createCamera = (onCreate = () => { }, onUpdate = () => { }) => {
+            this.canvasCamera = new CanvasCamera(onCreate, onUpdate);
+            return this;
         };
         _CanvasX_canvasUpdate.set(this, () => {
             __classPrivateFieldGet(this, _CanvasX_logic, "f").call(this);
@@ -85,6 +88,12 @@ class CanvasX {
         this.setCanvasSize = (width, height) => {
             this.setCanvasWidth(width);
             this.setCanvasHeight(height);
+        };
+        this.getCanvasSize = () => {
+            return {
+                width: __classPrivateFieldGet(this, _CanvasX_width, "f"),
+                height: __classPrivateFieldGet(this, _CanvasX_height, "f"),
+            };
         };
         this.getCamera = () => {
             return this.canvasCamera;

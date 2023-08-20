@@ -10,8 +10,10 @@ var __classPrivateFieldSet = (this && this.__classPrivateFieldSet) || function (
     return (kind === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value)), value;
 };
 var _CanvasCamera_position, _CanvasCamera_zoomLevel;
-class CanvasCamera {
-    constructor() {
+import VariableClass from "./VariableClass.js";
+class CanvasCamera extends VariableClass {
+    constructor(onCreate = () => { }, onUpdate = () => { }) {
+        super();
         _CanvasCamera_position.set(this, { x: 0, y: 0 });
         _CanvasCamera_zoomLevel.set(this, 1);
         this.getPosition = () => {
@@ -29,6 +31,13 @@ class CanvasCamera {
         this.setZoomLevel = (zoomLevel) => {
             __classPrivateFieldSet(this, _CanvasCamera_zoomLevel, zoomLevel, "f");
         };
+        onCreate(this);
+        // TODO: On cancal close animation frame
+        const updateLoop = () => {
+            onUpdate(this);
+            requestAnimationFrame(updateLoop);
+        };
+        requestAnimationFrame(updateLoop);
     }
 }
 _CanvasCamera_position = new WeakMap(), _CanvasCamera_zoomLevel = new WeakMap();

@@ -9,9 +9,11 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
 };
-var _CanvasObject_id, _CanvasObject_position, _CanvasObject_dimensions, _CanvasObject_sprite, _CanvasObject_loopId, _CanvasObject_onDestroy, _CanvasObject_destroyById, _CanvasObject_backgroundColor, _CanvasObject_opacity, _CanvasObject_variables;
-class CanvasObject {
+var _CanvasObject_id, _CanvasObject_position, _CanvasObject_dimensions, _CanvasObject_sprite, _CanvasObject_loopId, _CanvasObject_onDestroy, _CanvasObject_destroyById, _CanvasObject_backgroundColor, _CanvasObject_opacity;
+import VariableClass from "./VariableClass.js";
+class CanvasObject extends VariableClass {
     constructor(id, onCreate, onUpdate, onDestroy, destroyById) {
+        super();
         _CanvasObject_id.set(this, void 0);
         _CanvasObject_position.set(this, { x: 0, y: 0 });
         _CanvasObject_dimensions.set(this, { width: 100, height: 100 });
@@ -21,7 +23,6 @@ class CanvasObject {
         _CanvasObject_destroyById.set(this, void 0);
         _CanvasObject_backgroundColor.set(this, null);
         _CanvasObject_opacity.set(this, 1);
-        _CanvasObject_variables.set(this, {});
         this.getId = () => {
             return __classPrivateFieldGet(this, _CanvasObject_id, "f");
         };
@@ -63,12 +64,6 @@ class CanvasObject {
         this.setOpacity = (opacity) => {
             __classPrivateFieldSet(this, _CanvasObject_opacity, opacity, "f");
         };
-        this.getVariableValue = (key) => {
-            return __classPrivateFieldGet(this, _CanvasObject_variables, "f")[key];
-        };
-        this.setVariableValue = (key, value) => {
-            __classPrivateFieldGet(this, _CanvasObject_variables, "f")[key] = value;
-        };
         this.destroy = () => {
             __classPrivateFieldGet(this, _CanvasObject_onDestroy, "f").call(this, this);
             __classPrivateFieldGet(this, _CanvasObject_destroyById, "f").call(this, __classPrivateFieldGet(this, _CanvasObject_id, "f"));
@@ -85,6 +80,6 @@ class CanvasObject {
         __classPrivateFieldSet(this, _CanvasObject_destroyById, destroyById, "f");
     }
 }
-_CanvasObject_id = new WeakMap(), _CanvasObject_position = new WeakMap(), _CanvasObject_dimensions = new WeakMap(), _CanvasObject_sprite = new WeakMap(), _CanvasObject_loopId = new WeakMap(), _CanvasObject_onDestroy = new WeakMap(), _CanvasObject_destroyById = new WeakMap(), _CanvasObject_backgroundColor = new WeakMap(), _CanvasObject_opacity = new WeakMap(), _CanvasObject_variables = new WeakMap();
+_CanvasObject_id = new WeakMap(), _CanvasObject_position = new WeakMap(), _CanvasObject_dimensions = new WeakMap(), _CanvasObject_sprite = new WeakMap(), _CanvasObject_loopId = new WeakMap(), _CanvasObject_onDestroy = new WeakMap(), _CanvasObject_destroyById = new WeakMap(), _CanvasObject_backgroundColor = new WeakMap(), _CanvasObject_opacity = new WeakMap();
 export default CanvasObject;
 //# sourceMappingURL=CanvasObject.js.map

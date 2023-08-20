@@ -1,6 +1,7 @@
+import VariableClass from "./VariableClass.js";
 import { dimensionsType, positionType } from "./types.js";
 
-class CanvasObject {
+class CanvasObject extends VariableClass {
   #id: number;
   #position: positionType = { x: 0, y: 0 };
   #dimensions: dimensionsType = { width: 100, height: 100 };
@@ -10,15 +11,15 @@ class CanvasObject {
   #destroyById: (id: number) => void;
   #backgroundColor: string | null = null;
   #opacity = 1;
-  #variables: { [key: string]: any } = {};
 
   constructor(
     id: number,
-    onCreate: Function,
-    onUpdate: Function,
-    onDestroy: Function,
+    onCreate: (_this: CanvasObject) => void,
+    onUpdate: (_this: CanvasObject) => void,
+    onDestroy: (_this: CanvasObject) => void,
     destroyById: (id: number) => void
   ) {
+    super();
     this.#id = id;
     onCreate(this);
 
@@ -82,14 +83,6 @@ class CanvasObject {
 
   setOpacity = (opacity: number) => {
     this.#opacity = opacity;
-  };
-
-  getVariableValue = (key: string) => {
-    return this.#variables[key];
-  };
-
-  setVariableValue = (key: string, value: any) => {
-    this.#variables[key] = value;
   };
 
   destroy = () => {
