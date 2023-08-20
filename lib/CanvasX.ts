@@ -1,59 +1,15 @@
+import CanvasCamera from "./CanvasCamera.js";
 import CanvasObject from "./CanvasObject.js";
 import Log from "./log.js";
 
 export default class CanvasX {
   #width = 0;
   #height = 0;
+  canvasCamera = new CanvasCamera();
   canvasObjects: CanvasObject[] = [];
   canvas: HTMLCanvasElement | null = null;
   #ctx: CanvasRenderingContext2D | null = null;
   #objectsCreated = 0;
-
-  #drawCanvas = () => {
-    this.#ctx.clearRect(0, 0, this.#width, this.#height);
-
-    this.canvasObjects.forEach((canvasObject) => {
-      const sprite = canvasObject.getSprite();
-      const position = canvasObject.getPosition();
-      const dimensions = canvasObject.getDimensions();
-      const backgroundColor = canvasObject.getBackgroundColor();
-
-      // TODO: Add support for auto width and height
-      if (dimensions.width === "auto") {
-        dimensions.width = 1;
-      }
-      if (dimensions.height === "auto") {
-        dimensions.height = 1;
-      }
-
-      if (backgroundColor) {
-        this.#ctx.fillStyle = backgroundColor;
-        this.#ctx.fillRect(
-          position.x,
-          position.y,
-          dimensions.width,
-          dimensions.height
-        );
-      }
-
-      if (sprite) {
-        this.#ctx.drawImage(
-          sprite,
-          position.x,
-          position.y,
-          dimensions.width,
-          dimensions.height
-        );
-      }
-    });
-  };
-
-  #logic = () => {};
-
-  #canvasUpdate = () => {
-    this.#logic();
-    this.#drawCanvas();
-  };
 
   createCanvas = (canvasId: string) => {
     this.canvas =
@@ -71,6 +27,48 @@ export default class CanvasX {
       return null;
     }
   };
+
+  #canvasUpdate = () => {
+    this.#logic();
+    this.#drawCanvas();
+  };
+
+  #drawCanvas = () => {
+    this.#ctx.clearRect(0, 0, this.#width, this.#height);
+
+    this.canvasObjects.forEach((canvasObject) => {
+      const sprite = canvasObject.getSprite();
+      const position = canvasObject.getPosition();
+      const dimensions = canvasObject.getDimensions();
+      const backgroundColor = canvasObject.getBackgroundColor();
+      const positionOffset = this.canvasCamera.getPosition();
+      position.x -= positionOffset.x;
+      position.y -= positionOffset.y;
+
+      if (backgroundColor) {
+        this.#ctx.fillStyle = backgroundColor;
+        this.#ctx.fillRect(
+          position.x,
+          position.y,
+          dimensions.width,
+          dimensions.height
+        );
+      }
+
+      if (sprite) {
+        this.#ctx.globalAlpha = canvasObject.getOpacity();
+        this.#ctx.drawImage(
+          sprite,
+          position.x,
+          position.y,
+          dimensions.width,
+          dimensions.height
+        );
+      }
+    });
+  };
+
+  #logic = () => {};
 
   setCanvasWidth = (width: number) => {
     if (this.canvas) {
@@ -93,6 +91,10 @@ export default class CanvasX {
   setCanvasSize = (width: number, height: number) => {
     this.setCanvasWidth(width);
     this.setCanvasHeight(height);
+  };
+
+  getCamera = (): CanvasCamera => {
+    return this.canvasCamera;
   };
 
   #destroyObjectById = (id: number) => {

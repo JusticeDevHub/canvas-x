@@ -3,12 +3,15 @@ import { dimensionsType, positionType } from "./types.js";
 class CanvasObject {
   #id: number;
   #position: positionType = { x: 0, y: 0 };
-  #dimensions: dimensionsType = { width: "auto", height: "auto" };
+  #dimensions: dimensionsType = { width: 100, height: 100 };
   #sprite: CanvasImageSource | null = null;
   #loopId = -1;
   #onDestroy: Function;
   #destroyById: (id: number) => void;
   #backgroundColor: string | null = null;
+  #opacity = 1;
+  #variables: { [key: string]: any } = {};
+
   constructor(
     id: number,
     onCreate: Function,
@@ -57,10 +60,12 @@ class CanvasObject {
   };
 
   setDimensions = (width: number | "auto", height: number | "auto") => {
-    this.#dimensions = {
-      width,
-      height,
+    // TODO: handle auto
+    const dimensions: dimensionsType = {
+      width: typeof width === "number" ? width : 0,
+      height: typeof height === "number" ? height : 0,
     };
+    this.#dimensions = dimensions;
   };
 
   getBackgroundColor = (): string | null => {
@@ -69,6 +74,22 @@ class CanvasObject {
 
   setBackgroundColor = (color: string) => {
     this.#backgroundColor = color;
+  };
+
+  getOpacity = (): number => {
+    return this.#opacity;
+  };
+
+  setOpacity = (opacity: number) => {
+    this.#opacity = opacity;
+  };
+
+  getVariableValue = (key: string) => {
+    return this.#variables[key];
+  };
+
+  setVariableValue = (key: string, value: any) => {
+    this.#variables[key] = value;
   };
 
   destroy = () => {

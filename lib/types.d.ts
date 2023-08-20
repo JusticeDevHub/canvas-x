@@ -4,6 +4,6 @@ export type positionType = {
 };
 
 export type dimensionsType = {
-  width: number | "auto";
-  height: number | "auto";
+  width: number;
+  height: number;
 };
