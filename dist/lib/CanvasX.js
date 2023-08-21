@@ -50,13 +50,23 @@ class CanvasX {
             __classPrivateFieldGet(this, _CanvasX_ctx, "f").clearRect(0, 0, __classPrivateFieldGet(this, _CanvasX_width, "f"), __classPrivateFieldGet(this, _CanvasX_height, "f"));
             this.canvasObjects.forEach((canvasObject) => {
                 const sprite = canvasObject.getSprite();
-                const position = { ...canvasObject.getPosition() };
-                const dimensions = canvasObject.getDimensions();
                 const backgroundColor = canvasObject.getBackgroundColor();
-                const positionOffset = this.canvasCamera.getPosition();
-                position.x -= positionOffset.x;
-                position.y -= positionOffset.y;
+                const cameraZoomLevel = this.canvasCamera.getZoomLevel();
+                const cameraPositionOffset = { ...this.canvasCamera.getPosition() };
+                const position = { ...canvasObject.getPosition() };
+                const dimensions = { ...canvasObject.getDimensions() };
+                dimensions.width *= cameraZoomLevel;
+                dimensions.height *= cameraZoomLevel;
+                position.x -= cameraPositionOffset.x;
+                position.y -= cameraPositionOffset.y;
+                position.x *= cameraZoomLevel;
+                position.y *= cameraZoomLevel;
+                position.x -= dimensions.width / 2;
+                position.y -= dimensions.height / 2;
+                position.x += __classPrivateFieldGet(this, _CanvasX_width, "f") / 2;
+                position.y += __classPrivateFieldGet(this, _CanvasX_height, "f") / 2;
                 if (backgroundColor) {
+                    __classPrivateFieldGet(this, _CanvasX_ctx, "f").globalAlpha = canvasObject.getOpacity();
                     __classPrivateFieldGet(this, _CanvasX_ctx, "f").fillStyle = backgroundColor;
                     __classPrivateFieldGet(this, _CanvasX_ctx, "f").fillRect(position.x, position.y, dimensions.width, dimensions.height);
                 }

@@ -46,14 +46,25 @@ export default class CanvasX {
 
     this.canvasObjects.forEach((canvasObject) => {
       const sprite = canvasObject.getSprite();
-      const position = { ...canvasObject.getPosition() };
-      const dimensions = canvasObject.getDimensions();
       const backgroundColor = canvasObject.getBackgroundColor();
-      const positionOffset = this.canvasCamera.getPosition();
-      position.x -= positionOffset.x;
-      position.y -= positionOffset.y;
+      const cameraZoomLevel = this.canvasCamera.getZoomLevel();
+      const cameraPositionOffset = { ...this.canvasCamera.getPosition() };
+      const position = { ...canvasObject.getPosition() };
+      const dimensions = { ...canvasObject.getDimensions() };
+
+      dimensions.width *= cameraZoomLevel;
+      dimensions.height *= cameraZoomLevel;
+      position.x -= cameraPositionOffset.x;
+      position.y -= cameraPositionOffset.y;
+      position.x *= cameraZoomLevel;
+      position.y *= cameraZoomLevel;
+      position.x -= dimensions.width / 2;
+      position.y -= dimensions.height / 2;
+      position.x += this.#width / 2;
+      position.y += this.#height / 2;
 
       if (backgroundColor) {
+        this.#ctx.globalAlpha = canvasObject.getOpacity();
         this.#ctx.fillStyle = backgroundColor;
         this.#ctx.fillRect(
           position.x,
