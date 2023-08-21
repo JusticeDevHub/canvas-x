@@ -5,12 +5,16 @@ class CanvasObject extends VariableClass {
   #id: number;
   #position: positionType = { x: 0, y: 0 };
   #dimensions: dimensionsType = { width: 100, height: 100 };
-  #sprite: CanvasImageSource | null = null;
+  #sprite: HTMLImageElement | null = null;
   #loopId = -1;
   #onDestroy: Function;
   #destroyById: (id: number) => void;
   #backgroundColor: string | null = null;
   #opacity = 1;
+  #setDimensionsData: { width: number | "auto"; height: number | "auto" } = {
+    width: "auto",
+    height: "auto",
+  };
 
   constructor(
     id: number,
@@ -48,12 +52,18 @@ class CanvasObject extends VariableClass {
     };
   };
 
-  getSprite = (): CanvasImageSource | null => {
+  getSprite = (): HTMLImageElement | null => {
     return this.#sprite;
   };
 
-  setSprite = (sprite: CanvasImageSource) => {
+  setSprite = (sprite: HTMLImageElement) => {
     this.#sprite = sprite;
+    sprite.onload = () => {
+      this.setDimensions(
+        this.#setDimensionsData.width,
+        this.#setDimensionsData.height
+      );
+    };
   };
 
   getDimensions = () => {
@@ -61,12 +71,32 @@ class CanvasObject extends VariableClass {
   };
 
   setDimensions = (width: number | "auto", height: number | "auto") => {
-    // TODO: handle auto
-    const dimensions: dimensionsType = {
-      width: typeof width === "number" ? width : 0,
-      height: typeof height === "number" ? height : 0,
-    };
-    this.#dimensions = dimensions;
+    const dimensions: dimensionsType = { width: 50, height: 50 };
+    const sprite = this.getSprite();
+    if (sprite) {
+      const spriteDimensions = {
+        width: sprite?.naturalWidth || 10,
+        height: sprite?.naturalHeight || 10,
+      };
+      if (width === "auto" && height === "auto") {
+        dimensions.width = spriteDimensions.width;
+        dimensions.height = spriteDimensions.height;
+      } else if (width === "auto" && typeof height === "number") {
+        dimensions.height = height;
+        dimensions.width =
+          (spriteDimensions.width / spriteDimensions.height) * height;
+      } else if (height === "auto" && typeof width === "number") {
+        dimensions.width = width;
+        dimensions.height =
+          (spriteDimensions.height / spriteDimensions.width) * width;
+      } else if (typeof width === "number" && typeof height === "number") {
+        dimensions.width = width;
+        dimensions.height = height;
+      }
+      this.#dimensions = dimensions;
+    }
+
+    this.#setDimensionsData = { width, height };
   };
 
   getBackgroundColor = (): string | null => {
