@@ -2,4 +2,4 @@
 
 - Handle map dragging
 - Handle gifs
-- Handle object dimension auto
+- (Done) Handle object dimension auto
