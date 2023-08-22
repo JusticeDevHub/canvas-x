@@ -1,17 +1,25 @@
 import CanvasCamera from "./CanvasCamera.js";
 import CanvasObject from "./CanvasObject.js";
+import VariableClass from "./VariableClass.js";
 import Log from "./log.js";
+import { positionType } from "./types.js";
 
-export default class CanvasX {
+export default class CanvasX extends VariableClass {
   #width = 0;
   #height = 0;
-  canvasCamera: CanvasCamera;
+  canvasCamera: CanvasCamera = new CanvasCamera();
   canvasObjects: CanvasObject[] = [];
   canvas: HTMLCanvasElement | null = null;
   #ctx: CanvasRenderingContext2D | null = null;
   #objectsCreated = 0;
+  #mousePosition: positionType = { x: 0, y: 0 };
+  #onUpdate: Function | null = null;
 
-  createCanvas = (canvasId: string) => {
+  createCanvas = (
+    canvasId: string,
+    onCreate: (_this: CanvasX) => void = () => {},
+    onUpdate: (_this: CanvasX) => void = () => {}
+  ) => {
     this.canvas =
       (document.getElementById(canvasId) as HTMLCanvasElement) || null;
     if (this.canvas) {
@@ -21,6 +29,16 @@ export default class CanvasX {
         requestAnimationFrame(canvasUpdateLoop);
       };
       requestAnimationFrame(canvasUpdateLoop);
+
+      document.onmousemove = (e) => {
+        this.#mousePosition = {
+          x: e.clientX - this.#width / 2,
+          y: e.clientY - this.#height / 2,
+        };
+      };
+
+      onCreate(this);
+      this.#onUpdate = onUpdate;
       return this;
     } else {
       Log(`No canvas with id ${canvasId} found`);
@@ -87,7 +105,40 @@ export default class CanvasX {
     });
   };
 
-  #logic = () => {};
+  #logic = () => {
+    this.canvasObjects.forEach((canvasObject) => {
+      this.#onUpdate(this);
+
+      const onHover = canvasObject.getOnHover();
+      if (onHover) {
+        const objPosition = canvasObject.getPosition();
+        const objDimensions = canvasObject.getDimensions();
+        const onHoverTrue = canvasObject.getOnHoverTrue();
+
+        let inCollisionWithMouse = false;
+        if (
+          Math.abs(objPosition.x - this.#mousePosition.x) <
+            objDimensions.width / 2 &&
+          Math.abs(objPosition.y - this.#mousePosition.y) <
+            objDimensions.height / 2
+        ) {
+          inCollisionWithMouse = true;
+        }
+
+        if (inCollisionWithMouse && !onHoverTrue) {
+          // Mouse Entered Collision Box
+          canvasObject.setOnHoverTrue(true);
+          onHover(canvasObject);
+        }
+        if (!inCollisionWithMouse && onHoverTrue) {
+          // Mouse Left Collision Box
+          canvasObject.setOnHoverTrue(false);
+          const onHoverEnd = canvasObject.getOnHoverEnd();
+          onHoverEnd(canvasObject);
+        }
+      }
+    });
+  };
 
   setCanvasWidth = (width: number) => {
     if (this.canvas) {
@@ -127,6 +178,10 @@ export default class CanvasX {
     this.canvasObjects = this.canvasObjects.filter(
       (canvasObject) => canvasObject.getId() !== id
     );
+  };
+
+  setMouseCursor = (cursorType: string) => {
+    document.body.style.cursor = cursorType;
   };
 
   createObject = (

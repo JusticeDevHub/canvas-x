@@ -9,19 +9,24 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
 };
-var _CanvasX_width, _CanvasX_height, _CanvasX_ctx, _CanvasX_objectsCreated, _CanvasX_canvasUpdate, _CanvasX_drawCanvas, _CanvasX_logic, _CanvasX_destroyObjectById;
+var _CanvasX_width, _CanvasX_height, _CanvasX_ctx, _CanvasX_objectsCreated, _CanvasX_mousePosition, _CanvasX_onUpdate, _CanvasX_canvasUpdate, _CanvasX_drawCanvas, _CanvasX_logic, _CanvasX_destroyObjectById;
 import CanvasCamera from "./CanvasCamera.js";
 import CanvasObject from "./CanvasObject.js";
+import VariableClass from "./VariableClass.js";
 import Log from "./log.js";
-class CanvasX {
+class CanvasX extends VariableClass {
     constructor() {
+        super(...arguments);
         _CanvasX_width.set(this, 0);
         _CanvasX_height.set(this, 0);
+        this.canvasCamera = new CanvasCamera();
         this.canvasObjects = [];
         this.canvas = null;
         _CanvasX_ctx.set(this, null);
         _CanvasX_objectsCreated.set(this, 0);
-        this.createCanvas = (canvasId) => {
+        _CanvasX_mousePosition.set(this, { x: 0, y: 0 });
+        _CanvasX_onUpdate.set(this, null);
+        this.createCanvas = (canvasId, onCreate = () => { }, onUpdate = () => { }) => {
             this.canvas =
                 document.getElementById(canvasId) || null;
             if (this.canvas) {
@@ -31,6 +36,14 @@ class CanvasX {
                     requestAnimationFrame(canvasUpdateLoop);
                 };
                 requestAnimationFrame(canvasUpdateLoop);
+                document.onmousemove = (e) => {
+                    __classPrivateFieldSet(this, _CanvasX_mousePosition, {
+                        x: e.clientX - __classPrivateFieldGet(this, _CanvasX_width, "f") / 2,
+                        y: e.clientY - __classPrivateFieldGet(this, _CanvasX_height, "f") / 2,
+                    }, "f");
+                };
+                onCreate(this);
+                __classPrivateFieldSet(this, _CanvasX_onUpdate, onUpdate, "f");
                 return this;
             }
             else {
@@ -76,7 +89,35 @@ class CanvasX {
                 }
             });
         });
-        _CanvasX_logic.set(this, () => { });
+        _CanvasX_logic.set(this, () => {
+            this.canvasObjects.forEach((canvasObject) => {
+                __classPrivateFieldGet(this, _CanvasX_onUpdate, "f").call(this, this);
+                const onHover = canvasObject.getOnHover();
+                if (onHover) {
+                    const objPosition = canvasObject.getPosition();
+                    const objDimensions = canvasObject.getDimensions();
+                    const onHoverTrue = canvasObject.getOnHoverTrue();
+                    let inCollisionWithMouse = false;
+                    if (Math.abs(objPosition.x - __classPrivateFieldGet(this, _CanvasX_mousePosition, "f").x) <
+                        objDimensions.width / 2 &&
+                        Math.abs(objPosition.y - __classPrivateFieldGet(this, _CanvasX_mousePosition, "f").y) <
+                            objDimensions.height / 2) {
+                        inCollisionWithMouse = true;
+                    }
+                    if (inCollisionWithMouse && !onHoverTrue) {
+                        // Mouse Entered Collision Box
+                        canvasObject.setOnHoverTrue(true);
+                        onHover(canvasObject);
+                    }
+                    if (!inCollisionWithMouse && onHoverTrue) {
+                        // Mouse Left Collision Box
+                        canvasObject.setOnHoverTrue(false);
+                        const onHoverEnd = canvasObject.getOnHoverEnd();
+                        onHoverEnd(canvasObject);
+                    }
+                }
+            });
+        });
         this.setCanvasWidth = (width) => {
             if (this.canvas) {
                 __classPrivateFieldSet(this, _CanvasX_width, width, "f");
@@ -111,6 +152,9 @@ class CanvasX {
         _CanvasX_destroyObjectById.set(this, (id) => {
             this.canvasObjects = this.canvasObjects.filter((canvasObject) => canvasObject.getId() !== id);
         });
+        this.setMouseCursor = (cursorType) => {
+            document.body.style.cursor = cursorType;
+        };
         this.createObject = (onCreate = () => { }, onUpdate = () => { }, onDestroy = () => { }) => {
             var _a;
             const newObj = new CanvasObject(__classPrivateFieldSet(this, _CanvasX_objectsCreated, (_a = __classPrivateFieldGet(this, _CanvasX_objectsCreated, "f"), ++_a), "f"), onCreate, onUpdate, onDestroy, __classPrivateFieldGet(this, _CanvasX_destroyObjectById, "f"));
@@ -119,6 +163,6 @@ class CanvasX {
         };
     }
 }
-_CanvasX_width = new WeakMap(), _CanvasX_height = new WeakMap(), _CanvasX_ctx = new WeakMap(), _CanvasX_objectsCreated = new WeakMap(), _CanvasX_canvasUpdate = new WeakMap(), _CanvasX_drawCanvas = new WeakMap(), _CanvasX_logic = new WeakMap(), _CanvasX_destroyObjectById = new WeakMap();
+_CanvasX_width = new WeakMap(), _CanvasX_height = new WeakMap(), _CanvasX_ctx = new WeakMap(), _CanvasX_objectsCreated = new WeakMap(), _CanvasX_mousePosition = new WeakMap(), _CanvasX_onUpdate = new WeakMap(), _CanvasX_canvasUpdate = new WeakMap(), _CanvasX_drawCanvas = new WeakMap(), _CanvasX_logic = new WeakMap(), _CanvasX_destroyObjectById = new WeakMap();
 export default CanvasX;
 //# sourceMappingURL=CanvasX.js.map

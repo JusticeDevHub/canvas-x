@@ -11,6 +11,10 @@ class CanvasObject extends VariableClass {
   #destroyById: (id: number) => void;
   #backgroundColor: string | null = null;
   #opacity = 1;
+  #onHoverTrue = false;
+  #onHoverEndTrue = false;
+  #onHover: Function | null = null;
+  #onHoverEnd: Function | null = null;
   #setDimensionsData: { width: number | "auto"; height: number | "auto" } = {
     width: "auto",
     height: "auto",
@@ -114,6 +118,48 @@ class CanvasObject extends VariableClass {
   setOpacity = (opacity: number) => {
     this.#opacity = opacity;
   };
+
+  // TODO: Just for System.
+  getOnHover = () => {
+    return this.#onHover;
+  };
+
+  // TODO: Just for System.
+  setOnHoverEnter = (callback: Function) => {
+    this.#onHover = callback;
+  };
+
+  // TODO: Just for System.
+  getOnHoverEnd = () => {
+    return this.#onHoverEnd;
+  };
+
+  // TODO: Just for System.
+  setOnHoverEnd = (callback: Function) => {
+    this.#onHoverEnd = callback;
+  };
+
+  // TODO: Just for System.
+  getOnHoverTrue = () => {
+    return this.#onHoverTrue;
+  };
+
+  // TODO: Just for System.
+  setOnHoverTrue = (value: boolean) => {
+    this.#onHoverTrue = value;
+  };
+
+  // TODO: Just for System.
+  getOnHoverEndTrue = () => {
+    return this.#onHoverEndTrue;
+  };
+
+  // TODO: Just for System.
+  setOnHoverEndTrue = (value: boolean) => {
+    return this.#onHoverEndTrue;
+  };
+
+  setOnClicked = () => {};
 
   destroy = () => {
     this.#onDestroy(this);
