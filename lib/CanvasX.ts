@@ -30,6 +30,17 @@ export default class CanvasX extends VariableClass {
       };
       requestAnimationFrame(canvasUpdateLoop);
 
+      window.addEventListener("click", (e) => {
+        this.canvasObjects.forEach((canvasObject) => {
+          if (canvasObject.getOnHoverTrue()) {
+            const onClicked = canvasObject.getOnClicked();
+            if (onClicked) {
+              onClicked(canvasObject);
+            }
+          }
+        });
+      });
+
       document.onmousemove = (e) => {
         this.#mousePosition = {
           x: e.clientX - this.#width / 2,

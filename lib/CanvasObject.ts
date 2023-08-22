@@ -15,6 +15,7 @@ class CanvasObject extends VariableClass {
   #onHoverEndTrue = false;
   #onHover: Function | null = null;
   #onHoverEnd: Function | null = null;
+  #onClick: Function | null = null;
   #setDimensionsData: { width: number | "auto"; height: number | "auto" } = {
     width: "auto",
     height: "auto",
@@ -159,7 +160,13 @@ class CanvasObject extends VariableClass {
     return this.#onHoverEndTrue;
   };
 
-  setOnClicked = () => {};
+  getOnClicked = () => {
+    return this.#onClick;
+  };
+
+  setOnClicked = (func: (_this: CanvasObject) => void = () => {}) => {
+    this.#onClick = func;
+  };
 
   destroy = () => {
     this.#onDestroy(this);

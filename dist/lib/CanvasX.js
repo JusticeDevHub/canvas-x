@@ -36,6 +36,16 @@ class CanvasX extends VariableClass {
                     requestAnimationFrame(canvasUpdateLoop);
                 };
                 requestAnimationFrame(canvasUpdateLoop);
+                window.addEventListener("click", (e) => {
+                    this.canvasObjects.forEach((canvasObject) => {
+                        if (canvasObject.getOnHoverTrue()) {
+                            const onClicked = canvasObject.getOnClicked();
+                            if (onClicked) {
+                                onClicked(canvasObject);
+                            }
+                        }
+                    });
+                });
                 document.onmousemove = (e) => {
                     __classPrivateFieldSet(this, _CanvasX_mousePosition, {
                         x: e.clientX - __classPrivateFieldGet(this, _CanvasX_width, "f") / 2,
