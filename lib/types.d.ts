@@ -1,4 +1,4 @@
-export type positionType = {
+export type coordinationType = {
   x: number;
   y: number;
 };

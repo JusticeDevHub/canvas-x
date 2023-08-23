@@ -1,9 +1,10 @@
+import CanvasCamera from "./CanvasCamera.js";
 import VariableClass from "./VariableClass.js";
-import { dimensionsType, positionType } from "./types.js";
+import { dimensionsType, coordinationType } from "./types.js";
 
 class CanvasObject extends VariableClass {
   #id: number;
-  #position: positionType = { x: 0, y: 0 };
+  #position: coordinationType = { x: 0, y: 0 };
   #dimensions: dimensionsType = { width: 100, height: 100 };
   #sprite: HTMLImageElement | null = null;
   #loopId = -1;
@@ -16,6 +17,10 @@ class CanvasObject extends VariableClass {
   #onHover: Function | null = null;
   #onHoverEnd: Function | null = null;
   #onClick: Function | null = null;
+  #onWheelScroll: (
+    _this: CanvasObject | CanvasCamera,
+    scroll: coordinationType
+  ) => void | null = null;
   #setDimensionsData: { width: number | "auto"; height: number | "auto" } = {
     width: "auto",
     height: "auto",
@@ -46,7 +51,7 @@ class CanvasObject extends VariableClass {
     return this.#id;
   };
 
-  getPosition = (): positionType => {
+  getPosition = (): coordinationType => {
     return this.#position;
   };
 
@@ -166,6 +171,19 @@ class CanvasObject extends VariableClass {
 
   setOnClicked = (func: (_this: CanvasObject) => void = () => {}) => {
     this.#onClick = func;
+  };
+
+  getOnWheelScroll = () => {
+    return this.#onWheelScroll;
+  };
+
+  setOnWheelScroll = (
+    func: (
+      _this: CanvasObject | CanvasCamera,
+      scroll: coordinationType
+    ) => void = () => {}
+  ) => {
+    this.#onWheelScroll = func;
   };
 
   destroy = () => {

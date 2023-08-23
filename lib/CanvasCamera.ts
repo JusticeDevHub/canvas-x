@@ -1,38 +1,27 @@
-import VariableClass from "./VariableClass.js";
-import { positionType } from "./types.js";
+import CanvasObject from "./CanvasObject.js";
 
-export default class CanvasCamera extends VariableClass {
-  #position: positionType = { x: 0, y: 0 };
+export default class CanvasCamera extends CanvasObject {
   #zoomLevel: number = 1;
 
-  constructor(onCreate: Function = () => {}, onUpdate: Function = () => {}) {
-    super();
-    onCreate(this);
-
-    // TODO: On cancal close animation frame
-    const updateLoop = () => {
-      onUpdate(this);
-      requestAnimationFrame(updateLoop);
-    };
-    requestAnimationFrame(updateLoop);
+  constructor(
+    id: number,
+    onCreate: (_this: CanvasCamera) => void = () => {},
+    onUpdate: (_this: CanvasCamera) => void = () => {}
+  ) {
+    super(
+      id,
+      onCreate,
+      onUpdate,
+      () => {},
+      () => {}
+    );
   }
-
-  getPosition = (): positionType => {
-    return this.#position;
-  };
-
-  setPosition = (x: number, y: number): void => {
-    this.#position = {
-      x,
-      y,
-    };
-  };
 
   getZoomLevel = (): number => {
     return this.#zoomLevel;
   };
 
   setZoomLevel = (zoomLevel: number): void => {
-    this.#zoomLevel = zoomLevel;
+    this.#zoomLevel = zoomLevel > 0 ? zoomLevel : 0.001;
   };
 }

@@ -2,18 +2,23 @@ import CanvasCamera from "./CanvasCamera.js";
 import CanvasObject from "./CanvasObject.js";
 import VariableClass from "./VariableClass.js";
 import Log from "./log.js";
-import { positionType } from "./types.js";
+import { coordinationType } from "./types.js";
 
 export default class CanvasX extends VariableClass {
   #width = 0;
   #height = 0;
-  canvasCamera: CanvasCamera = new CanvasCamera();
+  canvasCamera: CanvasCamera = new CanvasCamera(
+    -1,
+    () => {},
+    () => {}
+  );
   canvasObjects: CanvasObject[] = [];
   canvas: HTMLCanvasElement | null = null;
   #ctx: CanvasRenderingContext2D | null = null;
   #objectsCreated = 0;
-  #mousePosition: positionType = { x: 0, y: 0 };
+  #mousePosition: coordinationType = { x: 0, y: 0 };
   #onUpdate: Function | null = null;
+  #wheelScroll: coordinationType = { x: 0, y: 0 };
 
   createCanvas = (
     canvasId: string,
@@ -30,7 +35,7 @@ export default class CanvasX extends VariableClass {
       };
       requestAnimationFrame(canvasUpdateLoop);
 
-      window.addEventListener("click", (e) => {
+      document.addEventListener("click", (e) => {
         this.canvasObjects.forEach((canvasObject) => {
           if (canvasObject.getOnHoverTrue()) {
             const onClicked = canvasObject.getOnClicked();
@@ -39,6 +44,13 @@ export default class CanvasX extends VariableClass {
             }
           }
         });
+      });
+
+      document.addEventListener("wheel", (e) => {
+        this.#wheelScroll = {
+          x: Math.abs(e.deltaX) < 10 ? 0 : e.deltaX,
+          y: Math.abs(e.deltaY) < 10 ? 0 : e.deltaY,
+        };
       });
 
       document.onmousemove = (e) => {
@@ -55,14 +67,6 @@ export default class CanvasX extends VariableClass {
       Log(`No canvas with id ${canvasId} found`);
       return null;
     }
-  };
-
-  createCamera = (
-    onCreate: (_this: CanvasCamera) => void = () => {},
-    onUpdate: (_this: CanvasCamera) => void = () => {}
-  ) => {
-    this.canvasCamera = new CanvasCamera(onCreate, onUpdate);
-    return this;
   };
 
   #canvasUpdate = () => {
@@ -117,8 +121,19 @@ export default class CanvasX extends VariableClass {
   };
 
   #logic = () => {
-    this.canvasObjects.forEach((canvasObject) => {
+    const objs = [...this.canvasObjects, this.canvasCamera];
+
+    objs.forEach((canvasObject) => {
       this.#onUpdate(this);
+
+      const wheelSroll = canvasObject.getOnWheelScroll();
+      if (wheelSroll) {
+        if (
+          JSON.stringify(this.#wheelScroll) !== JSON.stringify({ x: 0, y: 0 })
+        ) {
+          wheelSroll(canvasObject, this.#wheelScroll);
+        }
+      }
 
       const onHover = canvasObject.getOnHover();
       if (onHover) {
@@ -151,27 +166,17 @@ export default class CanvasX extends VariableClass {
     });
   };
 
-  setCanvasWidth = (width: number) => {
+  setCanvasSize = (width: number, height: number) => {
     if (this.canvas) {
       this.#width = width;
+      this.#height = height;
       this.canvas.width = width;
+      this.canvas.height = height;
+      this.canvas.style.width = `${width}px`;
+      this.canvas.style.height = `${height}px`;
     } else {
       Log("Cannot set canvas width because no canvas found");
     }
-  };
-
-  setCanvasHeight = (height: number) => {
-    if (this.canvas) {
-      this.#height = height;
-      this.canvas.height = height;
-    } else {
-      Log("Cannot set canvas height because no canvas found");
-    }
-  };
-
-  setCanvasSize = (width: number, height: number) => {
-    this.setCanvasWidth(width);
-    this.setCanvasHeight(height);
   };
 
   getCanvasSize = () => {
@@ -209,5 +214,18 @@ export default class CanvasX extends VariableClass {
     );
     this.canvasObjects.push(newObj);
     return newObj;
+  };
+
+  createCamera = (
+    onCreate: (_this: CanvasCamera) => void = () => {},
+    onUpdate: (_this: CanvasCamera) => void = () => {}
+  ) => {
+    this.canvasCamera = new CanvasCamera(
+      ++this.#objectsCreated,
+      onCreate,
+      onUpdate
+    );
+    this.canvasObjects.push(this.canvasCamera);
+    return this.canvasCamera;
   };
 }
