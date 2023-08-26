@@ -3,6 +3,8 @@ import CanvasObject from "./CanvasObject.js";
 import VariableClass from "./VariableClass.js";
 import Log from "./log.js";
 import { coordinationType } from "./types.js";
+import onHover from "./utils/onHover.js";
+import onWheelScroll from "./utils/onWheelScroll.js";
 
 export default class CanvasX extends VariableClass {
   #width = 0;
@@ -81,9 +83,9 @@ export default class CanvasX extends VariableClass {
       const sprite = canvasObject.getSprite();
       const backgroundColor = canvasObject.getBackgroundColor();
       const cameraZoomLevel = this.canvasCamera.getZoomLevel();
-      const cameraPositionOffset = { ...this.canvasCamera.getPosition() };
-      const position = { ...canvasObject.getPosition() };
-      const dimensions = { ...canvasObject.getDimensions() };
+      const cameraPositionOffset = this.canvasCamera.getPosition();
+      const position = canvasObject.getPosition();
+      const dimensions = canvasObject.getDimensions();
 
       dimensions.width *= cameraZoomLevel;
       dimensions.height *= cameraZoomLevel;
@@ -126,43 +128,12 @@ export default class CanvasX extends VariableClass {
     objs.forEach((canvasObject) => {
       this.#onUpdate(this);
 
-      const wheelSroll = canvasObject.getOnWheelScroll();
-      if (wheelSroll) {
-        if (
-          JSON.stringify(this.#wheelScroll) !== JSON.stringify({ x: 0, y: 0 })
-        ) {
-          wheelSroll(canvasObject, this.#wheelScroll);
-        }
-      }
-
-      const onHover = canvasObject.getOnHover();
-      if (onHover) {
-        const objPosition = canvasObject.getPosition();
-        const objDimensions = canvasObject.getDimensions();
-        const onHoverTrue = canvasObject.getOnHoverTrue();
-
-        let inCollisionWithMouse = false;
-        if (
-          Math.abs(objPosition.x - this.#mousePosition.x) <
-            objDimensions.width / 2 &&
-          Math.abs(objPosition.y - this.#mousePosition.y) <
-            objDimensions.height / 2
-        ) {
-          inCollisionWithMouse = true;
-        }
-
-        if (inCollisionWithMouse && !onHoverTrue) {
-          // Mouse Entered Collision Box
-          canvasObject.setOnHoverTrue(true);
-          onHover(canvasObject);
-        }
-        if (!inCollisionWithMouse && onHoverTrue) {
-          // Mouse Left Collision Box
-          canvasObject.setOnHoverTrue(false);
-          const onHoverEnd = canvasObject.getOnHoverEnd();
-          onHoverEnd(canvasObject);
-        }
-      }
+      onWheelScroll(canvasObject, { ...this.#wheelScroll });
+      onHover(
+        canvasObject,
+        { ...this.#mousePosition },
+        this.getCamera().getZoomLevel()
+      );
     });
   };
 

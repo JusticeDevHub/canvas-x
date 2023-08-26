@@ -52,7 +52,7 @@ class CanvasObject extends VariableClass {
   };
 
   getPosition = (): coordinationType => {
-    return this.#position;
+    return { ...this.#position };
   };
 
   setPosition = (x: number, y: number) => {
@@ -77,7 +77,7 @@ class CanvasObject extends VariableClass {
   };
 
   getDimensions = () => {
-    return this.#dimensions;
+    return { ...this.#dimensions };
   };
 
   setDimensions = (width: number | "auto", height: number | "auto") => {

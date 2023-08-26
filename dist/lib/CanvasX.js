@@ -14,6 +14,8 @@ import CanvasCamera from "./CanvasCamera.js";
 import CanvasObject from "./CanvasObject.js";
 import VariableClass from "./VariableClass.js";
 import Log from "./log.js";
+import onHover from "./utils/onHover.js";
+import onWheelScroll from "./utils/onWheelScroll.js";
 class CanvasX extends VariableClass {
     constructor() {
         super(...arguments);
@@ -78,9 +80,9 @@ class CanvasX extends VariableClass {
                 const sprite = canvasObject.getSprite();
                 const backgroundColor = canvasObject.getBackgroundColor();
                 const cameraZoomLevel = this.canvasCamera.getZoomLevel();
-                const cameraPositionOffset = { ...this.canvasCamera.getPosition() };
-                const position = { ...canvasObject.getPosition() };
-                const dimensions = { ...canvasObject.getDimensions() };
+                const cameraPositionOffset = this.canvasCamera.getPosition();
+                const position = canvasObject.getPosition();
+                const dimensions = canvasObject.getDimensions();
                 dimensions.width *= cameraZoomLevel;
                 dimensions.height *= cameraZoomLevel;
                 position.x -= cameraPositionOffset.x;
@@ -106,36 +108,8 @@ class CanvasX extends VariableClass {
             const objs = [...this.canvasObjects, this.canvasCamera];
             objs.forEach((canvasObject) => {
                 __classPrivateFieldGet(this, _CanvasX_onUpdate, "f").call(this, this);
-                const wheelSroll = canvasObject.getOnWheelScroll();
-                if (wheelSroll) {
-                    if (JSON.stringify(__classPrivateFieldGet(this, _CanvasX_wheelScroll, "f")) !== JSON.stringify({ x: 0, y: 0 })) {
-                        wheelSroll(canvasObject, __classPrivateFieldGet(this, _CanvasX_wheelScroll, "f"));
-                    }
-                }
-                const onHover = canvasObject.getOnHover();
-                if (onHover) {
-                    const objPosition = canvasObject.getPosition();
-                    const objDimensions = canvasObject.getDimensions();
-                    const onHoverTrue = canvasObject.getOnHoverTrue();
-                    let inCollisionWithMouse = false;
-                    if (Math.abs(objPosition.x - __classPrivateFieldGet(this, _CanvasX_mousePosition, "f").x) <
-                        objDimensions.width / 2 &&
-                        Math.abs(objPosition.y - __classPrivateFieldGet(this, _CanvasX_mousePosition, "f").y) <
-                            objDimensions.height / 2) {
-                        inCollisionWithMouse = true;
-                    }
-                    if (inCollisionWithMouse && !onHoverTrue) {
-                        // Mouse Entered Collision Box
-                        canvasObject.setOnHoverTrue(true);
-                        onHover(canvasObject);
-                    }
-                    if (!inCollisionWithMouse && onHoverTrue) {
-                        // Mouse Left Collision Box
-                        canvasObject.setOnHoverTrue(false);
-                        const onHoverEnd = canvasObject.getOnHoverEnd();
-                        onHoverEnd(canvasObject);
-                    }
-                }
+                onWheelScroll(canvasObject, { ...__classPrivateFieldGet(this, _CanvasX_wheelScroll, "f") });
+                onHover(canvasObject, { ...__classPrivateFieldGet(this, _CanvasX_mousePosition, "f") }, this.getCamera().getZoomLevel());
             });
         });
         this.setCanvasSize = (width, height) => {

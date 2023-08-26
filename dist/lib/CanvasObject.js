@@ -37,7 +37,7 @@ class CanvasObject extends VariableClass {
             return __classPrivateFieldGet(this, _CanvasObject_id, "f");
         };
         this.getPosition = () => {
-            return __classPrivateFieldGet(this, _CanvasObject_position, "f");
+            return { ...__classPrivateFieldGet(this, _CanvasObject_position, "f") };
         };
         this.setPosition = (x, y) => {
             __classPrivateFieldSet(this, _CanvasObject_position, {
@@ -55,7 +55,7 @@ class CanvasObject extends VariableClass {
             };
         };
         this.getDimensions = () => {
-            return __classPrivateFieldGet(this, _CanvasObject_dimensions, "f");
+            return { ...__classPrivateFieldGet(this, _CanvasObject_dimensions, "f") };
         };
         this.setDimensions = (width, height) => {
             const dimensions = { width: 50, height: 50 };
