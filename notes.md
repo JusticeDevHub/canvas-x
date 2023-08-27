@@ -7,9 +7,8 @@
 - (Done) onClicked
 - (Done) Wheel Scrolling
 - (Done) Handle onHoverEnter, hoverEnd when zoom level updated
-- Handle onHoverEnter, hoverEnd when camera position updated
+- (Done) Handle onHoverEnter, hoverEnd when camera position updated
 - All objects extend from CanvasObject
-- Wheel handling
 - on page resize for logic
 - object parent children relationship
 
