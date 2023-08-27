@@ -1,12 +1,17 @@
 import CanvasCamera from "./CanvasCamera.js";
 import VariableClass from "./VariableClass.js";
-import { dimensionsType, coordinationType } from "./types.js";
+import { dimensionsType, coordinationType, spriteDataType } from "./types.js";
 
 class CanvasObject extends VariableClass {
   #id: number;
   #position: coordinationType = { x: 0, y: 0 };
   #dimensions: dimensionsType = { width: 100, height: 100 };
-  #sprite: HTMLImageElement | null = null;
+  #spriteData: spriteDataType = {
+    sprites: null,
+    startFrame: 0,
+    animationSpeed: 0,
+    startTimeFrame: 0,
+  };
   #loopId = -1;
   #onDestroy: Function;
   #destroyById: (id: number) => void;
@@ -62,18 +67,47 @@ class CanvasObject extends VariableClass {
     };
   };
 
-  getSprite = (): HTMLImageElement | null => {
-    return this.#sprite;
+  getSpriteData = (): spriteDataType => {
+    return this.#spriteData;
   };
 
-  setSprite = (sprite: HTMLImageElement) => {
-    this.#sprite = sprite;
-    sprite.onload = () => {
-      this.setDimensions(
-        this.#setDimensionsData.width,
-        this.#setDimensionsData.height
-      );
-    };
+  setSpriteData = {
+    singleSprite: (sprite: HTMLImageElement) => {
+      this.#spriteData = {
+        sprites: [sprite],
+        startFrame: 0,
+        animationSpeed: 0,
+        startTimeFrame: 0,
+      };
+
+      sprite.onload = () => {
+        this.setDimensions(
+          this.#setDimensionsData.width,
+          this.#setDimensionsData.height
+        );
+      };
+    },
+    animationSprites: (
+      sprites: HTMLImageElement[],
+      startFrame: number,
+      animationSpeed: number
+    ) => {
+      this.#spriteData = {
+        sprites,
+        startFrame,
+        animationSpeed,
+        startTimeFrame: new Date().getTime(),
+      };
+
+      sprites.forEach((sprite) => {
+        sprite.onload = () => {
+          this.setDimensions(
+            this.#setDimensionsData.width,
+            this.#setDimensionsData.height
+          );
+        };
+      });
+    },
   };
 
   getDimensions = () => {
@@ -82,7 +116,7 @@ class CanvasObject extends VariableClass {
 
   setDimensions = (width: number | "auto", height: number | "auto") => {
     const dimensions: dimensionsType = { width: 50, height: 50 };
-    const sprite = this.getSprite();
+    const sprite = this.getSpriteData().sprites[0];
     if (sprite) {
       const spriteDimensions = {
         width: sprite?.naturalWidth || 10,

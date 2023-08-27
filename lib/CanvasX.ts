@@ -80,7 +80,7 @@ export default class CanvasX extends VariableClass {
     this.#ctx.clearRect(0, 0, this.#width, this.#height);
 
     this.canvasObjects.forEach((canvasObject) => {
-      const sprite = canvasObject.getSprite();
+      const spriteData = canvasObject.getSpriteData();
       const backgroundColor = canvasObject.getBackgroundColor();
       const cameraZoomLevel = this.canvasCamera.getZoomLevel();
       const cameraPositionOffset = this.canvasCamera.getPosition();
@@ -109,15 +109,33 @@ export default class CanvasX extends VariableClass {
         );
       }
 
-      if (sprite) {
+      if (spriteData.sprites) {
         this.#ctx.globalAlpha = canvasObject.getOpacity();
-        this.#ctx.drawImage(
-          sprite,
-          position.x,
-          position.y,
-          dimensions.width,
-          dimensions.height
-        );
+        if (spriteData.sprites.length === 1) {
+          this.#ctx.drawImage(
+            spriteData.sprites[0],
+            position.x,
+            position.y,
+            dimensions.width,
+            dimensions.height
+          );
+        } else if (spriteData.sprites.length > 1) {
+          const timePassed =
+            (new Date().getTime() -
+              canvasObject.getSpriteData().startTimeFrame) /
+            1000;
+          const animationFrame = Math.floor(
+            (timePassed * spriteData.animationSpeed) % spriteData.sprites.length
+          );
+
+          this.#ctx.drawImage(
+            spriteData.sprites[animationFrame],
+            position.x,
+            position.y,
+            dimensions.width,
+            dimensions.height
+          );
+        }
       }
     });
   };

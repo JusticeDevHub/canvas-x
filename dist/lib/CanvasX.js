@@ -77,7 +77,7 @@ class CanvasX extends VariableClass {
         _CanvasX_drawCanvas.set(this, () => {
             __classPrivateFieldGet(this, _CanvasX_ctx, "f").clearRect(0, 0, __classPrivateFieldGet(this, _CanvasX_width, "f"), __classPrivateFieldGet(this, _CanvasX_height, "f"));
             this.canvasObjects.forEach((canvasObject) => {
-                const sprite = canvasObject.getSprite();
+                const spriteData = canvasObject.getSpriteData();
                 const backgroundColor = canvasObject.getBackgroundColor();
                 const cameraZoomLevel = this.canvasCamera.getZoomLevel();
                 const cameraPositionOffset = this.canvasCamera.getPosition();
@@ -98,9 +98,18 @@ class CanvasX extends VariableClass {
                     __classPrivateFieldGet(this, _CanvasX_ctx, "f").fillStyle = backgroundColor;
                     __classPrivateFieldGet(this, _CanvasX_ctx, "f").fillRect(position.x, position.y, dimensions.width, dimensions.height);
                 }
-                if (sprite) {
+                if (spriteData.sprites) {
                     __classPrivateFieldGet(this, _CanvasX_ctx, "f").globalAlpha = canvasObject.getOpacity();
-                    __classPrivateFieldGet(this, _CanvasX_ctx, "f").drawImage(sprite, position.x, position.y, dimensions.width, dimensions.height);
+                    if (spriteData.sprites.length === 1) {
+                        __classPrivateFieldGet(this, _CanvasX_ctx, "f").drawImage(spriteData.sprites[0], position.x, position.y, dimensions.width, dimensions.height);
+                    }
+                    else if (spriteData.sprites.length > 1) {
+                        const timePassed = (new Date().getTime() -
+                            canvasObject.getSpriteData().startTimeFrame) /
+                            1000;
+                        const animationFrame = Math.floor((timePassed * spriteData.animationSpeed) % spriteData.sprites.length);
+                        __classPrivateFieldGet(this, _CanvasX_ctx, "f").drawImage(spriteData.sprites[animationFrame], position.x, position.y, dimensions.width, dimensions.height);
+                    }
                 }
             });
         });
