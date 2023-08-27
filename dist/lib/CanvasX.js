@@ -109,7 +109,7 @@ class CanvasX extends VariableClass {
             objs.forEach((canvasObject) => {
                 __classPrivateFieldGet(this, _CanvasX_onUpdate, "f").call(this, this);
                 onWheelScroll(canvasObject, { ...__classPrivateFieldGet(this, _CanvasX_wheelScroll, "f") });
-                onHover(canvasObject, { ...__classPrivateFieldGet(this, _CanvasX_mousePosition, "f") }, this.getCamera().getZoomLevel());
+                onHover(canvasObject, { ...__classPrivateFieldGet(this, _CanvasX_mousePosition, "f") }, this.getCamera());
             });
         });
         this.setCanvasSize = (width, height) => {

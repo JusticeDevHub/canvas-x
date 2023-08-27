@@ -129,11 +129,7 @@ export default class CanvasX extends VariableClass {
       this.#onUpdate(this);
 
       onWheelScroll(canvasObject, { ...this.#wheelScroll });
-      onHover(
-        canvasObject,
-        { ...this.#mousePosition },
-        this.getCamera().getZoomLevel()
-      );
+      onHover(canvasObject, { ...this.#mousePosition }, this.getCamera());
     });
   };
 

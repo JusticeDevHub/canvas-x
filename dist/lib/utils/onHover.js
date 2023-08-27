@@ -1,9 +1,13 @@
-const onHover = (canvasObject, mousePosition, cameraZoomLevel) => {
+const onHover = (canvasObject, mousePosition, cameraObject) => {
     const onHover = canvasObject.getOnHover();
     if (onHover) {
         const objPosition = canvasObject.getPosition();
         const objDimensions = canvasObject.getDimensions();
         const onHoverTrue = canvasObject.getOnHoverTrue();
+        const cameraZoomLevel = cameraObject.getZoomLevel();
+        const cameraPosition = cameraObject.getPosition();
+        mousePosition.x += cameraPosition.x * cameraZoomLevel;
+        mousePosition.y += cameraPosition.y * cameraZoomLevel;
         mousePosition.x /= cameraZoomLevel;
         mousePosition.y /= cameraZoomLevel;
         let inCollisionWithMouse = false;
