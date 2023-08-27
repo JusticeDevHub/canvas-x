@@ -8,6 +8,7 @@
 - (Done) Wheel Scrolling
 - (Done) Handle onHoverEnter, hoverEnd when zoom level updated
 - (Done) Handle onHoverEnter, hoverEnd when camera position updated
+- Sound
 - All objects extend from CanvasObject
 - on page resize for logic
 - object parent children relationship

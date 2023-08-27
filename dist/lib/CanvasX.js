@@ -60,6 +60,12 @@ class CanvasX extends VariableClass {
                         x: e.clientX - __classPrivateFieldGet(this, _CanvasX_width, "f") / 2,
                         y: e.clientY - __classPrivateFieldGet(this, _CanvasX_height, "f") / 2,
                     }, "f");
+                    const cameraZoomLevel = this.canvasCamera.getZoomLevel();
+                    const cameraPosition = this.canvasCamera.getPosition();
+                    __classPrivateFieldGet(this, _CanvasX_mousePosition, "f").x += cameraPosition.x * cameraZoomLevel;
+                    __classPrivateFieldGet(this, _CanvasX_mousePosition, "f").y += cameraPosition.y * cameraZoomLevel;
+                    __classPrivateFieldGet(this, _CanvasX_mousePosition, "f").x /= cameraZoomLevel;
+                    __classPrivateFieldGet(this, _CanvasX_mousePosition, "f").y /= cameraZoomLevel;
                 };
                 onCreate(this);
                 __classPrivateFieldSet(this, _CanvasX_onUpdate, onUpdate, "f");
@@ -118,7 +124,7 @@ class CanvasX extends VariableClass {
             objs.forEach((canvasObject) => {
                 __classPrivateFieldGet(this, _CanvasX_onUpdate, "f").call(this, this);
                 onWheelScroll(canvasObject, { ...__classPrivateFieldGet(this, _CanvasX_wheelScroll, "f") });
-                onHover(canvasObject, { ...__classPrivateFieldGet(this, _CanvasX_mousePosition, "f") }, this.getCamera());
+                onHover(canvasObject, { ...__classPrivateFieldGet(this, _CanvasX_mousePosition, "f") });
             });
         });
         this.setCanvasSize = (width, height) => {

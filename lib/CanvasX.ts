@@ -60,6 +60,12 @@ export default class CanvasX extends VariableClass {
           x: e.clientX - this.#width / 2,
           y: e.clientY - this.#height / 2,
         };
+        const cameraZoomLevel = this.canvasCamera.getZoomLevel();
+        const cameraPosition = this.canvasCamera.getPosition();
+        this.#mousePosition.x += cameraPosition.x * cameraZoomLevel;
+        this.#mousePosition.y += cameraPosition.y * cameraZoomLevel;
+        this.#mousePosition.x /= cameraZoomLevel;
+        this.#mousePosition.y /= cameraZoomLevel;
       };
 
       onCreate(this);
@@ -147,7 +153,7 @@ export default class CanvasX extends VariableClass {
       this.#onUpdate(this);
 
       onWheelScroll(canvasObject, { ...this.#wheelScroll });
-      onHover(canvasObject, { ...this.#mousePosition }, this.getCamera());
+      onHover(canvasObject, { ...this.#mousePosition });
     });
   };
 
