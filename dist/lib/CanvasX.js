@@ -89,6 +89,7 @@ class CanvasX extends VariableClass {
                 const cameraPositionOffset = this.canvasCamera.getPosition();
                 const position = canvasObject.getPosition();
                 const dimensions = canvasObject.getDimensions();
+                const rotation = canvasObject.getRotation();
                 dimensions.width *= cameraZoomLevel;
                 dimensions.height *= cameraZoomLevel;
                 position.x -= cameraPositionOffset.x;
@@ -105,7 +106,11 @@ class CanvasX extends VariableClass {
                     __classPrivateFieldGet(this, _CanvasX_ctx, "f").fillRect(position.x, position.y, dimensions.width, dimensions.height);
                 }
                 if (spriteData.sprites) {
+                    __classPrivateFieldGet(this, _CanvasX_ctx, "f").save();
                     __classPrivateFieldGet(this, _CanvasX_ctx, "f").globalAlpha = canvasObject.getOpacity();
+                    __classPrivateFieldGet(this, _CanvasX_ctx, "f").translate(position.x + dimensions.width / 2, position.y + dimensions.height / 2);
+                    __classPrivateFieldGet(this, _CanvasX_ctx, "f").rotate(rotation * (Math.PI / 180));
+                    __classPrivateFieldGet(this, _CanvasX_ctx, "f").translate(-(position.x + dimensions.width / 2), -(position.y + dimensions.height / 2));
                     if (spriteData.sprites.length === 1) {
                         __classPrivateFieldGet(this, _CanvasX_ctx, "f").drawImage(spriteData.sprites[0], position.x, position.y, dimensions.width, dimensions.height);
                     }
@@ -116,6 +121,7 @@ class CanvasX extends VariableClass {
                         const animationFrame = Math.floor((timePassed * spriteData.animationSpeed) % spriteData.sprites.length);
                         __classPrivateFieldGet(this, _CanvasX_ctx, "f").drawImage(spriteData.sprites[animationFrame], position.x, position.y, dimensions.width, dimensions.height);
                     }
+                    __classPrivateFieldGet(this, _CanvasX_ctx, "f").restore();
                 }
             });
         });

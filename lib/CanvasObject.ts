@@ -22,6 +22,7 @@ class CanvasObject extends VariableClass {
   #onHover: Function | null = null;
   #onHoverEnd: Function | null = null;
   #onClick: Function | null = null;
+  #rotation: number = 0;
   #onWheelScroll: (
     _this: CanvasObject | CanvasCamera,
     scroll: coordinationType
@@ -205,6 +206,14 @@ class CanvasObject extends VariableClass {
 
   setOnClicked = (func: (_this: CanvasObject) => void = () => {}) => {
     this.#onClick = func;
+  };
+
+  getRotation = () => {
+    return this.#rotation;
+  };
+
+  setRotation = (rotationAngle: number) => {
+    this.#rotation = rotationAngle % 360;
   };
 
   getOnWheelScroll = () => {

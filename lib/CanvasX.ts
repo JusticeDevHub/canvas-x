@@ -92,6 +92,7 @@ export default class CanvasX extends VariableClass {
       const cameraPositionOffset = this.canvasCamera.getPosition();
       const position = canvasObject.getPosition();
       const dimensions = canvasObject.getDimensions();
+      const rotation = canvasObject.getRotation();
 
       dimensions.width *= cameraZoomLevel;
       dimensions.height *= cameraZoomLevel;
@@ -116,7 +117,18 @@ export default class CanvasX extends VariableClass {
       }
 
       if (spriteData.sprites) {
+        this.#ctx.save();
         this.#ctx.globalAlpha = canvasObject.getOpacity();
+        this.#ctx.translate(
+          position.x + dimensions.width / 2,
+          position.y + dimensions.height / 2
+        );
+        this.#ctx.rotate(rotation * (Math.PI / 180));
+        this.#ctx.translate(
+          -(position.x + dimensions.width / 2),
+          -(position.y + dimensions.height / 2)
+        );
+
         if (spriteData.sprites.length === 1) {
           this.#ctx.drawImage(
             spriteData.sprites[0],
@@ -142,6 +154,8 @@ export default class CanvasX extends VariableClass {
             dimensions.height
           );
         }
+
+        this.#ctx.restore();
       }
     });
   };

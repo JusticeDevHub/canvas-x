@@ -8,6 +8,9 @@
 - (Done) Wheel Scrolling
 - (Done) Handle onHoverEnter, hoverEnd when zoom level updated
 - (Done) Handle onHoverEnter, hoverEnd when camera position updated
+- (Done) Set Image Rotation
+- Set Background Color Rotation
+- Make examples project (Also meant for testing)
 - Sound
 - All objects extend from CanvasObject
 - on page resize for logic
