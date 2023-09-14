@@ -14,3 +14,10 @@ export type spriteDataType = {
   animationSpeed: number;
   startTimeFrame: number;
 };
+
+export type moveToType = {
+  x: number;
+  y: number;
+  speed: number;
+  method: "linear";
+} | null;

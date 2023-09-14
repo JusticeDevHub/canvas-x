@@ -24,8 +24,8 @@ export default class CanvasX extends VariableClass {
 
   createCanvas = (
     canvasId: string,
-    onCreate: (_this: CanvasX) => void = () => {},
-    onUpdate: (_this: CanvasX) => void = () => {}
+    onCreate: (_this: CanvasX) => void = (_this: CanvasX) => {},
+    onUpdate: (_this: CanvasX) => void = (_this: CanvasX) => {}
   ) => {
     this.canvas =
       (document.getElementById(canvasId) as HTMLCanvasElement) || null;
@@ -166,6 +166,42 @@ export default class CanvasX extends VariableClass {
     objs.forEach((canvasObject) => {
       this.#onUpdate(this);
 
+      const moveToPosition = canvasObject.getMoveToPosition();
+      if (moveToPosition !== null) {
+        const position = canvasObject.getPosition();
+        const speed = moveToPosition.speed;
+        const method = moveToPosition.method;
+        const x = moveToPosition.x;
+        const y = moveToPosition.y;
+        const xDiff = x - position.x;
+        const yDiff = y - position.y;
+        const distance = Math.sqrt(xDiff * xDiff + yDiff * yDiff);
+        const xSpeed = (speed * xDiff) / distance;
+        const ySpeed = (speed * yDiff) / distance;
+        const xSpeedAbs = Math.abs(xSpeed);
+        const ySpeedAbs = Math.abs(ySpeed);
+
+        if (method === "linear") {
+          if (xSpeedAbs >= Math.abs(xDiff)) {
+            position.x = x;
+          } else {
+            position.x += xSpeed;
+          }
+
+          if (ySpeedAbs >= Math.abs(yDiff)) {
+            position.y = y;
+          } else {
+            position.y += ySpeed;
+          }
+
+          if (position.x === x && position.y === y) {
+            canvasObject.setMoveToPosition(null);
+          }
+        }
+
+        canvasObject.setPosition(position.x, position.y);
+      }
+
       onWheelScroll(canvasObject, { ...this.#wheelScroll });
       onHover(canvasObject, { ...this.#mousePosition });
     });
@@ -195,6 +231,10 @@ export default class CanvasX extends VariableClass {
     return this.canvasCamera;
   };
 
+  getMousePosition = (): coordinationType => {
+    return this.#mousePosition;
+  };
+
   #destroyObjectById = (id: number) => {
     this.canvasObjects = this.canvasObjects.filter(
       (canvasObject) => canvasObject.getId() !== id
@@ -206,9 +246,9 @@ export default class CanvasX extends VariableClass {
   };
 
   createObject = (
-    onCreate: (_this: CanvasObject) => void = () => {},
-    onUpdate: (_this: CanvasObject) => void = () => {},
-    onDestroy: (_this: CanvasObject) => void = () => {}
+    onCreate: (_this: CanvasObject) => void = (_this: CanvasObject) => {},
+    onUpdate: (_this: CanvasObject) => void = (_this: CanvasObject) => {},
+    onDestroy: (_this: CanvasObject) => void = (_this: CanvasObject) => {}
   ) => {
     const newObj = new CanvasObject(
       ++this.#objectsCreated,
@@ -222,8 +262,8 @@ export default class CanvasX extends VariableClass {
   };
 
   createCamera = (
-    onCreate: (_this: CanvasCamera) => void = () => {},
-    onUpdate: (_this: CanvasCamera) => void = () => {}
+    onCreate: (_this: CanvasCamera) => void = (_this: CanvasCamera) => {},
+    onUpdate: (_this: CanvasCamera) => void = (_this: CanvasCamera) => {}
   ) => {
     this.canvasCamera = new CanvasCamera(
       ++this.#objectsCreated,

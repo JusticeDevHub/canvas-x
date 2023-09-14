@@ -29,7 +29,7 @@ class CanvasX extends VariableClass {
         _CanvasX_mousePosition.set(this, { x: 0, y: 0 });
         _CanvasX_onUpdate.set(this, null);
         _CanvasX_wheelScroll.set(this, { x: 0, y: 0 });
-        this.createCanvas = (canvasId, onCreate = () => { }, onUpdate = () => { }) => {
+        this.createCanvas = (canvasId, onCreate = (_this) => { }, onUpdate = (_this) => { }) => {
             this.canvas =
                 document.getElementById(canvasId) || null;
             if (this.canvas) {
@@ -129,6 +129,39 @@ class CanvasX extends VariableClass {
             const objs = [...this.canvasObjects, this.canvasCamera];
             objs.forEach((canvasObject) => {
                 __classPrivateFieldGet(this, _CanvasX_onUpdate, "f").call(this, this);
+                const moveToPosition = canvasObject.getMoveToPosition();
+                if (moveToPosition !== null) {
+                    const position = canvasObject.getPosition();
+                    const speed = moveToPosition.speed;
+                    const method = moveToPosition.method;
+                    const x = moveToPosition.x;
+                    const y = moveToPosition.y;
+                    const xDiff = x - position.x;
+                    const yDiff = y - position.y;
+                    const distance = Math.sqrt(xDiff * xDiff + yDiff * yDiff);
+                    const xSpeed = (speed * xDiff) / distance;
+                    const ySpeed = (speed * yDiff) / distance;
+                    const xSpeedAbs = Math.abs(xSpeed);
+                    const ySpeedAbs = Math.abs(ySpeed);
+                    if (method === "linear") {
+                        if (xSpeedAbs >= Math.abs(xDiff)) {
+                            position.x = x;
+                        }
+                        else {
+                            position.x += xSpeed;
+                        }
+                        if (ySpeedAbs >= Math.abs(yDiff)) {
+                            position.y = y;
+                        }
+                        else {
+                            position.y += ySpeed;
+                        }
+                        if (position.x === x && position.y === y) {
+                            canvasObject.setMoveToPosition(null);
+                        }
+                    }
+                    canvasObject.setPosition(position.x, position.y);
+                }
                 onWheelScroll(canvasObject, { ...__classPrivateFieldGet(this, _CanvasX_wheelScroll, "f") });
                 onHover(canvasObject, { ...__classPrivateFieldGet(this, _CanvasX_mousePosition, "f") });
             });
@@ -155,19 +188,22 @@ class CanvasX extends VariableClass {
         this.getCamera = () => {
             return this.canvasCamera;
         };
+        this.getMousePosition = () => {
+            return __classPrivateFieldGet(this, _CanvasX_mousePosition, "f");
+        };
         _CanvasX_destroyObjectById.set(this, (id) => {
             this.canvasObjects = this.canvasObjects.filter((canvasObject) => canvasObject.getId() !== id);
         });
         this.setMouseCursor = (cursorType) => {
             document.body.style.cursor = cursorType;
         };
-        this.createObject = (onCreate = () => { }, onUpdate = () => { }, onDestroy = () => { }) => {
+        this.createObject = (onCreate = (_this) => { }, onUpdate = (_this) => { }, onDestroy = (_this) => { }) => {
             var _a;
             const newObj = new CanvasObject(__classPrivateFieldSet(this, _CanvasX_objectsCreated, (_a = __classPrivateFieldGet(this, _CanvasX_objectsCreated, "f"), ++_a), "f"), onCreate, onUpdate, onDestroy, __classPrivateFieldGet(this, _CanvasX_destroyObjectById, "f"));
             this.canvasObjects.push(newObj);
             return newObj;
         };
-        this.createCamera = (onCreate = () => { }, onUpdate = () => { }) => {
+        this.createCamera = (onCreate = (_this) => { }, onUpdate = (_this) => { }) => {
             var _a;
             this.canvasCamera = new CanvasCamera(__classPrivateFieldSet(this, _CanvasX_objectsCreated, (_a = __classPrivateFieldGet(this, _CanvasX_objectsCreated, "f"), ++_a), "f"), onCreate, onUpdate);
             this.canvasObjects.push(this.canvasCamera);

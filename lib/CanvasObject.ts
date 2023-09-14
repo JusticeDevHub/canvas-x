@@ -1,6 +1,11 @@
 import CanvasCamera from "./CanvasCamera.js";
 import VariableClass from "./VariableClass.js";
-import { dimensionsType, coordinationType, spriteDataType } from "./types.js";
+import {
+  dimensionsType,
+  coordinationType,
+  spriteDataType,
+  moveToType,
+} from "./types.js";
 
 class CanvasObject extends VariableClass {
   #id: number;
@@ -23,6 +28,7 @@ class CanvasObject extends VariableClass {
   #onHoverEnd: Function | null = null;
   #onClick: Function | null = null;
   #rotation: number = 0;
+  #moveToPosition: moveToType = null;
   #onWheelScroll: (
     _this: CanvasObject | CanvasCamera,
     scroll: coordinationType
@@ -68,6 +74,14 @@ class CanvasObject extends VariableClass {
     };
   };
 
+  setMoveToPosition = (moveToPosition: moveToType) => {
+    this.#moveToPosition = moveToPosition;
+  };
+
+  getMoveToPosition = (): moveToType => {
+    return this.#moveToPosition;
+  };
+
   getSpriteData = (): spriteDataType => {
     return this.#spriteData;
   };
@@ -111,18 +125,30 @@ class CanvasObject extends VariableClass {
     },
   };
 
-  getDimensions = () => {
+  getDimensions = (): dimensionsType => {
     return { ...this.#dimensions };
   };
 
   setDimensions = (width: number | "auto", height: number | "auto") => {
     const dimensions: dimensionsType = { width: 50, height: 50 };
-    const sprite = this.getSpriteData().sprites[0];
-    if (sprite) {
-      const spriteDimensions = {
-        width: sprite?.naturalWidth || 10,
-        height: sprite?.naturalHeight || 10,
+
+    if (typeof width === "number" && typeof height === "number") {
+      dimensions.width = width;
+      dimensions.height = height;
+      this.#dimensions = {
+        width,
+        height,
       };
+    } else {
+      const spriteDimensions = {
+        width: 10,
+        height: 10,
+      };
+      if (this.getSpriteData().sprites !== null) {
+        const sprite: HTMLImageElement = this.getSpriteData().sprites[0];
+        spriteDimensions.width = sprite.naturalWidth;
+        spriteDimensions.height = sprite.naturalHeight;
+      }
       if (width === "auto" && height === "auto") {
         dimensions.width = spriteDimensions.width;
         dimensions.height = spriteDimensions.height;
@@ -134,13 +160,10 @@ class CanvasObject extends VariableClass {
         dimensions.width = width;
         dimensions.height =
           (spriteDimensions.height / spriteDimensions.width) * width;
-      } else if (typeof width === "number" && typeof height === "number") {
-        dimensions.width = width;
-        dimensions.height = height;
       }
-      this.#dimensions = dimensions;
     }
 
+    // Name this related to setDimensionsWhenSpriteLoadedN
     this.#setDimensionsData = { width, height };
   };
 
@@ -204,7 +227,9 @@ class CanvasObject extends VariableClass {
     return this.#onClick;
   };
 
-  setOnClicked = (func: (_this: CanvasObject) => void = () => {}) => {
+  setOnClicked = (
+    func: (_this: CanvasObject) => void = (_this: CanvasObject) => {}
+  ) => {
     this.#onClick = func;
   };
 
@@ -224,7 +249,10 @@ class CanvasObject extends VariableClass {
     func: (
       _this: CanvasObject | CanvasCamera,
       scroll: coordinationType
-    ) => void = () => {}
+    ) => void = (
+      _this: CanvasObject | CanvasCamera,
+      scroll: coordinationType
+    ) => {}
   ) => {
     this.#onWheelScroll = func;
   };

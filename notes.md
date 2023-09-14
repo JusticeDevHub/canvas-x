@@ -9,6 +9,8 @@
 - (Done) Handle onHoverEnter, hoverEnd when zoom level updated
 - (Done) Handle onHoverEnter, hoverEnd when camera position updated
 - (Done) Set Image Rotation
+- (Done) Add move to position for canvas object
+- Add move to options
 - Set Background Color Rotation
 - Make examples project (Also meant for testing)
 - Sound
