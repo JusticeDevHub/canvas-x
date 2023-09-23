@@ -11,7 +11,7 @@ var __classPrivateFieldSet = (this && this.__classPrivateFieldSet) || function (
 };
 var _CanvasCamera_zoomLevel;
 import CanvasObject from "./CanvasObject.js";
-class CanvasCamera extends CanvasObject {
+export default class CanvasCamera extends CanvasObject {
     constructor(id, onCreate = (_this) => { }, onUpdate = (_this) => { }) {
         super(id, onCreate, onUpdate, () => { }, () => { });
         _CanvasCamera_zoomLevel.set(this, 1);
@@ -24,5 +24,4 @@ class CanvasCamera extends CanvasObject {
     }
 }
 _CanvasCamera_zoomLevel = new WeakMap();
-export default CanvasCamera;
 //# sourceMappingURL=CanvasCamera.js.map

@@ -17,7 +17,7 @@ class CanvasObject extends VariableClass {
     animationSpeed: 0,
     startTimeFrame: 0,
   };
-  #loopId = -1;
+  #onUpdate: Function;
   #onDestroy: Function;
   #destroyById: (id: number) => void;
   #backgroundColor: string | null = null;
@@ -40,23 +40,18 @@ class CanvasObject extends VariableClass {
 
   constructor(
     id: number,
-    onCreate: (_this: CanvasObject) => void,
-    onUpdate: (_this: CanvasObject) => void,
-    onDestroy: (_this: CanvasObject) => void,
+    onCreate: (_this: CanvasObject) => void = (_this: CanvasObject) => {},
+    onUpdate: (_this: CanvasObject) => void = (_this: CanvasObject) => {},
+    onDestroy: (_this: CanvasObject) => void = (_this: CanvasObject) => {},
     destroyById: (id: number) => void
   ) {
     super();
     this.#id = id;
-    onCreate(this);
-
-    const updateLoop = () => {
-      onUpdate(this);
-      this.#loopId = requestAnimationFrame(updateLoop);
-    };
-    this.#loopId = requestAnimationFrame(updateLoop);
-
+    this.#onUpdate = onUpdate;
     this.#onDestroy = onDestroy;
     this.#destroyById = destroyById;
+
+    onCreate(this);
   }
 
   getId = (): number => {
@@ -74,8 +69,18 @@ class CanvasObject extends VariableClass {
     };
   };
 
-  setMoveToPosition = (moveToPosition: moveToType) => {
-    this.#moveToPosition = moveToPosition;
+  setMoveToPosition = (
+    x: number,
+    y: number,
+    speed: number,
+    method: "linear"
+  ) => {
+    this.#moveToPosition = {
+      x,
+      y,
+      speed,
+      method,
+    };
   };
 
   getMoveToPosition = (): moveToType => {
@@ -84,6 +89,10 @@ class CanvasObject extends VariableClass {
 
   getSpriteData = (): spriteDataType => {
     return this.#spriteData;
+  };
+
+  getOnUpdate = () => {
+    return this.#onUpdate;
   };
 
   setSpriteData = {
@@ -135,10 +144,6 @@ class CanvasObject extends VariableClass {
     if (typeof width === "number" && typeof height === "number") {
       dimensions.width = width;
       dimensions.height = height;
-      this.#dimensions = {
-        width,
-        height,
-      };
     } else {
       const spriteDimensions = {
         width: 10,
@@ -163,7 +168,12 @@ class CanvasObject extends VariableClass {
       }
     }
 
-    // Name this related to setDimensionsWhenSpriteLoadedN
+    this.#dimensions = {
+      width: dimensions.width,
+      height: dimensions.height,
+    };
+
+    // Name this related to setDimensionsWhenSpriteLoaded
     this.#setDimensionsData = { width, height };
   };
 
@@ -260,7 +270,6 @@ class CanvasObject extends VariableClass {
   destroy = () => {
     this.#onDestroy(this);
     this.#destroyById(this.#id);
-    cancelAnimationFrame(this.#loopId);
   };
 }
 

@@ -19,10 +19,11 @@ export default class CanvasX extends VariableClass {
   #ctx: CanvasRenderingContext2D | null = null;
   #objectsCreated = 0;
   #mousePosition: coordinationType = { x: 0, y: 0 };
-  #onUpdate: Function | null = null;
+  #onUpdate: Function;
   #wheelScroll: coordinationType = { x: 0, y: 0 };
+  #loopId: number | null = null;
 
-  createCanvas = (
+  init = (
     canvasId: string,
     onCreate: (_this: CanvasX) => void = (_this: CanvasX) => {},
     onUpdate: (_this: CanvasX) => void = (_this: CanvasX) => {}
@@ -31,11 +32,10 @@ export default class CanvasX extends VariableClass {
       (document.getElementById(canvasId) as HTMLCanvasElement) || null;
     if (this.canvas) {
       this.#ctx = this.canvas.getContext("2d");
-      const canvasUpdateLoop = () => {
+
+      this.#loopId = setInterval(() => {
         this.#canvasUpdate();
-        requestAnimationFrame(canvasUpdateLoop);
-      };
-      requestAnimationFrame(canvasUpdateLoop);
+      }, 1000 / 60);
 
       document.addEventListener("click", (e) => {
         this.canvasObjects.forEach((canvasObject) => {
@@ -75,6 +75,16 @@ export default class CanvasX extends VariableClass {
       Log(`No canvas with id ${canvasId} found`);
       return null;
     }
+  };
+
+  useRequestAnimationFrame = (window: Window) => {
+    clearInterval(this.#loopId);
+
+    const loop = () => {
+      this.#canvasUpdate();
+      window.requestAnimationFrame(loop);
+    };
+    loop();
   };
 
   #canvasUpdate = () => {
@@ -161,13 +171,15 @@ export default class CanvasX extends VariableClass {
   };
 
   #logic = () => {
-    const objs = [...this.canvasObjects, this.canvasCamera];
+    this.#onUpdate(this);
 
+    const objs = [...this.canvasObjects, this.canvasCamera];
     objs.forEach((canvasObject) => {
-      this.#onUpdate(this);
+      const update = canvasObject.getOnUpdate();
+      update(canvasObject);
 
       const moveToPosition = canvasObject.getMoveToPosition();
-      if (moveToPosition !== null) {
+      if (moveToPosition !== null && moveToPosition.speed !== 0) {
         const position = canvasObject.getPosition();
         const speed = moveToPosition.speed;
         const method = moveToPosition.method;
@@ -195,7 +207,7 @@ export default class CanvasX extends VariableClass {
           }
 
           if (position.x === x && position.y === y) {
-            canvasObject.setMoveToPosition(null);
+            canvasObject.setMoveToPosition(x, y, 0, "linear");
           }
         }
 
