@@ -16,7 +16,7 @@ import VariableClass from "./VariableClass.js";
 import Log from "./log.js";
 import onHover from "./utils/onHover.js";
 import onWheelScroll from "./utils/onWheelScroll.js";
-export default class CanvasX extends VariableClass {
+class CanvasX extends VariableClass {
     constructor() {
         super(...arguments);
         _CanvasX_width.set(this, 0);
@@ -39,11 +39,31 @@ export default class CanvasX extends VariableClass {
                     __classPrivateFieldGet(this, _CanvasX_canvasUpdate, "f").call(this);
                 }, 1000 / 60), "f");
                 document.addEventListener("click", (e) => {
+                    e.preventDefault();
                     this.canvasObjects.forEach((canvasObject) => {
+                        const global_left_click = canvasObject.getOnClick("global_left_click");
+                        if (global_left_click) {
+                            global_left_click(canvasObject);
+                        }
                         if (canvasObject.getOnHoverTrue()) {
-                            const onClicked = canvasObject.getOnClicked();
-                            if (onClicked) {
-                                onClicked(canvasObject);
+                            const this_left_click = canvasObject.getOnClick("this_left_click");
+                            if (this_left_click) {
+                                this_left_click(canvasObject);
+                            }
+                        }
+                    });
+                });
+                document.addEventListener("contextmenu", (e) => {
+                    e.preventDefault();
+                    this.canvasObjects.forEach((canvasObject) => {
+                        const global_right_click = canvasObject.getOnClick("global_right_click");
+                        if (global_right_click) {
+                            global_right_click(canvasObject);
+                        }
+                        if (canvasObject.getOnHoverTrue()) {
+                            const this_right_click = canvasObject.getOnClick("this_right_click");
+                            if (this_right_click) {
+                                this_right_click(canvasObject);
                             }
                         }
                     });
@@ -221,4 +241,5 @@ export default class CanvasX extends VariableClass {
     }
 }
 _CanvasX_width = new WeakMap(), _CanvasX_height = new WeakMap(), _CanvasX_ctx = new WeakMap(), _CanvasX_objectsCreated = new WeakMap(), _CanvasX_mousePosition = new WeakMap(), _CanvasX_onUpdate = new WeakMap(), _CanvasX_wheelScroll = new WeakMap(), _CanvasX_loopId = new WeakMap(), _CanvasX_canvasUpdate = new WeakMap(), _CanvasX_drawCanvas = new WeakMap(), _CanvasX_logic = new WeakMap(), _CanvasX_destroyObjectById = new WeakMap();
+export default CanvasX;
 //# sourceMappingURL=CanvasX.js.map

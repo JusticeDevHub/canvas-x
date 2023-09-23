@@ -5,6 +5,7 @@ import {
   coordinationType,
   spriteDataType,
   moveToType,
+  onClickType,
 } from "./types.js";
 
 class CanvasObject extends VariableClass {
@@ -26,7 +27,7 @@ class CanvasObject extends VariableClass {
   #onHoverEndTrue = false;
   #onHover: Function | null = null;
   #onHoverEnd: Function | null = null;
-  #onClick: Function | null = null;
+  #onClick: { [clickType: string]: (_this: CanvasObject) => void } = {};
   #rotation: number = 0;
   #moveToPosition: moveToType = null;
   #onWheelScroll: (
@@ -233,14 +234,15 @@ class CanvasObject extends VariableClass {
     return this.#onHoverEndTrue;
   };
 
-  getOnClicked = () => {
-    return this.#onClick;
+  getOnClick = (onClickType: onClickType) => {
+    return this.#onClick[onClickType];
   };
 
-  setOnClicked = (
-    func: (_this: CanvasObject) => void = (_this: CanvasObject) => {}
+  setOnClick = (
+    clickType: onClickType,
+    func: (_this: CanvasObject) => void
   ) => {
-    this.#onClick = func;
+    this.#onClick[clickType] = func;
   };
 
   getRotation = () => {

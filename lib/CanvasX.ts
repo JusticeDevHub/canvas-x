@@ -38,11 +38,37 @@ export default class CanvasX extends VariableClass {
       }, 1000 / 60);
 
       document.addEventListener("click", (e) => {
+        e.preventDefault();
         this.canvasObjects.forEach((canvasObject) => {
+          const global_left_click =
+            canvasObject.getOnClick("global_left_click");
+          if (global_left_click) {
+            global_left_click(canvasObject);
+          }
+
           if (canvasObject.getOnHoverTrue()) {
-            const onClicked = canvasObject.getOnClicked();
-            if (onClicked) {
-              onClicked(canvasObject);
+            const this_left_click = canvasObject.getOnClick("this_left_click");
+            if (this_left_click) {
+              this_left_click(canvasObject);
+            }
+          }
+        });
+      });
+
+      document.addEventListener("contextmenu", (e) => {
+        e.preventDefault();
+        this.canvasObjects.forEach((canvasObject) => {
+          const global_right_click =
+            canvasObject.getOnClick("global_right_click");
+          if (global_right_click) {
+            global_right_click(canvasObject);
+          }
+
+          if (canvasObject.getOnHoverTrue()) {
+            const this_right_click =
+              canvasObject.getOnClick("this_right_click");
+            if (this_right_click) {
+              this_right_click(canvasObject);
             }
           }
         });

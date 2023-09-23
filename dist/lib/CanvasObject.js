@@ -32,7 +32,7 @@ class CanvasObject extends VariableClass {
         _CanvasObject_onHoverEndTrue.set(this, false);
         _CanvasObject_onHover.set(this, null);
         _CanvasObject_onHoverEnd.set(this, null);
-        _CanvasObject_onClick.set(this, null);
+        _CanvasObject_onClick.set(this, {});
         _CanvasObject_rotation.set(this, 0);
         _CanvasObject_moveToPosition.set(this, null);
         _CanvasObject_onWheelScroll.set(this, null);
@@ -180,11 +180,11 @@ class CanvasObject extends VariableClass {
         this.setOnHoverEndTrue = (value) => {
             return __classPrivateFieldGet(this, _CanvasObject_onHoverEndTrue, "f");
         };
-        this.getOnClicked = () => {
-            return __classPrivateFieldGet(this, _CanvasObject_onClick, "f");
+        this.getOnClick = (onClickType) => {
+            return __classPrivateFieldGet(this, _CanvasObject_onClick, "f")[onClickType];
         };
-        this.setOnClicked = (func = (_this) => { }) => {
-            __classPrivateFieldSet(this, _CanvasObject_onClick, func, "f");
+        this.setOnClick = (clickType, func) => {
+            __classPrivateFieldGet(this, _CanvasObject_onClick, "f")[clickType] = func;
         };
         this.getRotation = () => {
             return __classPrivateFieldGet(this, _CanvasObject_rotation, "f");
