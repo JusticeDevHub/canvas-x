@@ -12,7 +12,8 @@ export default class CanvasX extends VariableClass {
   canvasCamera: CanvasCamera = new CanvasCamera(
     -1,
     () => {},
-    () => {}
+    () => {},
+    this
   );
   canvasObjects: CanvasObject[] = [];
   canvas: HTMLCanvasElement | null = null;
@@ -22,6 +23,7 @@ export default class CanvasX extends VariableClass {
   #onUpdate: Function;
   #wheelScroll: coordinationType = { x: 0, y: 0 };
   #loopId: number | null = null;
+  #globalValues: VariableClass = new VariableClass();
 
   init = (
     canvasId: string,
@@ -273,6 +275,14 @@ export default class CanvasX extends VariableClass {
     return this.#mousePosition;
   };
 
+  getGlobalVariableValue = (key: string) => {
+    return this.#globalValues.getVariableValue(key);
+  };
+
+  setGlobalVariableValue = (key: string, value: any) => {
+    this.#globalValues.setVariableValue(key, value);
+  };
+
   #destroyObjectById = (id: number) => {
     this.canvasObjects = this.canvasObjects.filter(
       (canvasObject) => canvasObject.getId() !== id
@@ -293,7 +303,8 @@ export default class CanvasX extends VariableClass {
       onCreate,
       onUpdate,
       onDestroy,
-      this.#destroyObjectById
+      this.#destroyObjectById,
+      this
     );
     this.canvasObjects.push(newObj);
     return newObj;
@@ -306,7 +317,8 @@ export default class CanvasX extends VariableClass {
     this.canvasCamera = new CanvasCamera(
       ++this.#objectsCreated,
       onCreate,
-      onUpdate
+      onUpdate,
+      this
     );
     this.canvasObjects.push(this.canvasCamera);
     return this.canvasCamera;

@@ -9,7 +9,7 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
 };
-var _CanvasX_width, _CanvasX_height, _CanvasX_ctx, _CanvasX_objectsCreated, _CanvasX_mousePosition, _CanvasX_onUpdate, _CanvasX_wheelScroll, _CanvasX_loopId, _CanvasX_canvasUpdate, _CanvasX_drawCanvas, _CanvasX_logic, _CanvasX_destroyObjectById;
+var _CanvasX_width, _CanvasX_height, _CanvasX_ctx, _CanvasX_objectsCreated, _CanvasX_mousePosition, _CanvasX_onUpdate, _CanvasX_wheelScroll, _CanvasX_loopId, _CanvasX_globalValues, _CanvasX_canvasUpdate, _CanvasX_drawCanvas, _CanvasX_logic, _CanvasX_destroyObjectById;
 import CanvasCamera from "./CanvasCamera.js";
 import CanvasObject from "./CanvasObject.js";
 import VariableClass from "./VariableClass.js";
@@ -21,7 +21,7 @@ class CanvasX extends VariableClass {
         super(...arguments);
         _CanvasX_width.set(this, 0);
         _CanvasX_height.set(this, 0);
-        this.canvasCamera = new CanvasCamera(-1, () => { }, () => { });
+        this.canvasCamera = new CanvasCamera(-1, () => { }, () => { }, this);
         this.canvasObjects = [];
         this.canvas = null;
         _CanvasX_ctx.set(this, null);
@@ -30,6 +30,7 @@ class CanvasX extends VariableClass {
         _CanvasX_onUpdate.set(this, void 0);
         _CanvasX_wheelScroll.set(this, { x: 0, y: 0 });
         _CanvasX_loopId.set(this, null);
+        _CanvasX_globalValues.set(this, new VariableClass());
         this.init = (canvasId, onCreate = (_this) => { }, onUpdate = (_this) => { }) => {
             this.canvas =
                 document.getElementById(canvasId) || null;
@@ -220,6 +221,12 @@ class CanvasX extends VariableClass {
         this.getMousePosition = () => {
             return __classPrivateFieldGet(this, _CanvasX_mousePosition, "f");
         };
+        this.getGlobalVariableValue = (key) => {
+            return __classPrivateFieldGet(this, _CanvasX_globalValues, "f").getVariableValue(key);
+        };
+        this.setGlobalVariableValue = (key, value) => {
+            __classPrivateFieldGet(this, _CanvasX_globalValues, "f").setVariableValue(key, value);
+        };
         _CanvasX_destroyObjectById.set(this, (id) => {
             this.canvasObjects = this.canvasObjects.filter((canvasObject) => canvasObject.getId() !== id);
         });
@@ -228,18 +235,18 @@ class CanvasX extends VariableClass {
         };
         this.createObject = (onCreate = (_this) => { }, onUpdate = (_this) => { }, onDestroy = (_this) => { }) => {
             var _a;
-            const newObj = new CanvasObject(__classPrivateFieldSet(this, _CanvasX_objectsCreated, (_a = __classPrivateFieldGet(this, _CanvasX_objectsCreated, "f"), ++_a), "f"), onCreate, onUpdate, onDestroy, __classPrivateFieldGet(this, _CanvasX_destroyObjectById, "f"));
+            const newObj = new CanvasObject(__classPrivateFieldSet(this, _CanvasX_objectsCreated, (_a = __classPrivateFieldGet(this, _CanvasX_objectsCreated, "f"), ++_a), "f"), onCreate, onUpdate, onDestroy, __classPrivateFieldGet(this, _CanvasX_destroyObjectById, "f"), this);
             this.canvasObjects.push(newObj);
             return newObj;
         };
         this.createCamera = (onCreate = (_this) => { }, onUpdate = (_this) => { }) => {
             var _a;
-            this.canvasCamera = new CanvasCamera(__classPrivateFieldSet(this, _CanvasX_objectsCreated, (_a = __classPrivateFieldGet(this, _CanvasX_objectsCreated, "f"), ++_a), "f"), onCreate, onUpdate);
+            this.canvasCamera = new CanvasCamera(__classPrivateFieldSet(this, _CanvasX_objectsCreated, (_a = __classPrivateFieldGet(this, _CanvasX_objectsCreated, "f"), ++_a), "f"), onCreate, onUpdate, this);
             this.canvasObjects.push(this.canvasCamera);
             return this.canvasCamera;
         };
     }
 }
-_CanvasX_width = new WeakMap(), _CanvasX_height = new WeakMap(), _CanvasX_ctx = new WeakMap(), _CanvasX_objectsCreated = new WeakMap(), _CanvasX_mousePosition = new WeakMap(), _CanvasX_onUpdate = new WeakMap(), _CanvasX_wheelScroll = new WeakMap(), _CanvasX_loopId = new WeakMap(), _CanvasX_canvasUpdate = new WeakMap(), _CanvasX_drawCanvas = new WeakMap(), _CanvasX_logic = new WeakMap(), _CanvasX_destroyObjectById = new WeakMap();
+_CanvasX_width = new WeakMap(), _CanvasX_height = new WeakMap(), _CanvasX_ctx = new WeakMap(), _CanvasX_objectsCreated = new WeakMap(), _CanvasX_mousePosition = new WeakMap(), _CanvasX_onUpdate = new WeakMap(), _CanvasX_wheelScroll = new WeakMap(), _CanvasX_loopId = new WeakMap(), _CanvasX_globalValues = new WeakMap(), _CanvasX_canvasUpdate = new WeakMap(), _CanvasX_drawCanvas = new WeakMap(), _CanvasX_logic = new WeakMap(), _CanvasX_destroyObjectById = new WeakMap();
 export default CanvasX;
 //# sourceMappingURL=CanvasX.js.map

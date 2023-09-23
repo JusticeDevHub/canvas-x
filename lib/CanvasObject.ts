@@ -1,4 +1,5 @@
 import CanvasCamera from "./CanvasCamera.js";
+import CanvasX from "./CanvasX.js";
 import VariableClass from "./VariableClass.js";
 import {
   dimensionsType,
@@ -18,6 +19,7 @@ class CanvasObject extends VariableClass {
     animationSpeed: 0,
     startTimeFrame: 0,
   };
+  #canvasX: CanvasX;
   #onUpdate: Function;
   #onDestroy: Function;
   #destroyById: (id: number) => void;
@@ -44,10 +46,12 @@ class CanvasObject extends VariableClass {
     onCreate: (_this: CanvasObject) => void = (_this: CanvasObject) => {},
     onUpdate: (_this: CanvasObject) => void = (_this: CanvasObject) => {},
     onDestroy: (_this: CanvasObject) => void = (_this: CanvasObject) => {},
-    destroyById: (id: number) => void
+    destroyById: (id: number) => void,
+    canvasX: CanvasX
   ) {
     super();
     this.#id = id;
+    this.#canvasX = canvasX;
     this.#onUpdate = onUpdate;
     this.#onDestroy = onDestroy;
     this.#destroyById = destroyById;
@@ -267,6 +271,14 @@ class CanvasObject extends VariableClass {
     ) => {}
   ) => {
     this.#onWheelScroll = func;
+  };
+
+  getGlobalVariableValue = (key: string) => {
+    return this.#canvasX.getGlobalVariableValue(key);
+  };
+
+  setGlobalVariableValue = (key: string, value: any) => {
+    this.#canvasX.setGlobalVariableValue(key, value);
   };
 
   destroy = () => {

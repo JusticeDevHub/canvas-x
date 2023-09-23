@@ -1,4 +1,5 @@
 import CanvasObject from "./CanvasObject.js";
+import CanvasX from "./CanvasX.js";
 
 export default class CanvasCamera extends CanvasObject {
   #zoomLevel: number = 1;
@@ -6,14 +7,16 @@ export default class CanvasCamera extends CanvasObject {
   constructor(
     id: number,
     onCreate: (_this: CanvasCamera) => void = (_this: CanvasCamera) => {},
-    onUpdate: (_this: CanvasCamera) => void = (_this: CanvasCamera) => {}
+    onUpdate: (_this: CanvasCamera) => void = (_this: CanvasCamera) => {},
+    canvasX: CanvasX
   ) {
     super(
       id,
       onCreate,
       onUpdate,
       () => {},
-      () => {}
+      () => {},
+      canvasX
     );
   }
 

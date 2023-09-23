@@ -12,8 +12,8 @@ var __classPrivateFieldSet = (this && this.__classPrivateFieldSet) || function (
 var _CanvasCamera_zoomLevel;
 import CanvasObject from "./CanvasObject.js";
 class CanvasCamera extends CanvasObject {
-    constructor(id, onCreate = (_this) => { }, onUpdate = (_this) => { }) {
-        super(id, onCreate, onUpdate, () => { }, () => { });
+    constructor(id, onCreate = (_this) => { }, onUpdate = (_this) => { }, canvasX) {
+        super(id, onCreate, onUpdate, () => { }, () => { }, canvasX);
         _CanvasCamera_zoomLevel.set(this, 1);
         this.getZoomLevel = () => {
             return __classPrivateFieldGet(this, _CanvasCamera_zoomLevel, "f");
