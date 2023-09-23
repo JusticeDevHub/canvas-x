@@ -27,7 +27,7 @@ export default class CanvasX extends VariableClass {
         _CanvasX_ctx.set(this, null);
         _CanvasX_objectsCreated.set(this, 0);
         _CanvasX_mousePosition.set(this, { x: 0, y: 0 });
-        _CanvasX_onUpdate.set(this, () => { });
+        _CanvasX_onUpdate.set(this, void 0);
         _CanvasX_wheelScroll.set(this, { x: 0, y: 0 });
         _CanvasX_loopId.set(this, null);
         this.init = (canvasId, onCreate = (_this) => { }, onUpdate = (_this) => { }) => {
@@ -36,7 +36,6 @@ export default class CanvasX extends VariableClass {
             if (this.canvas) {
                 __classPrivateFieldSet(this, _CanvasX_ctx, this.canvas.getContext("2d"), "f");
                 __classPrivateFieldSet(this, _CanvasX_loopId, setInterval(() => {
-                    console.log("Set Interval Loop");
                     __classPrivateFieldGet(this, _CanvasX_canvasUpdate, "f").call(this);
                 }, 1000 / 60), "f");
                 document.addEventListener("click", (e) => {
@@ -79,7 +78,6 @@ export default class CanvasX extends VariableClass {
         this.useRequestAnimationFrame = (window) => {
             clearInterval(__classPrivateFieldGet(this, _CanvasX_loopId, "f"));
             const loop = () => {
-                console.log("Requset Loop");
                 __classPrivateFieldGet(this, _CanvasX_canvasUpdate, "f").call(this);
                 window.requestAnimationFrame(loop);
             };
