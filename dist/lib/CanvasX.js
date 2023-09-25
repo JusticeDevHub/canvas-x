@@ -16,6 +16,7 @@ import VariableClass from "./VariableClass.js";
 import Log from "./log.js";
 import onHover from "./utils/onHover.js";
 import onWheelScroll from "./utils/onWheelScroll.js";
+import moveToPositionHandling from "./utils/moveToPositionHandling.js";
 class CanvasX extends VariableClass {
     constructor() {
         super(...arguments);
@@ -167,39 +168,7 @@ class CanvasX extends VariableClass {
             objs.forEach((canvasObject) => {
                 const update = canvasObject.getOnUpdate();
                 update(canvasObject);
-                const moveToPosition = canvasObject.getMoveToPosition();
-                if (moveToPosition !== null && moveToPosition.speed !== 0) {
-                    const position = canvasObject.getPosition();
-                    const speed = moveToPosition.speed;
-                    const method = moveToPosition.method;
-                    const x = moveToPosition.x;
-                    const y = moveToPosition.y;
-                    const xDiff = x - position.x;
-                    const yDiff = y - position.y;
-                    const distance = Math.sqrt(xDiff * xDiff + yDiff * yDiff);
-                    const xSpeed = (speed * xDiff) / distance;
-                    const ySpeed = (speed * yDiff) / distance;
-                    const xSpeedAbs = Math.abs(xSpeed);
-                    const ySpeedAbs = Math.abs(ySpeed);
-                    if (method === "linear") {
-                        if (xSpeedAbs >= Math.abs(xDiff)) {
-                            position.x = x;
-                        }
-                        else {
-                            position.x += xSpeed;
-                        }
-                        if (ySpeedAbs >= Math.abs(yDiff)) {
-                            position.y = y;
-                        }
-                        else {
-                            position.y += ySpeed;
-                        }
-                        if (position.x === x && position.y === y) {
-                            canvasObject.setMoveToPosition(x, y, 0, "linear");
-                        }
-                    }
-                    canvasObject.setPosition(position.x, position.y);
-                }
+                moveToPositionHandling(canvasObject);
                 onWheelScroll(canvasObject, { ...__classPrivateFieldGet(this, _CanvasX_wheelScroll, "f") });
                 onHover(canvasObject, { ...__classPrivateFieldGet(this, _CanvasX_mousePosition, "f") });
             });
