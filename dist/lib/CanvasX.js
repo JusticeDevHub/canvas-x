@@ -16,7 +16,7 @@ import VariableClass from "./VariableClass.js";
 import Log from "./log.js";
 import onHover from "./utils/onHover.js";
 import onWheelScroll from "./utils/onWheelScroll.js";
-class CanvasX extends VariableClass {
+export default class CanvasX extends VariableClass {
     constructor() {
         super(...arguments);
         _CanvasX_width.set(this, 0);
@@ -110,7 +110,15 @@ class CanvasX extends VariableClass {
         });
         _CanvasX_drawCanvas.set(this, () => {
             __classPrivateFieldGet(this, _CanvasX_ctx, "f").clearRect(0, 0, __classPrivateFieldGet(this, _CanvasX_width, "f"), __classPrivateFieldGet(this, _CanvasX_height, "f"));
+            const canvasObjectsDrawOrder = [];
             this.canvasObjects.forEach((canvasObject) => {
+                const obj = { ...canvasObject };
+                canvasObjectsDrawOrder.push(obj);
+            });
+            canvasObjectsDrawOrder.sort((a, b) => {
+                return a.getPosition().z - b.getPosition().z;
+            });
+            canvasObjectsDrawOrder.forEach((canvasObject) => {
                 const spriteData = canvasObject.getSpriteData();
                 const backgroundColor = canvasObject.getBackgroundColor();
                 const cameraZoomLevel = this.canvasCamera.getZoomLevel();
@@ -233,6 +241,11 @@ class CanvasX extends VariableClass {
         this.setMouseCursor = (cursorType) => {
             document.body.style.cursor = cursorType;
         };
+        this.getObjectWithId = (id) => {
+            return this.canvasObjects.find((canvasObject) => {
+                return canvasObject.getId() === id;
+            });
+        };
         this.createObject = (onCreate = (_this) => { }, onUpdate = (_this) => { }, onDestroy = (_this) => { }) => {
             var _a;
             const newObj = new CanvasObject(__classPrivateFieldSet(this, _CanvasX_objectsCreated, (_a = __classPrivateFieldGet(this, _CanvasX_objectsCreated, "f"), ++_a), "f"), onCreate, onUpdate, onDestroy, __classPrivateFieldGet(this, _CanvasX_destroyObjectById, "f"), this);
@@ -248,5 +261,4 @@ class CanvasX extends VariableClass {
     }
 }
 _CanvasX_width = new WeakMap(), _CanvasX_height = new WeakMap(), _CanvasX_ctx = new WeakMap(), _CanvasX_objectsCreated = new WeakMap(), _CanvasX_mousePosition = new WeakMap(), _CanvasX_onUpdate = new WeakMap(), _CanvasX_wheelScroll = new WeakMap(), _CanvasX_loopId = new WeakMap(), _CanvasX_globalValues = new WeakMap(), _CanvasX_canvasUpdate = new WeakMap(), _CanvasX_drawCanvas = new WeakMap(), _CanvasX_logic = new WeakMap(), _CanvasX_destroyObjectById = new WeakMap();
-export default CanvasX;
 //# sourceMappingURL=CanvasX.js.map

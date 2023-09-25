@@ -15,7 +15,7 @@ class CanvasObject extends VariableClass {
     constructor(id, onCreate = (_this) => { }, onUpdate = (_this) => { }, onDestroy = (_this) => { }, destroyById, canvasX) {
         super();
         _CanvasObject_id.set(this, void 0);
-        _CanvasObject_position.set(this, { x: 0, y: 0 });
+        _CanvasObject_position.set(this, { x: 0, y: 0, z: 0 });
         _CanvasObject_dimensions.set(this, { width: 100, height: 100 });
         _CanvasObject_spriteData.set(this, {
             sprites: null,
@@ -47,10 +47,11 @@ class CanvasObject extends VariableClass {
         this.getPosition = () => {
             return { ...__classPrivateFieldGet(this, _CanvasObject_position, "f") };
         };
-        this.setPosition = (x, y) => {
+        this.setPosition = (x, y, z = 0) => {
             __classPrivateFieldSet(this, _CanvasObject_position, {
                 x,
                 y,
+                z,
             }, "f");
         };
         this.setMoveToPosition = (x, y, speed, method) => {
@@ -71,7 +72,7 @@ class CanvasObject extends VariableClass {
             return __classPrivateFieldGet(this, _CanvasObject_onUpdate, "f");
         };
         this.setSpriteData = {
-            singleSprite: (sprite) => {
+            singleSprite: (sprite, _onLoaded = () => { }) => {
                 __classPrivateFieldSet(this, _CanvasObject_spriteData, {
                     sprites: [sprite],
                     startFrame: 0,
@@ -79,18 +80,24 @@ class CanvasObject extends VariableClass {
                     startTimeFrame: 0,
                 }, "f");
                 sprite.onload = () => {
+                    _onLoaded(this);
                     this.setDimensions(__classPrivateFieldGet(this, _CanvasObject_setDimensionsData, "f").width, __classPrivateFieldGet(this, _CanvasObject_setDimensionsData, "f").height);
                 };
             },
-            animationSprites: (sprites, startFrame, animationSpeed) => {
+            animationSprites: (sprites, startFrame, animationSpeed, _onLoaded = () => { }) => {
                 __classPrivateFieldSet(this, _CanvasObject_spriteData, {
                     sprites,
                     startFrame,
                     animationSpeed,
                     startTimeFrame: new Date().getTime(),
                 }, "f");
+                let loaded = 0;
                 sprites.forEach((sprite) => {
                     sprite.onload = () => {
+                        ++loaded;
+                        if (loaded === sprites.length) {
+                            _onLoaded(this);
+                        }
                         this.setDimensions(__classPrivateFieldGet(this, _CanvasObject_setDimensionsData, "f").width, __classPrivateFieldGet(this, _CanvasObject_setDimensionsData, "f").height);
                     };
                 });
@@ -112,8 +119,11 @@ class CanvasObject extends VariableClass {
                 };
                 if (this.getSpriteData().sprites !== null) {
                     const sprite = this.getSpriteData().sprites[0];
-                    spriteDimensions.width = sprite.naturalWidth;
-                    spriteDimensions.height = sprite.naturalHeight;
+                    //TODO: Check if this is needed
+                    if (sprite) {
+                        spriteDimensions.width = sprite.naturalWidth;
+                        spriteDimensions.height = sprite.naturalHeight;
+                    }
                 }
                 if (width === "auto" && height === "auto") {
                     dimensions.width = spriteDimensions.width;

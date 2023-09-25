@@ -123,7 +123,16 @@ export default class CanvasX extends VariableClass {
   #drawCanvas = () => {
     this.#ctx.clearRect(0, 0, this.#width, this.#height);
 
+    const canvasObjectsDrawOrder: CanvasObject[] = [];
     this.canvasObjects.forEach((canvasObject) => {
+      const obj: any = { ...canvasObject };
+      canvasObjectsDrawOrder.push(obj);
+    });
+    canvasObjectsDrawOrder.sort((a, b) => {
+      return a.getPosition().z - b.getPosition().z;
+    });
+
+    canvasObjectsDrawOrder.forEach((canvasObject) => {
       const spriteData = canvasObject.getSpriteData();
       const backgroundColor = canvasObject.getBackgroundColor();
       const cameraZoomLevel = this.canvasCamera.getZoomLevel();
@@ -291,6 +300,12 @@ export default class CanvasX extends VariableClass {
 
   setMouseCursor = (cursorType: string) => {
     document.body.style.cursor = cursorType;
+  };
+
+  getObjectWithId = (id: number): CanvasObject | null => {
+    return this.canvasObjects.find((canvasObject) => {
+      return canvasObject.getId() === id;
+    });
   };
 
   createObject = (

@@ -11,7 +11,7 @@ import {
 
 class CanvasObject extends VariableClass {
   #id: number;
-  #position: coordinationType = { x: 0, y: 0 };
+  #position: coordinationType & { z: number } = { x: 0, y: 0, z: 0 };
   #dimensions: dimensionsType = { width: 100, height: 100 };
   #spriteData: spriteDataType = {
     sprites: null,
@@ -63,14 +63,15 @@ class CanvasObject extends VariableClass {
     return this.#id;
   };
 
-  getPosition = (): coordinationType => {
+  getPosition = (): coordinationType & { z: number } => {
     return { ...this.#position };
   };
 
-  setPosition = (x: number, y: number) => {
+  setPosition = (x: number, y: number, z: number = 0) => {
     this.#position = {
       x,
       y,
+      z,
     };
   };
 
@@ -101,7 +102,10 @@ class CanvasObject extends VariableClass {
   };
 
   setSpriteData = {
-    singleSprite: (sprite: HTMLImageElement) => {
+    singleSprite: (
+      sprite: HTMLImageElement,
+      _onLoaded: (_this: CanvasObject) => void = () => {}
+    ) => {
       this.#spriteData = {
         sprites: [sprite],
         startFrame: 0,
@@ -110,6 +114,7 @@ class CanvasObject extends VariableClass {
       };
 
       sprite.onload = () => {
+        _onLoaded(this);
         this.setDimensions(
           this.#setDimensionsData.width,
           this.#setDimensionsData.height
@@ -119,7 +124,8 @@ class CanvasObject extends VariableClass {
     animationSprites: (
       sprites: HTMLImageElement[],
       startFrame: number,
-      animationSpeed: number
+      animationSpeed: number,
+      _onLoaded: (_this: CanvasObject) => void = () => {}
     ) => {
       this.#spriteData = {
         sprites,
@@ -128,8 +134,13 @@ class CanvasObject extends VariableClass {
         startTimeFrame: new Date().getTime(),
       };
 
+      let loaded = 0;
       sprites.forEach((sprite) => {
         sprite.onload = () => {
+          ++loaded;
+          if (loaded === sprites.length) {
+            _onLoaded(this);
+          }
           this.setDimensions(
             this.#setDimensionsData.width,
             this.#setDimensionsData.height
@@ -156,8 +167,11 @@ class CanvasObject extends VariableClass {
       };
       if (this.getSpriteData().sprites !== null) {
         const sprite: HTMLImageElement = this.getSpriteData().sprites[0];
-        spriteDimensions.width = sprite.naturalWidth;
-        spriteDimensions.height = sprite.naturalHeight;
+        //TODO: Check if this is needed
+        if (sprite) {
+          spriteDimensions.width = sprite.naturalWidth;
+          spriteDimensions.height = sprite.naturalHeight;
+        }
       }
       if (width === "auto" && height === "auto") {
         dimensions.width = spriteDimensions.width;
