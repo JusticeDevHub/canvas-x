@@ -35,7 +35,7 @@ const moveToPositionHandling = (canvasObject: CanvasObject) => {
       }
     }
 
-    canvasObject.setPosition(position.x, position.y);
+    canvasObject.setPosition(position.x, position.y, position.z);
   }
 };
 

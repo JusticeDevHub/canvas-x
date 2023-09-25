@@ -21,6 +21,11 @@ class CanvasObject extends VariableClass {
   };
   #canvasX: CanvasX;
   #name: string;
+  #draggable: boolean = false;
+  #dragData: { dragPositionOffset: coordinationType; isDragged: boolean } = {
+    dragPositionOffset: { x: 0, y: 0 },
+    isDragged: false,
+  };
   #onUpdate: Function;
   #onDestroy: Function;
   #destroyById: (id: number) => void;
@@ -304,6 +309,25 @@ class CanvasObject extends VariableClass {
 
   setName = (name: string) => {
     this.#name = name;
+  };
+
+  getDraggable = () => {
+    return this.#draggable;
+  };
+
+  setDraggable = (draggable: boolean) => {
+    this.#draggable = draggable;
+  };
+
+  getDragData = () => {
+    return this.#dragData;
+  };
+
+  setDragData = (dragData: {
+    dragPositionOffset: coordinationType;
+    isDragged: boolean;
+  }) => {
+    this.#dragData = dragData;
   };
 
   destroy = () => {

@@ -40,18 +40,47 @@ class CanvasX extends VariableClass {
                 __classPrivateFieldSet(this, _CanvasX_loopId, setInterval(() => {
                     __classPrivateFieldGet(this, _CanvasX_canvasUpdate, "f").call(this);
                 }, 1000 / 60), "f");
-                document.addEventListener("click", (e) => {
+                document.addEventListener("mousedown", (e) => {
                     e.preventDefault();
                     this.canvasObjects.forEach((canvasObject) => {
+                        // Handle Global Left Click
                         const global_left_click = canvasObject.getOnClick("global_left_click");
                         if (global_left_click) {
                             global_left_click(canvasObject);
                         }
                         if (canvasObject.getOnHoverTrue()) {
+                            // Handle this Left Clicked
                             const this_left_click = canvasObject.getOnClick("this_left_click");
                             if (this_left_click) {
                                 this_left_click(canvasObject);
                             }
+                            // Handle drag
+                            const draggable = canvasObject.getDraggable();
+                            if (draggable) {
+                                canvasObject.setDragData({
+                                    dragPositionOffset: {
+                                        x: __classPrivateFieldGet(this, _CanvasX_mousePosition, "f").x - canvasObject.getPosition().x,
+                                        y: __classPrivateFieldGet(this, _CanvasX_mousePosition, "f").y - canvasObject.getPosition().y,
+                                    },
+                                    isDragged: true,
+                                });
+                            }
+                        }
+                    });
+                });
+                document.addEventListener("mouseup", (e) => {
+                    e.preventDefault();
+                    this.canvasObjects.forEach((canvasObject) => {
+                        // Handle drag
+                        const dragData = canvasObject.getDragData();
+                        if (dragData.isDragged) {
+                            canvasObject.setDragData({
+                                dragPositionOffset: {
+                                    x: 0,
+                                    y: 0,
+                                },
+                                isDragged: false,
+                            });
                         }
                     });
                 });
@@ -171,6 +200,10 @@ class CanvasX extends VariableClass {
                 moveToPositionHandling(canvasObject);
                 onWheelScroll(canvasObject, { ...__classPrivateFieldGet(this, _CanvasX_wheelScroll, "f") });
                 onHover(canvasObject, { ...__classPrivateFieldGet(this, _CanvasX_mousePosition, "f") });
+                const dragData = canvasObject.getDragData();
+                if (dragData.isDragged) {
+                    canvasObject.setPosition(__classPrivateFieldGet(this, _CanvasX_mousePosition, "f").x - dragData.dragPositionOffset.x, __classPrivateFieldGet(this, _CanvasX_mousePosition, "f").y - dragData.dragPositionOffset.y, canvasObject.getPosition().z);
+                }
             });
         });
         this.setCanvasSize = (width, height) => {

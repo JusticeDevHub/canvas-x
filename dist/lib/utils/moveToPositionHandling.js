@@ -31,7 +31,7 @@ const moveToPositionHandling = (canvasObject) => {
                 canvasObject.setMoveToPosition(x, y, 0, "linear");
             }
         }
-        canvasObject.setPosition(position.x, position.y);
+        canvasObject.setPosition(position.x, position.y, position.z);
     }
 };
 export default moveToPositionHandling;
