@@ -11,6 +11,7 @@ export default class CanvasX extends VariableClass {
   #height = 0;
   canvasCamera: CanvasCamera = new CanvasCamera(
     -1,
+    "",
     () => {},
     () => {},
     this
@@ -308,13 +309,21 @@ export default class CanvasX extends VariableClass {
     });
   };
 
+  getObjectWithName = (name: string): CanvasObject | null => {
+    return this.canvasObjects.find((canvasObject) => {
+      return canvasObject.getName() === name;
+    });
+  };
+
   createObject = (
+    name: string = "",
     onCreate: (_this: CanvasObject) => void = (_this: CanvasObject) => {},
     onUpdate: (_this: CanvasObject) => void = (_this: CanvasObject) => {},
     onDestroy: (_this: CanvasObject) => void = (_this: CanvasObject) => {}
   ) => {
     const newObj = new CanvasObject(
       ++this.#objectsCreated,
+      name,
       onCreate,
       onUpdate,
       onDestroy,
@@ -326,11 +335,13 @@ export default class CanvasX extends VariableClass {
   };
 
   createCamera = (
+    name: string = "",
     onCreate: (_this: CanvasCamera) => void = (_this: CanvasCamera) => {},
     onUpdate: (_this: CanvasCamera) => void = (_this: CanvasCamera) => {}
   ) => {
     this.canvasCamera = new CanvasCamera(
       ++this.#objectsCreated,
+      name,
       onCreate,
       onUpdate,
       this

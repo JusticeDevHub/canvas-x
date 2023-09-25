@@ -16,12 +16,12 @@ import VariableClass from "./VariableClass.js";
 import Log from "./log.js";
 import onHover from "./utils/onHover.js";
 import onWheelScroll from "./utils/onWheelScroll.js";
-export default class CanvasX extends VariableClass {
+class CanvasX extends VariableClass {
     constructor() {
         super(...arguments);
         _CanvasX_width.set(this, 0);
         _CanvasX_height.set(this, 0);
-        this.canvasCamera = new CanvasCamera(-1, () => { }, () => { }, this);
+        this.canvasCamera = new CanvasCamera(-1, "", () => { }, () => { }, this);
         this.canvasObjects = [];
         this.canvas = null;
         _CanvasX_ctx.set(this, null);
@@ -246,19 +246,25 @@ export default class CanvasX extends VariableClass {
                 return canvasObject.getId() === id;
             });
         };
-        this.createObject = (onCreate = (_this) => { }, onUpdate = (_this) => { }, onDestroy = (_this) => { }) => {
+        this.getObjectWithName = (name) => {
+            return this.canvasObjects.find((canvasObject) => {
+                return canvasObject.getName() === name;
+            });
+        };
+        this.createObject = (name = "", onCreate = (_this) => { }, onUpdate = (_this) => { }, onDestroy = (_this) => { }) => {
             var _a;
-            const newObj = new CanvasObject(__classPrivateFieldSet(this, _CanvasX_objectsCreated, (_a = __classPrivateFieldGet(this, _CanvasX_objectsCreated, "f"), ++_a), "f"), onCreate, onUpdate, onDestroy, __classPrivateFieldGet(this, _CanvasX_destroyObjectById, "f"), this);
+            const newObj = new CanvasObject(__classPrivateFieldSet(this, _CanvasX_objectsCreated, (_a = __classPrivateFieldGet(this, _CanvasX_objectsCreated, "f"), ++_a), "f"), name, onCreate, onUpdate, onDestroy, __classPrivateFieldGet(this, _CanvasX_destroyObjectById, "f"), this);
             this.canvasObjects.push(newObj);
             return newObj;
         };
-        this.createCamera = (onCreate = (_this) => { }, onUpdate = (_this) => { }) => {
+        this.createCamera = (name = "", onCreate = (_this) => { }, onUpdate = (_this) => { }) => {
             var _a;
-            this.canvasCamera = new CanvasCamera(__classPrivateFieldSet(this, _CanvasX_objectsCreated, (_a = __classPrivateFieldGet(this, _CanvasX_objectsCreated, "f"), ++_a), "f"), onCreate, onUpdate, this);
+            this.canvasCamera = new CanvasCamera(__classPrivateFieldSet(this, _CanvasX_objectsCreated, (_a = __classPrivateFieldGet(this, _CanvasX_objectsCreated, "f"), ++_a), "f"), name, onCreate, onUpdate, this);
             this.canvasObjects.push(this.canvasCamera);
             return this.canvasCamera;
         };
     }
 }
 _CanvasX_width = new WeakMap(), _CanvasX_height = new WeakMap(), _CanvasX_ctx = new WeakMap(), _CanvasX_objectsCreated = new WeakMap(), _CanvasX_mousePosition = new WeakMap(), _CanvasX_onUpdate = new WeakMap(), _CanvasX_wheelScroll = new WeakMap(), _CanvasX_loopId = new WeakMap(), _CanvasX_globalValues = new WeakMap(), _CanvasX_canvasUpdate = new WeakMap(), _CanvasX_drawCanvas = new WeakMap(), _CanvasX_logic = new WeakMap(), _CanvasX_destroyObjectById = new WeakMap();
+export default CanvasX;
 //# sourceMappingURL=CanvasX.js.map

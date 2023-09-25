@@ -6,12 +6,14 @@ export default class CanvasCamera extends CanvasObject {
 
   constructor(
     id: number,
+    name: string,
     onCreate: (_this: CanvasCamera) => void = (_this: CanvasCamera) => {},
     onUpdate: (_this: CanvasCamera) => void = (_this: CanvasCamera) => {},
     canvasX: CanvasX
   ) {
     super(
       id,
+      name,
       onCreate,
       onUpdate,
       () => {},

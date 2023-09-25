@@ -20,6 +20,7 @@ class CanvasObject extends VariableClass {
     startTimeFrame: 0,
   };
   #canvasX: CanvasX;
+  #name: string;
   #onUpdate: Function;
   #onDestroy: Function;
   #destroyById: (id: number) => void;
@@ -43,6 +44,7 @@ class CanvasObject extends VariableClass {
 
   constructor(
     id: number,
+    name: string,
     onCreate: (_this: CanvasObject) => void = (_this: CanvasObject) => {},
     onUpdate: (_this: CanvasObject) => void = (_this: CanvasObject) => {},
     onDestroy: (_this: CanvasObject) => void = (_this: CanvasObject) => {},
@@ -51,6 +53,7 @@ class CanvasObject extends VariableClass {
   ) {
     super();
     this.#id = id;
+    this.#name = name;
     this.#canvasX = canvasX;
     this.#onUpdate = onUpdate;
     this.#onDestroy = onDestroy;
@@ -293,6 +296,14 @@ class CanvasObject extends VariableClass {
 
   setGlobalVariableValue = (key: string, value: any) => {
     this.#canvasX.setGlobalVariableValue(key, value);
+  };
+
+  getName = () => {
+    return this.#name;
+  };
+
+  setName = (name: string) => {
+    this.#name = name;
   };
 
   destroy = () => {
