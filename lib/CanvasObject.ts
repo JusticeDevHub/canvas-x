@@ -12,6 +12,7 @@ import {
 class CanvasObject extends VariableClass {
   #id: number;
   #position: coordinationType & { z: number } = { x: 0, y: 0, z: 0 };
+  #parent: CanvasObject | CanvasCamera | null = null;
   #dimensions: dimensionsType = { width: 100, height: 100 };
   #spriteData: spriteDataType = {
     sprites: null,
@@ -328,6 +329,20 @@ class CanvasObject extends VariableClass {
     isDragged: boolean;
   }) => {
     this.#dragData = dragData;
+  };
+
+  getParent = () => {
+    return this.#parent;
+  };
+
+  setParent = (nameOrId: string | number) => {
+    let parent = null;
+    if (typeof nameOrId === "string") {
+      parent = this.#canvasX.getObjectWithName(nameOrId);
+    } else if (typeof nameOrId === "number") {
+      parent = this.#canvasX.getObjectWithId(nameOrId);
+    }
+    this.#parent = parent;
   };
 
   destroy = () => {

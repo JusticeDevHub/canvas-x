@@ -17,7 +17,7 @@ import Log from "./log.js";
 import onHover from "./utils/onHover.js";
 import onWheelScroll from "./utils/onWheelScroll.js";
 import moveToPositionHandling from "./utils/moveToPositionHandling.js";
-class CanvasX extends VariableClass {
+export default class CanvasX extends VariableClass {
     constructor() {
         super(...arguments);
         _CanvasX_width.set(this, 0);
@@ -156,6 +156,12 @@ class CanvasX extends VariableClass {
                 const position = canvasObject.getPosition();
                 const dimensions = canvasObject.getDimensions();
                 const rotation = canvasObject.getRotation();
+                const parent = canvasObject.getParent();
+                if (parent) {
+                    const parentPosition = parent.getPosition();
+                    position.x += parentPosition.x;
+                    position.y += parentPosition.y;
+                }
                 dimensions.width *= cameraZoomLevel;
                 dimensions.height *= cameraZoomLevel;
                 position.x -= cameraPositionOffset.x;
@@ -268,5 +274,4 @@ class CanvasX extends VariableClass {
     }
 }
 _CanvasX_width = new WeakMap(), _CanvasX_height = new WeakMap(), _CanvasX_ctx = new WeakMap(), _CanvasX_objectsCreated = new WeakMap(), _CanvasX_mousePosition = new WeakMap(), _CanvasX_onUpdate = new WeakMap(), _CanvasX_wheelScroll = new WeakMap(), _CanvasX_loopId = new WeakMap(), _CanvasX_globalValues = new WeakMap(), _CanvasX_canvasUpdate = new WeakMap(), _CanvasX_drawCanvas = new WeakMap(), _CanvasX_logic = new WeakMap(), _CanvasX_destroyObjectById = new WeakMap();
-export default CanvasX;
 //# sourceMappingURL=CanvasX.js.map

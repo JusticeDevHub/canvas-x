@@ -9,13 +9,14 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
 };
-var _CanvasObject_id, _CanvasObject_position, _CanvasObject_dimensions, _CanvasObject_spriteData, _CanvasObject_canvasX, _CanvasObject_name, _CanvasObject_draggable, _CanvasObject_dragData, _CanvasObject_onUpdate, _CanvasObject_onDestroy, _CanvasObject_destroyById, _CanvasObject_backgroundColor, _CanvasObject_opacity, _CanvasObject_onHoverTrue, _CanvasObject_onHoverEndTrue, _CanvasObject_onHover, _CanvasObject_onHoverEnd, _CanvasObject_onClick, _CanvasObject_rotation, _CanvasObject_moveToPosition, _CanvasObject_onWheelScroll, _CanvasObject_setDimensionsData;
+var _CanvasObject_id, _CanvasObject_position, _CanvasObject_parent, _CanvasObject_dimensions, _CanvasObject_spriteData, _CanvasObject_canvasX, _CanvasObject_name, _CanvasObject_draggable, _CanvasObject_dragData, _CanvasObject_onUpdate, _CanvasObject_onDestroy, _CanvasObject_destroyById, _CanvasObject_backgroundColor, _CanvasObject_opacity, _CanvasObject_onHoverTrue, _CanvasObject_onHoverEndTrue, _CanvasObject_onHover, _CanvasObject_onHoverEnd, _CanvasObject_onClick, _CanvasObject_rotation, _CanvasObject_moveToPosition, _CanvasObject_onWheelScroll, _CanvasObject_setDimensionsData;
 import VariableClass from "./VariableClass.js";
 class CanvasObject extends VariableClass {
     constructor(id, name, onCreate = (_this) => { }, onUpdate = (_this) => { }, onDestroy = (_this) => { }, destroyById, canvasX) {
         super();
         _CanvasObject_id.set(this, void 0);
         _CanvasObject_position.set(this, { x: 0, y: 0, z: 0 });
+        _CanvasObject_parent.set(this, null);
         _CanvasObject_dimensions.set(this, { width: 100, height: 100 });
         _CanvasObject_spriteData.set(this, {
             sprites: null,
@@ -239,6 +240,19 @@ class CanvasObject extends VariableClass {
         this.setDragData = (dragData) => {
             __classPrivateFieldSet(this, _CanvasObject_dragData, dragData, "f");
         };
+        this.getParent = () => {
+            return __classPrivateFieldGet(this, _CanvasObject_parent, "f");
+        };
+        this.setParent = (nameOrId) => {
+            let parent = null;
+            if (typeof nameOrId === "string") {
+                parent = __classPrivateFieldGet(this, _CanvasObject_canvasX, "f").getObjectWithName(nameOrId);
+            }
+            else if (typeof nameOrId === "number") {
+                parent = __classPrivateFieldGet(this, _CanvasObject_canvasX, "f").getObjectWithId(nameOrId);
+            }
+            __classPrivateFieldSet(this, _CanvasObject_parent, parent, "f");
+        };
         this.destroy = () => {
             __classPrivateFieldGet(this, _CanvasObject_onDestroy, "f").call(this, this);
             __classPrivateFieldGet(this, _CanvasObject_destroyById, "f").call(this, __classPrivateFieldGet(this, _CanvasObject_id, "f"));
@@ -252,6 +266,6 @@ class CanvasObject extends VariableClass {
         onCreate(this);
     }
 }
-_CanvasObject_id = new WeakMap(), _CanvasObject_position = new WeakMap(), _CanvasObject_dimensions = new WeakMap(), _CanvasObject_spriteData = new WeakMap(), _CanvasObject_canvasX = new WeakMap(), _CanvasObject_name = new WeakMap(), _CanvasObject_draggable = new WeakMap(), _CanvasObject_dragData = new WeakMap(), _CanvasObject_onUpdate = new WeakMap(), _CanvasObject_onDestroy = new WeakMap(), _CanvasObject_destroyById = new WeakMap(), _CanvasObject_backgroundColor = new WeakMap(), _CanvasObject_opacity = new WeakMap(), _CanvasObject_onHoverTrue = new WeakMap(), _CanvasObject_onHoverEndTrue = new WeakMap(), _CanvasObject_onHover = new WeakMap(), _CanvasObject_onHoverEnd = new WeakMap(), _CanvasObject_onClick = new WeakMap(), _CanvasObject_rotation = new WeakMap(), _CanvasObject_moveToPosition = new WeakMap(), _CanvasObject_onWheelScroll = new WeakMap(), _CanvasObject_setDimensionsData = new WeakMap();
+_CanvasObject_id = new WeakMap(), _CanvasObject_position = new WeakMap(), _CanvasObject_parent = new WeakMap(), _CanvasObject_dimensions = new WeakMap(), _CanvasObject_spriteData = new WeakMap(), _CanvasObject_canvasX = new WeakMap(), _CanvasObject_name = new WeakMap(), _CanvasObject_draggable = new WeakMap(), _CanvasObject_dragData = new WeakMap(), _CanvasObject_onUpdate = new WeakMap(), _CanvasObject_onDestroy = new WeakMap(), _CanvasObject_destroyById = new WeakMap(), _CanvasObject_backgroundColor = new WeakMap(), _CanvasObject_opacity = new WeakMap(), _CanvasObject_onHoverTrue = new WeakMap(), _CanvasObject_onHoverEndTrue = new WeakMap(), _CanvasObject_onHover = new WeakMap(), _CanvasObject_onHoverEnd = new WeakMap(), _CanvasObject_onClick = new WeakMap(), _CanvasObject_rotation = new WeakMap(), _CanvasObject_moveToPosition = new WeakMap(), _CanvasObject_onWheelScroll = new WeakMap(), _CanvasObject_setDimensionsData = new WeakMap();
 export default CanvasObject;
 //# sourceMappingURL=CanvasObject.js.map

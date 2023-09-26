@@ -173,6 +173,12 @@ export default class CanvasX extends VariableClass {
       const position = canvasObject.getPosition();
       const dimensions = canvasObject.getDimensions();
       const rotation = canvasObject.getRotation();
+      const parent = canvasObject.getParent();
+      if (parent) {
+        const parentPosition = parent.getPosition();
+        position.x += parentPosition.x;
+        position.y += parentPosition.y;
+      }
 
       dimensions.width *= cameraZoomLevel;
       dimensions.height *= cameraZoomLevel;
@@ -309,13 +315,13 @@ export default class CanvasX extends VariableClass {
     document.body.style.cursor = cursorType;
   };
 
-  getObjectWithId = (id: number): CanvasObject | null => {
+  getObjectWithId = (id: number): CanvasObject | CanvasCamera | null => {
     return this.canvasObjects.find((canvasObject) => {
       return canvasObject.getId() === id;
     });
   };
 
-  getObjectWithName = (name: string): CanvasObject | null => {
+  getObjectWithName = (name: string): CanvasObject | CanvasCamera | null => {
     return this.canvasObjects.find((canvasObject) => {
       return canvasObject.getName() === name;
     });
