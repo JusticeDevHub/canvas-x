@@ -110,6 +110,19 @@ export default class CanvasX extends VariableClass {
       });
 
       document.addEventListener("wheel", (e) => {
+        if (this.canvasCamera.getZoomByScroll()) {
+          let zoomLevel = this.canvasCamera.getZoomLevel();
+          const zoomSpeed = this.canvasCamera.getZoomSpeed();
+
+          if (e.deltaY < 0) {
+            zoomLevel *= 1.25 * zoomSpeed;
+            this.canvasCamera.setZoomLevel(zoomLevel);
+          } else {
+            zoomLevel /= 1.25 * zoomSpeed;
+            this.canvasCamera.setZoomLevel(zoomLevel);
+          }
+        }
+
         this.#wheelScroll = {
           x: Math.abs(e.deltaX) < 10 ? 0 : e.deltaX,
           y: Math.abs(e.deltaY) < 10 ? 0 : e.deltaY,
@@ -253,7 +266,6 @@ export default class CanvasX extends VariableClass {
     objs.forEach((canvasObject) => {
       const update = canvasObject.getOnUpdate();
       update(canvasObject);
-
       moveToPositionHandling(canvasObject);
       onWheelScroll(canvasObject, { ...this.#wheelScroll });
       onHover(canvasObject, { ...this.#mousePosition });

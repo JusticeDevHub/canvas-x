@@ -3,6 +3,8 @@ import CanvasX from "./CanvasX.js";
 
 export default class CanvasCamera extends CanvasObject {
   #zoomLevel: number = 1;
+  #zoomByScroll: boolean = false;
+  #zoomSpeed: number = 1;
 
   constructor(
     id: number,
@@ -28,5 +30,22 @@ export default class CanvasCamera extends CanvasObject {
 
   setZoomLevel = (zoomLevel: number): void => {
     this.#zoomLevel = zoomLevel > 0 ? zoomLevel : 0.001;
+  };
+
+  getZoomSpeed = (): number => {
+    return this.#zoomSpeed;
+  };
+
+  setZoomSpeed = (zoomSpeed: number): void => {
+    this.#zoomSpeed = zoomSpeed;
+  };
+
+  getZoomByScroll = () => {
+    return this.#zoomByScroll;
+  };
+
+  setZoomByScroll = (value: boolean, zoomSpeed: number = 1) => {
+    this.#zoomByScroll = value;
+    this.#zoomSpeed = zoomSpeed;
   };
 }
