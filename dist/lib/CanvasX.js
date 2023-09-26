@@ -17,7 +17,8 @@ import Log from "./log.js";
 import onHover from "./utils/onHover.js";
 import onWheelScroll from "./utils/onWheelScroll.js";
 import moveToPositionHandling from "./utils/moveToPositionHandling.js";
-export default class CanvasX extends VariableClass {
+import isDraggedHandling from "./utils/isDraggedHandling.js";
+class CanvasX extends VariableClass {
     constructor() {
         super(...arguments);
         _CanvasX_width.set(this, 0);
@@ -103,15 +104,17 @@ export default class CanvasX extends VariableClass {
                     if (this.canvasCamera.getZoomByScroll()) {
                         let zoomLevel = this.canvasCamera.getZoomLevel();
                         const zoomSpeed = this.canvasCamera.getZoomSpeed();
+                        const bassScrollSpeedPoint = 50;
+                        const scrollDelta = 1 + 0.02 * zoomSpeed * (Math.abs(e.deltaY) / bassScrollSpeedPoint);
                         if (e.deltaY < 0) {
-                            zoomLevel *= 1.25 * zoomSpeed;
-                            this.canvasCamera.setZoomLevel(zoomLevel);
+                            zoomLevel *= scrollDelta;
                         }
                         else {
-                            zoomLevel /= 1.25 * zoomSpeed;
-                            this.canvasCamera.setZoomLevel(zoomLevel);
+                            zoomLevel /= scrollDelta;
                         }
+                        this.canvasCamera.setZoomLevel(zoomLevel);
                     }
+                    // TODO: Seems not needed
                     __classPrivateFieldSet(this, _CanvasX_wheelScroll, {
                         x: Math.abs(e.deltaX) < 10 ? 0 : e.deltaX,
                         y: Math.abs(e.deltaY) < 10 ? 0 : e.deltaY,
@@ -218,10 +221,7 @@ export default class CanvasX extends VariableClass {
                 moveToPositionHandling(canvasObject);
                 onWheelScroll(canvasObject, { ...__classPrivateFieldGet(this, _CanvasX_wheelScroll, "f") });
                 onHover(canvasObject, { ...__classPrivateFieldGet(this, _CanvasX_mousePosition, "f") });
-                const dragData = canvasObject.getDragData();
-                if (dragData.isDragged) {
-                    canvasObject.setPosition(__classPrivateFieldGet(this, _CanvasX_mousePosition, "f").x - dragData.dragPositionOffset.x, __classPrivateFieldGet(this, _CanvasX_mousePosition, "f").y - dragData.dragPositionOffset.y, canvasObject.getPosition().z);
-                }
+                isDraggedHandling(canvasObject, { ...__classPrivateFieldGet(this, _CanvasX_mousePosition, "f") });
             });
         });
         this.setCanvasSize = (width, height) => {
@@ -286,4 +286,5 @@ export default class CanvasX extends VariableClass {
     }
 }
 _CanvasX_width = new WeakMap(), _CanvasX_height = new WeakMap(), _CanvasX_ctx = new WeakMap(), _CanvasX_objectsCreated = new WeakMap(), _CanvasX_mousePosition = new WeakMap(), _CanvasX_onUpdate = new WeakMap(), _CanvasX_wheelScroll = new WeakMap(), _CanvasX_loopId = new WeakMap(), _CanvasX_globalValues = new WeakMap(), _CanvasX_canvasUpdate = new WeakMap(), _CanvasX_drawCanvas = new WeakMap(), _CanvasX_logic = new WeakMap(), _CanvasX_destroyObjectById = new WeakMap();
+export default CanvasX;
 //# sourceMappingURL=CanvasX.js.map

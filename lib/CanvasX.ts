@@ -6,6 +6,7 @@ import { coordinationType } from "./types.js";
 import onHover from "./utils/onHover.js";
 import onWheelScroll from "./utils/onWheelScroll.js";
 import moveToPositionHandling from "./utils/moveToPositionHandling.js";
+import isDraggedHandling from "./utils/isDraggedHandling.js";
 
 export default class CanvasX extends VariableClass {
   #width = 0;
@@ -113,16 +114,19 @@ export default class CanvasX extends VariableClass {
         if (this.canvasCamera.getZoomByScroll()) {
           let zoomLevel = this.canvasCamera.getZoomLevel();
           const zoomSpeed = this.canvasCamera.getZoomSpeed();
+          const bassScrollSpeedPoint = 50;
+          const scrollDelta =
+            1 + 0.02 * zoomSpeed * (Math.abs(e.deltaY) / bassScrollSpeedPoint);
 
           if (e.deltaY < 0) {
-            zoomLevel *= 1.25 * zoomSpeed;
-            this.canvasCamera.setZoomLevel(zoomLevel);
+            zoomLevel *= scrollDelta;
           } else {
-            zoomLevel /= 1.25 * zoomSpeed;
-            this.canvasCamera.setZoomLevel(zoomLevel);
+            zoomLevel /= scrollDelta;
           }
+          this.canvasCamera.setZoomLevel(zoomLevel);
         }
 
+        // TODO: Seems not needed
         this.#wheelScroll = {
           x: Math.abs(e.deltaX) < 10 ? 0 : e.deltaX,
           y: Math.abs(e.deltaY) < 10 ? 0 : e.deltaY,
@@ -269,15 +273,7 @@ export default class CanvasX extends VariableClass {
       moveToPositionHandling(canvasObject);
       onWheelScroll(canvasObject, { ...this.#wheelScroll });
       onHover(canvasObject, { ...this.#mousePosition });
-
-      const dragData = canvasObject.getDragData();
-      if (dragData.isDragged) {
-        canvasObject.setPosition(
-          this.#mousePosition.x - dragData.dragPositionOffset.x,
-          this.#mousePosition.y - dragData.dragPositionOffset.y,
-          canvasObject.getPosition().z
-        );
-      }
+      isDraggedHandling(canvasObject, { ...this.#mousePosition });
     });
   };
 
