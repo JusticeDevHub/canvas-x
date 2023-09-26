@@ -9,13 +9,15 @@ const moveToPositionHandling = (canvasObject) => {
         const xDiff = x - position.x;
         const yDiff = y - position.y;
         const distance = Math.sqrt(xDiff * xDiff + yDiff * yDiff);
+        if (distance <= 0) {
+            return;
+        }
         const xSpeed = (speed * xDiff) / distance;
         const ySpeed = (speed * yDiff) / distance;
         const xSpeedAbs = Math.abs(xSpeed);
         const ySpeedAbs = Math.abs(ySpeed);
         if (method === "linear") {
             if (xSpeedAbs >= Math.abs(xDiff)) {
-                moveToPositionHandling;
                 position.x = x;
             }
             else {
