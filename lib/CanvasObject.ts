@@ -37,6 +37,7 @@ class CanvasObject extends VariableClass {
   #destroyById: (id: number) => void;
   #backgroundColor: string | null = null;
   #opacity = 1;
+  #visible: boolean = true;
   #onHoverTrue = false;
   #onHoverEndTrue = false;
   #onHover: Function | null = null;
@@ -342,8 +343,16 @@ class CanvasObject extends VariableClass {
     return this.#parent;
   };
 
+  getVisible = () => {
+    return this.#visible;
+  };
+
+  setVisible = (visible: boolean) => {
+    this.#visible = visible;
+  };
+
   setParent = (nameOrId: string | number) => {
-    let parent = null;
+    let parent: CanvasObject | CanvasCamera | null = null;
     if (typeof nameOrId === "string") {
       parent = this.#canvasX.getObjectWithName(nameOrId);
     } else if (typeof nameOrId === "number") {

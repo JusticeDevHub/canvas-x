@@ -212,7 +212,9 @@ export default class CanvasX extends VariableClass {
     const canvasObjectsDrawOrder: CanvasObject[] = [];
     this.canvasObjects.forEach((canvasObject) => {
       const obj: any = { ...canvasObject };
-      canvasObjectsDrawOrder.push(obj);
+      if (canvasObject.getVisible()) {
+        canvasObjectsDrawOrder.push(obj);
+      }
     });
     canvasObjectsDrawOrder.sort((a, b) => {
       return a.getPosition().z - b.getPosition().z;
