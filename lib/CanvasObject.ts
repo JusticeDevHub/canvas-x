@@ -23,9 +23,14 @@ class CanvasObject extends VariableClass {
   #canvasX: CanvasX;
   #name: string;
   #draggable: boolean = false;
-  #dragData: { dragPositionOffset: coordinationType; isDragged: boolean } = {
+  #dragData: {
+    dragPositionOffset: coordinationType;
+    isDragged: boolean;
+    smoothness: number; // TODO: Not yet developed
+  } = {
     dragPositionOffset: { x: 0, y: 0 },
     isDragged: false,
+    smoothness: 0,
   };
   #onUpdate: Function;
   #onDestroy: Function;
@@ -316,8 +321,9 @@ class CanvasObject extends VariableClass {
     return this.#draggable;
   };
 
-  setDraggable = (draggable: boolean) => {
+  setDraggable = (draggable: boolean, smoothness: number = 0) => {
     this.#draggable = draggable;
+    this.#dragData.smoothness = smoothness;
   };
 
   getDragData = () => {
@@ -327,6 +333,7 @@ class CanvasObject extends VariableClass {
   setDragData = (dragData: {
     dragPositionOffset: coordinationType;
     isDragged: boolean;
+    smoothness: number;
   }) => {
     this.#dragData = dragData;
   };

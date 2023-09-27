@@ -62,12 +62,14 @@ export default class CanvasX extends VariableClass {
             // Handle drag
             const draggable = canvasObject.getDraggable();
             if (draggable) {
+              const dragData = canvasObject.getDragData();
               canvasObject.setDragData({
                 dragPositionOffset: {
                   x: this.#mousePosition.x - canvasObject.getPosition().x,
                   y: this.#mousePosition.y - canvasObject.getPosition().y,
                 },
                 isDragged: true,
+                smoothness: dragData.smoothness,
               });
             }
           }
@@ -94,6 +96,7 @@ export default class CanvasX extends VariableClass {
                 y: 0,
               },
               isDragged: false,
+              smoothness: dragData.smoothness,
             });
           }
         });

@@ -30,6 +30,7 @@ class CanvasObject extends VariableClass {
         _CanvasObject_dragData.set(this, {
             dragPositionOffset: { x: 0, y: 0 },
             isDragged: false,
+            smoothness: 0,
         });
         _CanvasObject_onUpdate.set(this, void 0);
         _CanvasObject_onDestroy.set(this, void 0);
@@ -231,8 +232,9 @@ class CanvasObject extends VariableClass {
         this.getDraggable = () => {
             return __classPrivateFieldGet(this, _CanvasObject_draggable, "f");
         };
-        this.setDraggable = (draggable) => {
+        this.setDraggable = (draggable, smoothness = 0) => {
             __classPrivateFieldSet(this, _CanvasObject_draggable, draggable, "f");
+            __classPrivateFieldGet(this, _CanvasObject_dragData, "f").smoothness = smoothness;
         };
         this.getDragData = () => {
             return __classPrivateFieldGet(this, _CanvasObject_dragData, "f");
