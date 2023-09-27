@@ -2,6 +2,12 @@ const onHover = (canvasObject, mousePosition) => {
     const objPosition = canvasObject.getPosition();
     const objDimensions = canvasObject.getDimensions();
     const onHoverTrue = canvasObject.getOnHoverTrue();
+    const parent = canvasObject.getParent();
+    if (parent) {
+        const parentPosition = parent.getPosition();
+        objPosition.x += parentPosition.x;
+        objPosition.y += parentPosition.y;
+    }
     let inCollisionWithMouse = false;
     if (Math.abs(objPosition.x - mousePosition.x) < objDimensions.width / 2 &&
         Math.abs(objPosition.y - mousePosition.y) < objDimensions.height / 2) {
