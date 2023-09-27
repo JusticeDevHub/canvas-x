@@ -42,7 +42,7 @@ export default class CanvasX extends VariableClass {
         this.#canvasUpdate();
       }, 1000 / 60);
 
-      document.addEventListener("mousedown", (e) => {
+      const mouseOrClickDown = (e: MouseEvent | TouchEvent) => {
         e.preventDefault();
         this.canvasObjects.forEach((canvasObject) => {
           // Handle Global Left Click
@@ -72,9 +72,17 @@ export default class CanvasX extends VariableClass {
             }
           }
         });
+      };
+
+      document.addEventListener("mousedown", (e) => {
+        mouseOrClickDown(e);
       });
 
-      document.addEventListener("mouseup", (e) => {
+      document.addEventListener("touchstart", (e) => {
+        mouseOrClickDown(e);
+      });
+
+      const mouseOrClickUp = (e: MouseEvent | TouchEvent) => {
         e.preventDefault();
         this.canvasObjects.forEach((canvasObject) => {
           // Handle drag
@@ -89,6 +97,14 @@ export default class CanvasX extends VariableClass {
             });
           }
         });
+      };
+
+      document.addEventListener("mouseup", (e) => {
+        mouseOrClickUp(e);
+      });
+
+      document.addEventListener("touchend", (e) => {
+        mouseOrClickUp(e);
       });
 
       document.addEventListener("contextmenu", (e) => {
@@ -109,6 +125,32 @@ export default class CanvasX extends VariableClass {
           }
         });
       });
+
+      const mouseOrClickMove = (
+        e: MouseEvent | TouchEvent,
+        clientX: number,
+        clientY: number
+      ) => {
+        e.preventDefault();
+        this.#mousePosition = {
+          x: clientX - this.#width / 2,
+          y: clientY - this.#height / 2,
+        };
+        const cameraZoomLevel = this.canvasCamera.getZoomLevel();
+        const cameraPosition = this.canvasCamera.getPosition();
+        this.#mousePosition.x += cameraPosition.x * cameraZoomLevel;
+        this.#mousePosition.y += cameraPosition.y * cameraZoomLevel;
+        this.#mousePosition.x /= cameraZoomLevel;
+        this.#mousePosition.y /= cameraZoomLevel;
+      };
+
+      document.onmousemove = (e) => {
+        mouseOrClickMove(e, e.clientX, e.clientY);
+      };
+
+      document.ontouchmove = (e) => {
+        mouseOrClickMove(e, e.touches[0].clientX, e.touches[0].clientY);
+      };
 
       document.addEventListener("wheel", (e) => {
         if (this.canvasCamera.getZoomByScroll()) {
@@ -133,19 +175,6 @@ export default class CanvasX extends VariableClass {
         };
       });
 
-      document.onmousemove = (e) => {
-        this.#mousePosition = {
-          x: e.clientX - this.#width / 2,
-          y: e.clientY - this.#height / 2,
-        };
-        const cameraZoomLevel = this.canvasCamera.getZoomLevel();
-        const cameraPosition = this.canvasCamera.getPosition();
-        this.#mousePosition.x += cameraPosition.x * cameraZoomLevel;
-        this.#mousePosition.y += cameraPosition.y * cameraZoomLevel;
-        this.#mousePosition.x /= cameraZoomLevel;
-        this.#mousePosition.y /= cameraZoomLevel;
-      };
-
       onCreate(this);
       this.#onUpdate = onUpdate;
       return this;
@@ -155,19 +184,23 @@ export default class CanvasX extends VariableClass {
     }
   };
 
-  useRequestAnimationFrame = (window: Window) => {
-    clearInterval(this.#loopId);
-
-    const loop = () => {
-      this.#canvasUpdate();
-      window.requestAnimationFrame(loop);
-    };
-    loop();
-  };
-
   #canvasUpdate = () => {
     this.#logic();
     this.#drawCanvas();
+  };
+
+  #logic = () => {
+    this.#onUpdate(this);
+
+    const objs = [...this.canvasObjects, this.canvasCamera];
+    objs.forEach((canvasObject) => {
+      const update = canvasObject.getOnUpdate();
+      update(canvasObject);
+      moveToPositionHandling(canvasObject);
+      onWheelScroll(canvasObject, { ...this.#wheelScroll });
+      onHover(canvasObject, { ...this.#mousePosition });
+      isDraggedHandling(canvasObject, { ...this.#mousePosition });
+    });
   };
 
   #drawCanvas = () => {
@@ -263,18 +296,14 @@ export default class CanvasX extends VariableClass {
     });
   };
 
-  #logic = () => {
-    this.#onUpdate(this);
+  useRequestAnimationFrame = (window: Window) => {
+    clearInterval(this.#loopId);
 
-    const objs = [...this.canvasObjects, this.canvasCamera];
-    objs.forEach((canvasObject) => {
-      const update = canvasObject.getOnUpdate();
-      update(canvasObject);
-      moveToPositionHandling(canvasObject);
-      onWheelScroll(canvasObject, { ...this.#wheelScroll });
-      onHover(canvasObject, { ...this.#mousePosition });
-      isDraggedHandling(canvasObject, { ...this.#mousePosition });
-    });
+    const loop = () => {
+      this.#canvasUpdate();
+      window.requestAnimationFrame(loop);
+    };
+    loop();
   };
 
   setCanvasSize = (width: number, height: number) => {
