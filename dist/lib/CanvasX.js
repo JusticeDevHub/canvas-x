@@ -29,7 +29,7 @@ export default class CanvasX extends VariableClass {
         _CanvasX_ctx.set(this, null);
         _CanvasX_objectsCreated.set(this, 0);
         _CanvasX_mousePosition.set(this, { x: 0, y: 0 });
-        _CanvasX_onUpdate.set(this, void 0);
+        _CanvasX_onUpdate.set(this, (_this) => { });
         _CanvasX_wheelScroll.set(this, { x: 0, y: 0 });
         _CanvasX_loopId.set(this, null);
         _CanvasX_globalValues.set(this, new VariableClass());

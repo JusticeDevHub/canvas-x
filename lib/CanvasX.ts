@@ -23,7 +23,7 @@ export default class CanvasX extends VariableClass {
   #ctx: CanvasRenderingContext2D | null = null;
   #objectsCreated = 0;
   #mousePosition: coordinationType = { x: 0, y: 0 };
-  #onUpdate: Function;
+  #onUpdate: (_this: CanvasX) => void = (_this: CanvasX) => {};
   #wheelScroll: coordinationType = { x: 0, y: 0 };
   #loopId: number | null = null;
   #globalValues: VariableClass = new VariableClass();
