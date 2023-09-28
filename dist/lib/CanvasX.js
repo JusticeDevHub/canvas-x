@@ -21,8 +21,8 @@ import isDraggedHandling from "./utils/isDraggedHandling.js";
 export default class CanvasX extends VariableClass {
     constructor() {
         super(...arguments);
-        _CanvasX_width.set(this, 0);
-        _CanvasX_height.set(this, 0);
+        _CanvasX_width.set(this, "auto");
+        _CanvasX_height.set(this, "auto");
         this.canvasCamera = new CanvasCamera(-1, "", () => { }, () => { }, this);
         this.canvasObjects = [];
         this.canvas = null;
@@ -117,9 +117,11 @@ export default class CanvasX extends VariableClass {
                 });
                 const mouseOrClickMove = (e, clientX, clientY) => {
                     e.preventDefault();
+                    const canvasSize = this.getCanvasSize();
+                    const canvasPosition = this.canvas.getBoundingClientRect();
                     __classPrivateFieldSet(this, _CanvasX_mousePosition, {
-                        x: clientX - __classPrivateFieldGet(this, _CanvasX_width, "f") / 2,
-                        y: clientY - __classPrivateFieldGet(this, _CanvasX_height, "f") / 2,
+                        x: clientX - canvasSize.width / 2 - canvasPosition.left,
+                        y: clientY - canvasSize.height / 2 - canvasPosition.top,
                     }, "f");
                     const cameraZoomLevel = this.canvasCamera.getZoomLevel();
                     const cameraPosition = this.canvasCamera.getPosition();
@@ -127,6 +129,7 @@ export default class CanvasX extends VariableClass {
                     __classPrivateFieldGet(this, _CanvasX_mousePosition, "f").y += cameraPosition.y * cameraZoomLevel;
                     __classPrivateFieldGet(this, _CanvasX_mousePosition, "f").x /= cameraZoomLevel;
                     __classPrivateFieldGet(this, _CanvasX_mousePosition, "f").y /= cameraZoomLevel;
+                    console.log(__classPrivateFieldGet(this, _CanvasX_mousePosition, "f"), canvasId);
                 };
                 document.onmousemove = (e) => {
                     mouseOrClickMove(e, e.clientX, e.clientY);
@@ -180,7 +183,8 @@ export default class CanvasX extends VariableClass {
             });
         });
         _CanvasX_drawCanvas.set(this, () => {
-            __classPrivateFieldGet(this, _CanvasX_ctx, "f").clearRect(0, 0, __classPrivateFieldGet(this, _CanvasX_width, "f"), __classPrivateFieldGet(this, _CanvasX_height, "f"));
+            const canvasSize = this.getCanvasSize();
+            __classPrivateFieldGet(this, _CanvasX_ctx, "f").clearRect(0, 0, canvasSize.width, canvasSize.height);
             const canvasObjectsDrawOrder = [];
             this.canvasObjects.forEach((canvasObject) => {
                 const obj = { ...canvasObject };
@@ -213,8 +217,8 @@ export default class CanvasX extends VariableClass {
                 position.y *= cameraZoomLevel;
                 position.x -= dimensions.width / 2;
                 position.y -= dimensions.height / 2;
-                position.x += __classPrivateFieldGet(this, _CanvasX_width, "f") / 2;
-                position.y += __classPrivateFieldGet(this, _CanvasX_height, "f") / 2;
+                position.x += canvasSize.width / 2;
+                position.y += canvasSize.height / 2;
                 if (backgroundColor) {
                     __classPrivateFieldGet(this, _CanvasX_ctx, "f").globalAlpha = canvasObject.getOpacity();
                     __classPrivateFieldGet(this, _CanvasX_ctx, "f").fillStyle = backgroundColor;
@@ -262,10 +266,13 @@ export default class CanvasX extends VariableClass {
             }
         };
         this.getCanvasSize = () => {
-            return {
-                width: __classPrivateFieldGet(this, _CanvasX_width, "f"),
-                height: __classPrivateFieldGet(this, _CanvasX_height, "f"),
+            const canvasSize = {
+                width: typeof __classPrivateFieldGet(this, _CanvasX_width, "f") === "number" ? __classPrivateFieldGet(this, _CanvasX_width, "f") : this.canvas.clientWidth,
+                height: typeof __classPrivateFieldGet(this, _CanvasX_height, "f") === "number"
+                    ? __classPrivateFieldGet(this, _CanvasX_height, "f")
+                    : this.canvas.clientHeight,
             };
+            return canvasSize;
         };
         this.getCamera = () => {
             return this.canvasCamera;

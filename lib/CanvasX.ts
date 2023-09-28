@@ -9,8 +9,8 @@ import moveToPositionHandling from "./utils/moveToPositionHandling.js";
 import isDraggedHandling from "./utils/isDraggedHandling.js";
 
 export default class CanvasX extends VariableClass {
-  #width = 0;
-  #height = 0;
+  #width: number | "auto" = "auto";
+  #height: number | "auto" = "auto";
   canvasCamera: CanvasCamera = new CanvasCamera(
     -1,
     "",
@@ -135,9 +135,11 @@ export default class CanvasX extends VariableClass {
         clientY: number
       ) => {
         e.preventDefault();
+        const canvasSize = this.getCanvasSize();
+        const canvasPosition = this.canvas.getBoundingClientRect();
         this.#mousePosition = {
-          x: clientX - this.#width / 2,
-          y: clientY - this.#height / 2,
+          x: clientX - canvasSize.width / 2 - canvasPosition.left,
+          y: clientY - canvasSize.height / 2 - canvasPosition.top,
         };
         const cameraZoomLevel = this.canvasCamera.getZoomLevel();
         const cameraPosition = this.canvasCamera.getPosition();
@@ -145,6 +147,8 @@ export default class CanvasX extends VariableClass {
         this.#mousePosition.y += cameraPosition.y * cameraZoomLevel;
         this.#mousePosition.x /= cameraZoomLevel;
         this.#mousePosition.y /= cameraZoomLevel;
+
+        console.log(this.#mousePosition, canvasId);
       };
 
       document.onmousemove = (e) => {
@@ -207,7 +211,8 @@ export default class CanvasX extends VariableClass {
   };
 
   #drawCanvas = () => {
-    this.#ctx.clearRect(0, 0, this.#width, this.#height);
+    const canvasSize = this.getCanvasSize();
+    this.#ctx.clearRect(0, 0, canvasSize.width, canvasSize.height);
 
     const canvasObjectsDrawOrder: CanvasObject[] = [];
     this.canvasObjects.forEach((canvasObject) => {
@@ -243,8 +248,8 @@ export default class CanvasX extends VariableClass {
       position.y *= cameraZoomLevel;
       position.x -= dimensions.width / 2;
       position.y -= dimensions.height / 2;
-      position.x += this.#width / 2;
-      position.y += this.#height / 2;
+      position.x += canvasSize.width / 2;
+      position.y += canvasSize.height / 2;
 
       if (backgroundColor) {
         this.#ctx.globalAlpha = canvasObject.getOpacity();
@@ -325,10 +330,15 @@ export default class CanvasX extends VariableClass {
   };
 
   getCanvasSize = () => {
-    return {
-      width: this.#width,
-      height: this.#height,
+    const canvasSize = {
+      width:
+        typeof this.#width === "number" ? this.#width : this.canvas.clientWidth,
+      height:
+        typeof this.#height === "number"
+          ? this.#height
+          : this.canvas.clientHeight,
     };
+    return canvasSize;
   };
 
   getCamera = (): CanvasCamera => {
