@@ -130,12 +130,12 @@ export default class CanvasX extends VariableClass {
                     __classPrivateFieldGet(this, _CanvasX_mousePosition, "f").x /= cameraZoomLevel;
                     __classPrivateFieldGet(this, _CanvasX_mousePosition, "f").y /= cameraZoomLevel;
                 };
-                document.onmousemove = (e) => {
+                document.addEventListener("mousemove", (e) => {
                     mouseOrClickMove(e, e.clientX, e.clientY);
-                };
-                document.ontouchmove = (e) => {
+                });
+                document.addEventListener("touchmove", (e) => {
                     mouseOrClickMove(e, e.touches[0].clientX, e.touches[0].clientY);
-                };
+                });
                 document.addEventListener("wheel", (e) => {
                     if (this.canvasCamera.getZoomByScroll()) {
                         let zoomLevel = this.canvasCamera.getZoomLevel();
