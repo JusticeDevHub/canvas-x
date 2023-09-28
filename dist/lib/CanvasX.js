@@ -129,7 +129,6 @@ export default class CanvasX extends VariableClass {
                     __classPrivateFieldGet(this, _CanvasX_mousePosition, "f").y += cameraPosition.y * cameraZoomLevel;
                     __classPrivateFieldGet(this, _CanvasX_mousePosition, "f").x /= cameraZoomLevel;
                     __classPrivateFieldGet(this, _CanvasX_mousePosition, "f").y /= cameraZoomLevel;
-                    console.log(__classPrivateFieldGet(this, _CanvasX_mousePosition, "f"), canvasId);
                 };
                 document.onmousemove = (e) => {
                     mouseOrClickMove(e, e.clientX, e.clientY);

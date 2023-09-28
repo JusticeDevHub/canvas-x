@@ -147,8 +147,6 @@ export default class CanvasX extends VariableClass {
         this.#mousePosition.y += cameraPosition.y * cameraZoomLevel;
         this.#mousePosition.x /= cameraZoomLevel;
         this.#mousePosition.y /= cameraZoomLevel;
-
-        console.log(this.#mousePosition, canvasId);
       };
 
       document.onmousemove = (e) => {
