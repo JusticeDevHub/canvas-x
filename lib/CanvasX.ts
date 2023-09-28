@@ -36,6 +36,7 @@ export default class CanvasX extends VariableClass {
     this.canvas =
       (document.getElementById(canvasId) as HTMLCanvasElement) || null;
     if (this.canvas) {
+      this.setCanvasSize("auto", "auto");
       this.#ctx = this.canvas.getContext("2d");
 
       this.#loopId = setInterval(() => {
@@ -314,16 +315,21 @@ export default class CanvasX extends VariableClass {
     loop();
   };
 
-  setCanvasSize = (width: number, height: number) => {
+  setCanvasSize = (width: number | "auto", height: number | "auto") => {
     if (this.canvas) {
-      this.#width = width;
-      this.#height = height;
-      this.canvas.width = width;
-      this.canvas.height = height;
+      let canvasWidth =
+        typeof width === "number" ? width : this.canvas.clientWidth;
+      let canvasHeight =
+        typeof height === "number" ? height : this.canvas.clientHeight;
+
+      this.#width = canvasWidth;
+      this.#height = canvasHeight;
+      this.canvas.width = canvasWidth;
+      this.canvas.height = canvasHeight;
       this.canvas.style.width = `${width}px`;
       this.canvas.style.height = `${height}px`;
     } else {
-      Log("Cannot set canvas width because no canvas found");
+      Log("Cannot set canvas size because no canvas found");
     }
   };
 

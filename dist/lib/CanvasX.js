@@ -37,6 +37,7 @@ export default class CanvasX extends VariableClass {
             this.canvas =
                 document.getElementById(canvasId) || null;
             if (this.canvas) {
+                this.setCanvasSize("auto", "auto");
                 __classPrivateFieldSet(this, _CanvasX_ctx, this.canvas.getContext("2d"), "f");
                 __classPrivateFieldSet(this, _CanvasX_loopId, setInterval(() => {
                     __classPrivateFieldGet(this, _CanvasX_canvasUpdate, "f").call(this);
@@ -253,15 +254,17 @@ export default class CanvasX extends VariableClass {
         };
         this.setCanvasSize = (width, height) => {
             if (this.canvas) {
-                __classPrivateFieldSet(this, _CanvasX_width, width, "f");
-                __classPrivateFieldSet(this, _CanvasX_height, height, "f");
-                this.canvas.width = width;
-                this.canvas.height = height;
+                let canvasWidth = typeof width === "number" ? width : this.canvas.clientWidth;
+                let canvasHeight = typeof height === "number" ? height : this.canvas.clientHeight;
+                __classPrivateFieldSet(this, _CanvasX_width, canvasWidth, "f");
+                __classPrivateFieldSet(this, _CanvasX_height, canvasHeight, "f");
+                this.canvas.width = canvasWidth;
+                this.canvas.height = canvasHeight;
                 this.canvas.style.width = `${width}px`;
                 this.canvas.style.height = `${height}px`;
             }
             else {
-                Log("Cannot set canvas width because no canvas found");
+                Log("Cannot set canvas size because no canvas found");
             }
         };
         this.getCanvasSize = () => {
