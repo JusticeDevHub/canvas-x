@@ -8,6 +8,7 @@ import onWheelScroll from "./utils/onWheelScroll.js";
 import moveToPositionHandling from "./utils/moveToPositionHandling.js";
 import isDraggedHandling from "./utils/isDraggedHandling.js";
 import drawSpriteCTX from "./utils/drawSpriteCTX.js";
+import updateCanvasMousePosition from "./utils/updateCanvasMousePosition.js";
 
 export default class CanvasX extends VariableClass {
   #width: number | "auto" = "auto";
@@ -45,7 +46,18 @@ export default class CanvasX extends VariableClass {
       }, 1000 / 60);
 
       const mouseOrClickDown = (e: MouseEvent | TouchEvent) => {
+        if (e instanceof MouseEvent) {
+          updateCanvasMousePosition(this, e.clientX, e.clientY);
+        } else if (e.touches && e.touches[0]) {
+          updateCanvasMousePosition(
+            this,
+            e.touches[0].clientX,
+            e.touches[0].clientY
+          );
+        }
+
         e.preventDefault();
+
         this.canvasObjects.forEach((canvasObject) => {
           // Handle Global Left Click
           const global_left_click =
@@ -78,14 +90,6 @@ export default class CanvasX extends VariableClass {
         });
       };
 
-      document.addEventListener("mousedown", (e) => {
-        mouseOrClickDown(e);
-      });
-
-      document.addEventListener("touchstart", (e) => {
-        mouseOrClickDown(e);
-      });
-
       const mouseOrClickUp = (e: MouseEvent | TouchEvent) => {
         e.preventDefault();
         this.canvasObjects.forEach((canvasObject) => {
@@ -103,6 +107,42 @@ export default class CanvasX extends VariableClass {
           }
         });
       };
+
+      const mouseOrClickMove = (
+        e: MouseEvent | TouchEvent,
+        clientX: number,
+        clientY: number
+      ) => {
+        if (this.canvas === null) {
+          return;
+        }
+
+        updateCanvasMousePosition(this, clientX, clientY);
+
+        e.preventDefault();
+      };
+
+      document.addEventListener("mousedown", (e) => {
+        mouseOrClickDown(e);
+      });
+
+      document.addEventListener("touchstart", (e) => {
+        mouseOrClickDown(e);
+      });
+
+      document.addEventListener("mousemove", (e: MouseEvent) => {
+        mouseOrClickMove(e, e.clientX, e.clientY);
+      });
+
+      document.addEventListener("touchmove", (e: TouchEvent) => {
+        setTimeout(() => {
+          if (e && e.touches && e.touches[0]) {
+            const clientX = e.touches[0].clientX;
+            const clientY = e.touches[0].clientY;
+            mouseOrClickMove(e, clientX, clientY);
+          }
+        }, 1);
+      });
 
       document.addEventListener("mouseup", (e) => {
         mouseOrClickUp(e);
@@ -129,42 +169,6 @@ export default class CanvasX extends VariableClass {
             }
           }
         });
-      });
-
-      const mouseOrClickMove = (
-        e: MouseEvent | TouchEvent,
-        clientX: number,
-        clientY: number
-      ) => {
-        if (this.canvas === null) {
-          return;
-        }
-
-        e.preventDefault();
-        const canvasSize = this.getCanvasSize();
-        const canvasPosition = this.canvas.getBoundingClientRect();
-        this.#mousePosition = {
-          x: clientX - canvasSize.width / 2 - canvasPosition.left,
-          y: clientY - canvasSize.height / 2 - canvasPosition.top,
-        };
-        const cameraZoomLevel = this.canvasCamera.getZoomLevel();
-        const cameraPosition = this.canvasCamera.getPosition();
-        this.#mousePosition.x += cameraPosition.x * cameraZoomLevel;
-        this.#mousePosition.y += cameraPosition.y * cameraZoomLevel;
-        this.#mousePosition.x /= cameraZoomLevel;
-        this.#mousePosition.y /= cameraZoomLevel;
-      };
-
-      document.addEventListener("mousemove", (e: MouseEvent) => {
-        mouseOrClickMove(e, e.clientX, e.clientY);
-      });
-
-      document.addEventListener("touchmove", (e: TouchEvent) => {
-        if (e && e.touches && e.touches[0]) {
-          const clientX = e.touches[0].clientX;
-          const clientY = e.touches[0].clientY;
-          mouseOrClickMove(e, clientX, clientY);
-        }
       });
 
       document.addEventListener("wheel", (e) => {
@@ -368,6 +372,11 @@ export default class CanvasX extends VariableClass {
 
   getCamera = (): CanvasCamera => {
     return this.canvasCamera;
+  };
+
+  // TODO: Hidden from user
+  setMousePosition = (x: number, y: number) => {
+    this.#mousePosition = { x, y };
   };
 
   getMousePosition = (): coordinationType => {

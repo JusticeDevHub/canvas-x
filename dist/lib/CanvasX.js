@@ -19,6 +19,7 @@ import onWheelScroll from "./utils/onWheelScroll.js";
 import moveToPositionHandling from "./utils/moveToPositionHandling.js";
 import isDraggedHandling from "./utils/isDraggedHandling.js";
 import drawSpriteCTX from "./utils/drawSpriteCTX.js";
+import updateCanvasMousePosition from "./utils/updateCanvasMousePosition.js";
 export default class CanvasX extends VariableClass {
     constructor() {
         super(...arguments);
@@ -44,6 +45,12 @@ export default class CanvasX extends VariableClass {
                     __classPrivateFieldGet(this, _CanvasX_canvasUpdate, "f").call(this);
                 }, 1000 / 60), "f");
                 const mouseOrClickDown = (e) => {
+                    if (e instanceof MouseEvent) {
+                        updateCanvasMousePosition(this, e.clientX, e.clientY);
+                    }
+                    else if (e.touches && e.touches[0]) {
+                        updateCanvasMousePosition(this, e.touches[0].clientX, e.touches[0].clientY);
+                    }
                     e.preventDefault();
                     this.canvasObjects.forEach((canvasObject) => {
                         // Handle Global Left Click
@@ -73,12 +80,6 @@ export default class CanvasX extends VariableClass {
                         }
                     });
                 };
-                document.addEventListener("mousedown", (e) => {
-                    mouseOrClickDown(e);
-                });
-                document.addEventListener("touchstart", (e) => {
-                    mouseOrClickDown(e);
-                });
                 const mouseOrClickUp = (e) => {
                     e.preventDefault();
                     this.canvasObjects.forEach((canvasObject) => {
@@ -96,6 +97,31 @@ export default class CanvasX extends VariableClass {
                         }
                     });
                 };
+                const mouseOrClickMove = (e, clientX, clientY) => {
+                    if (this.canvas === null) {
+                        return;
+                    }
+                    updateCanvasMousePosition(this, clientX, clientY);
+                    e.preventDefault();
+                };
+                document.addEventListener("mousedown", (e) => {
+                    mouseOrClickDown(e);
+                });
+                document.addEventListener("touchstart", (e) => {
+                    mouseOrClickDown(e);
+                });
+                document.addEventListener("mousemove", (e) => {
+                    mouseOrClickMove(e, e.clientX, e.clientY);
+                });
+                document.addEventListener("touchmove", (e) => {
+                    setTimeout(() => {
+                        if (e && e.touches && e.touches[0]) {
+                            const clientX = e.touches[0].clientX;
+                            const clientY = e.touches[0].clientY;
+                            mouseOrClickMove(e, clientX, clientY);
+                        }
+                    }, 1);
+                });
                 document.addEventListener("mouseup", (e) => {
                     mouseOrClickUp(e);
                 });
@@ -116,34 +142,6 @@ export default class CanvasX extends VariableClass {
                             }
                         }
                     });
-                });
-                const mouseOrClickMove = (e, clientX, clientY) => {
-                    if (this.canvas === null) {
-                        return;
-                    }
-                    e.preventDefault();
-                    const canvasSize = this.getCanvasSize();
-                    const canvasPosition = this.canvas.getBoundingClientRect();
-                    __classPrivateFieldSet(this, _CanvasX_mousePosition, {
-                        x: clientX - canvasSize.width / 2 - canvasPosition.left,
-                        y: clientY - canvasSize.height / 2 - canvasPosition.top,
-                    }, "f");
-                    const cameraZoomLevel = this.canvasCamera.getZoomLevel();
-                    const cameraPosition = this.canvasCamera.getPosition();
-                    __classPrivateFieldGet(this, _CanvasX_mousePosition, "f").x += cameraPosition.x * cameraZoomLevel;
-                    __classPrivateFieldGet(this, _CanvasX_mousePosition, "f").y += cameraPosition.y * cameraZoomLevel;
-                    __classPrivateFieldGet(this, _CanvasX_mousePosition, "f").x /= cameraZoomLevel;
-                    __classPrivateFieldGet(this, _CanvasX_mousePosition, "f").y /= cameraZoomLevel;
-                };
-                document.addEventListener("mousemove", (e) => {
-                    mouseOrClickMove(e, e.clientX, e.clientY);
-                });
-                document.addEventListener("touchmove", (e) => {
-                    if (e && e.touches && e.touches[0]) {
-                        const clientX = e.touches[0].clientX;
-                        const clientY = e.touches[0].clientY;
-                        mouseOrClickMove(e, clientX, clientY);
-                    }
                 });
                 document.addEventListener("wheel", (e) => {
                     if (this.canvasCamera.getZoomByScroll()) {
@@ -296,6 +294,10 @@ export default class CanvasX extends VariableClass {
         };
         this.getCamera = () => {
             return this.canvasCamera;
+        };
+        // TODO: Hidden from user
+        this.setMousePosition = (x, y) => {
+            __classPrivateFieldSet(this, _CanvasX_mousePosition, { x, y }, "f");
         };
         this.getMousePosition = () => {
             return __classPrivateFieldGet(this, _CanvasX_mousePosition, "f");
