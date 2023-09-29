@@ -31,6 +31,8 @@ class CanvasObject extends VariableClass {
             dragPositionOffset: { x: 0, y: 0 },
             isDragged: false,
             smoothness: 0,
+            objPosition: { x: 0, y: 0 },
+            targetPosition: { x: 0, y: 0 },
         });
         _CanvasObject_onUpdate.set(this, void 0);
         _CanvasObject_onDestroy.set(this, void 0);
@@ -57,6 +59,8 @@ class CanvasObject extends VariableClass {
             return { ...__classPrivateFieldGet(this, _CanvasObject_position, "f") };
         };
         this.setPosition = (x, y, z = 0) => {
+            x = Math.round(x);
+            y = Math.round(y);
             __classPrivateFieldSet(this, _CanvasObject_position, {
                 x,
                 y,
@@ -236,12 +240,14 @@ class CanvasObject extends VariableClass {
         this.setDraggable = (draggable, smoothness = 0) => {
             __classPrivateFieldSet(this, _CanvasObject_draggable, draggable, "f");
             __classPrivateFieldGet(this, _CanvasObject_dragData, "f").smoothness = smoothness;
+            __classPrivateFieldGet(this, _CanvasObject_dragData, "f").objPosition = this.getPosition();
+            __classPrivateFieldGet(this, _CanvasObject_dragData, "f").targetPosition = this.getPosition();
         };
         this.getDragData = () => {
             return __classPrivateFieldGet(this, _CanvasObject_dragData, "f");
         };
         this.setDragData = (dragData) => {
-            __classPrivateFieldSet(this, _CanvasObject_dragData, dragData, "f");
+            __classPrivateFieldSet(this, _CanvasObject_dragData, { ...__classPrivateFieldGet(this, _CanvasObject_dragData, "f"), ...dragData }, "f");
         };
         this.getParent = () => {
             return __classPrivateFieldGet(this, _CanvasObject_parent, "f");
