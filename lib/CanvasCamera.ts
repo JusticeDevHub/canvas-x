@@ -16,8 +16,12 @@ export default class CanvasCamera extends CanvasObject {
     super(
       id,
       name,
-      onCreate,
-      onUpdate,
+      (_this: CanvasObject) => {
+        onCreate(this);
+      },
+      (_this: CanvasObject) => {
+        onUpdate(this);
+      },
       () => {},
       () => {},
       canvasX

@@ -13,7 +13,11 @@ var _CanvasCamera_zoomLevel, _CanvasCamera_zoomByScroll, _CanvasCamera_zoomSpeed
 import CanvasObject from "./CanvasObject.js";
 export default class CanvasCamera extends CanvasObject {
     constructor(id, name, onCreate = (_this) => { }, onUpdate = (_this) => { }, canvasX) {
-        super(id, name, onCreate, onUpdate, () => { }, () => { }, canvasX);
+        super(id, name, (_this) => {
+            onCreate(this);
+        }, (_this) => {
+            onUpdate(this);
+        }, () => { }, () => { }, canvasX);
         _CanvasCamera_zoomLevel.set(this, 1);
         _CanvasCamera_zoomByScroll.set(this, false);
         _CanvasCamera_zoomSpeed.set(this, 1);
