@@ -126,8 +126,9 @@ class CanvasObject extends VariableClass {
                     width: 10,
                     height: 10,
                 };
-                if (this.getSpriteData().sprites !== null) {
-                    const sprite = this.getSpriteData().sprites[0];
+                const spriteData = this.getSpriteData();
+                if (spriteData.sprites !== null) {
+                    const sprite = spriteData.sprites[0];
                     if (sprite) {
                         spriteDimensions.width = sprite.naturalWidth;
                         spriteDimensions.height = sprite.naturalHeight;
