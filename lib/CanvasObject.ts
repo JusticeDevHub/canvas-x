@@ -45,10 +45,9 @@ class CanvasObject extends VariableClass {
   #onClick: { [clickType: string]: (_this: CanvasObject) => void } = {};
   #rotation: number = 0;
   #moveToPosition: moveToType = null;
-  #onWheelScroll: (
-    _this: CanvasObject | CanvasCamera,
-    scroll: coordinationType
-  ) => void | null = null;
+  #onWheelScroll:
+    | ((_this: CanvasObject | CanvasCamera, scroll: coordinationType) => void)
+    | null = null;
   #setDimensionsData: { width: number | "auto"; height: number | "auto" } = {
     width: "auto",
     height: "auto",
@@ -182,7 +181,6 @@ class CanvasObject extends VariableClass {
       };
       if (this.getSpriteData().sprites !== null) {
         const sprite: HTMLImageElement = this.getSpriteData().sprites[0];
-        //TODO: Check if this is needed
         if (sprite) {
           spriteDimensions.width = sprite.naturalWidth;
           spriteDimensions.height = sprite.naturalHeight;
