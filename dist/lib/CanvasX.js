@@ -313,16 +313,16 @@ export default class CanvasX extends VariableClass {
             document.body.style.cursor = cursorType;
         };
         this.getObjectWithId = (id) => {
-            this.canvasObjects.find((canvasObject) => {
+            const canvasObject = this.canvasObjects.find((canvasObject) => {
                 return canvasObject.getId() === id;
             });
-            return null;
+            return canvasObject || null;
         };
         this.getObjectWithName = (name) => {
-            this.canvasObjects.find((canvasObject) => {
+            const canvasObject = this.canvasObjects.find((canvasObject) => {
                 return canvasObject.getName() === name;
             });
-            return null;
+            return canvasObject || null;
         };
         this.createObject = (name = "", onCreate = (_this) => { }, onUpdate = (_this) => { }, onDestroy = (_this) => { }) => {
             var _a;

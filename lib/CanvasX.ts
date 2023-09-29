@@ -393,17 +393,17 @@ export default class CanvasX extends VariableClass {
   };
 
   getObjectWithId = (id: number): CanvasObject | CanvasCamera | null => {
-    this.canvasObjects.find((canvasObject) => {
+    const canvasObject = this.canvasObjects.find((canvasObject) => {
       return canvasObject.getId() === id;
     });
-    return null;
+    return canvasObject || null;
   };
 
   getObjectWithName = (name: string): CanvasObject | CanvasCamera | null => {
-    this.canvasObjects.find((canvasObject) => {
+    const canvasObject = this.canvasObjects.find((canvasObject) => {
       return canvasObject.getName() === name;
     });
-    return null;
+    return canvasObject || null;
   };
 
   createObject = (
