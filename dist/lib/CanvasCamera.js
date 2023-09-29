@@ -14,9 +14,9 @@ import CanvasObject from "./CanvasObject.js";
 export default class CanvasCamera extends CanvasObject {
     constructor(id, name, onCreate = (_this) => { }, onUpdate = (_this) => { }, canvasX) {
         super(id, name, (_this) => {
-            onCreate(this);
+            onCreate(_this);
         }, (_this) => {
-            onUpdate(this);
+            onUpdate(_this);
         }, () => { }, () => { }, canvasX);
         _CanvasCamera_zoomLevel.set(this, 1);
         _CanvasCamera_zoomByScroll.set(this, false);
