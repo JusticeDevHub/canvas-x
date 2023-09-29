@@ -18,6 +18,7 @@ import onHover from "./utils/onHover.js";
 import onWheelScroll from "./utils/onWheelScroll.js";
 import moveToPositionHandling from "./utils/moveToPositionHandling.js";
 import isDraggedHandling from "./utils/isDraggedHandling.js";
+import drawSpriteCTX from "./utils/drawSpriteCTX.js";
 export default class CanvasX extends VariableClass {
     constructor() {
         super(...arguments);
@@ -117,6 +118,9 @@ export default class CanvasX extends VariableClass {
                     });
                 });
                 const mouseOrClickMove = (e, clientX, clientY) => {
+                    if (this.canvas === null) {
+                        return;
+                    }
                     e.preventDefault();
                     const canvasSize = this.getCanvasSize();
                     const canvasPosition = this.canvas.getBoundingClientRect();
@@ -135,7 +139,11 @@ export default class CanvasX extends VariableClass {
                     mouseOrClickMove(e, e.clientX, e.clientY);
                 });
                 document.addEventListener("touchmove", (e) => {
-                    mouseOrClickMove(e, e.touches[0].clientX, e.touches[0].clientY);
+                    if (e && e.touches && e.touches[0]) {
+                        const clientX = e.touches[0].clientX;
+                        const clientY = e.touches[0].clientY;
+                        mouseOrClickMove(e, clientX, clientY);
+                    }
                 });
                 document.addEventListener("wheel", (e) => {
                     if (this.canvasCamera.getZoomByScroll()) {
@@ -183,6 +191,9 @@ export default class CanvasX extends VariableClass {
             });
         });
         _CanvasX_drawCanvas.set(this, () => {
+            if (this.canvas === null || __classPrivateFieldGet(this, _CanvasX_ctx, "f") === null) {
+                return;
+            }
             const canvasSize = this.getCanvasSize();
             __classPrivateFieldGet(this, _CanvasX_ctx, "f").clearRect(0, 0, canvasSize.width, canvasSize.height);
             const canvasObjectsDrawOrder = [];
@@ -219,26 +230,30 @@ export default class CanvasX extends VariableClass {
                 position.y -= dimensions.height / 2;
                 position.x += canvasSize.width / 2;
                 position.y += canvasSize.height / 2;
-                if (backgroundColor) {
+                if (backgroundColor && __classPrivateFieldGet(this, _CanvasX_ctx, "f") !== null) {
                     __classPrivateFieldGet(this, _CanvasX_ctx, "f").globalAlpha = canvasObject.getOpacity();
                     __classPrivateFieldGet(this, _CanvasX_ctx, "f").fillStyle = backgroundColor;
                     __classPrivateFieldGet(this, _CanvasX_ctx, "f").fillRect(position.x, position.y, dimensions.width, dimensions.height);
                 }
-                if (spriteData.sprites) {
+                if (spriteData.sprites && __classPrivateFieldGet(this, _CanvasX_ctx, "f") !== null) {
                     __classPrivateFieldGet(this, _CanvasX_ctx, "f").save();
                     __classPrivateFieldGet(this, _CanvasX_ctx, "f").globalAlpha = canvasObject.getOpacity();
                     __classPrivateFieldGet(this, _CanvasX_ctx, "f").translate(position.x + dimensions.width / 2, position.y + dimensions.height / 2);
                     __classPrivateFieldGet(this, _CanvasX_ctx, "f").rotate(rotation * (Math.PI / 180));
                     __classPrivateFieldGet(this, _CanvasX_ctx, "f").translate(-(position.x + dimensions.width / 2), -(position.y + dimensions.height / 2));
-                    if (spriteData.sprites.length === 1) {
-                        __classPrivateFieldGet(this, _CanvasX_ctx, "f").drawImage(spriteData.sprites[0], position.x, position.y, dimensions.width, dimensions.height);
+                    const sprites = spriteData.sprites;
+                    if (sprites && sprites[0] && sprites.length === 1) {
+                        drawSpriteCTX(__classPrivateFieldGet(this, _CanvasX_ctx, "f"), sprites[0], position.x, position.y, dimensions.width, dimensions.height);
                     }
-                    else if (spriteData.sprites.length > 1) {
+                    else if (sprites.length > 1) {
                         const timePassed = (new Date().getTime() -
                             canvasObject.getSpriteData().startTimeFrame) /
                             1000;
                         const animationFrame = Math.floor((timePassed * spriteData.animationSpeed) % spriteData.sprites.length);
-                        __classPrivateFieldGet(this, _CanvasX_ctx, "f").drawImage(spriteData.sprites[animationFrame], position.x, position.y, dimensions.width, dimensions.height);
+                        const sprite = sprites[animationFrame];
+                        if (sprite) {
+                            drawSpriteCTX(__classPrivateFieldGet(this, _CanvasX_ctx, "f"), sprite, position.x, position.y, dimensions.width, dimensions.height);
+                        }
                     }
                     __classPrivateFieldGet(this, _CanvasX_ctx, "f").restore();
                 }
@@ -268,6 +283,9 @@ export default class CanvasX extends VariableClass {
             }
         };
         this.getCanvasSize = () => {
+            if (this.canvas === null) {
+                return { width: 0, height: 0 };
+            }
             const canvasSize = {
                 width: typeof __classPrivateFieldGet(this, _CanvasX_width, "f") === "number" ? __classPrivateFieldGet(this, _CanvasX_width, "f") : this.canvas.clientWidth,
                 height: typeof __classPrivateFieldGet(this, _CanvasX_height, "f") === "number"
@@ -295,14 +313,16 @@ export default class CanvasX extends VariableClass {
             document.body.style.cursor = cursorType;
         };
         this.getObjectWithId = (id) => {
-            return this.canvasObjects.find((canvasObject) => {
+            this.canvasObjects.find((canvasObject) => {
                 return canvasObject.getId() === id;
             });
+            return null;
         };
         this.getObjectWithName = (name) => {
-            return this.canvasObjects.find((canvasObject) => {
+            this.canvasObjects.find((canvasObject) => {
                 return canvasObject.getName() === name;
             });
+            return null;
         };
         this.createObject = (name = "", onCreate = (_this) => { }, onUpdate = (_this) => { }, onDestroy = (_this) => { }) => {
             var _a;

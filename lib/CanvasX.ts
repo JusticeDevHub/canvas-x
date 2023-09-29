@@ -7,6 +7,7 @@ import onHover from "./utils/onHover.js";
 import onWheelScroll from "./utils/onWheelScroll.js";
 import moveToPositionHandling from "./utils/moveToPositionHandling.js";
 import isDraggedHandling from "./utils/isDraggedHandling.js";
+import drawSpriteCTX from "./utils/drawSpriteCTX.js";
 
 export default class CanvasX extends VariableClass {
   #width: number | "auto" = "auto";
@@ -25,7 +26,7 @@ export default class CanvasX extends VariableClass {
   #mousePosition: coordinationType = { x: 0, y: 0 };
   #onUpdate: (_this: CanvasX) => void = (_this: CanvasX) => {};
   #wheelScroll: coordinationType = { x: 0, y: 0 };
-  #loopId: number | null = null;
+  #loopId: any | null = null;
   #globalValues: VariableClass = new VariableClass();
 
   init = (
@@ -135,6 +136,10 @@ export default class CanvasX extends VariableClass {
         clientX: number,
         clientY: number
       ) => {
+        if (this.canvas === null) {
+          return;
+        }
+
         e.preventDefault();
         const canvasSize = this.getCanvasSize();
         const canvasPosition = this.canvas.getBoundingClientRect();
@@ -150,12 +155,16 @@ export default class CanvasX extends VariableClass {
         this.#mousePosition.y /= cameraZoomLevel;
       };
 
-      document.addEventListener("mousemove", (e) => {
+      document.addEventListener("mousemove", (e: MouseEvent) => {
         mouseOrClickMove(e, e.clientX, e.clientY);
       });
 
-      document.addEventListener("touchmove", (e) => {
-        mouseOrClickMove(e, e.touches[0].clientX, e.touches[0].clientY);
+      document.addEventListener("touchmove", (e: TouchEvent) => {
+        if (e && e.touches && e.touches[0]) {
+          const clientX = e.touches[0].clientX;
+          const clientY = e.touches[0].clientY;
+          mouseOrClickMove(e, clientX, clientY);
+        }
       });
 
       document.addEventListener("wheel", (e) => {
@@ -210,6 +219,10 @@ export default class CanvasX extends VariableClass {
   };
 
   #drawCanvas = () => {
+    if (this.canvas === null || this.#ctx === null) {
+      return;
+    }
+
     const canvasSize = this.getCanvasSize();
     this.#ctx.clearRect(0, 0, canvasSize.width, canvasSize.height);
 
@@ -250,7 +263,7 @@ export default class CanvasX extends VariableClass {
       position.x += canvasSize.width / 2;
       position.y += canvasSize.height / 2;
 
-      if (backgroundColor) {
+      if (backgroundColor && this.#ctx !== null) {
         this.#ctx.globalAlpha = canvasObject.getOpacity();
         this.#ctx.fillStyle = backgroundColor;
         this.#ctx.fillRect(
@@ -261,7 +274,7 @@ export default class CanvasX extends VariableClass {
         );
       }
 
-      if (spriteData.sprites) {
+      if (spriteData.sprites && this.#ctx !== null) {
         this.#ctx.save();
         this.#ctx.globalAlpha = canvasObject.getOpacity();
         this.#ctx.translate(
@@ -274,15 +287,17 @@ export default class CanvasX extends VariableClass {
           -(position.y + dimensions.height / 2)
         );
 
-        if (spriteData.sprites.length === 1) {
-          this.#ctx.drawImage(
-            spriteData.sprites[0],
+        const sprites: HTMLImageElement[] | undefined = spriteData.sprites;
+        if (sprites && sprites[0] && sprites.length === 1) {
+          drawSpriteCTX(
+            this.#ctx,
+            sprites[0],
             position.x,
             position.y,
             dimensions.width,
             dimensions.height
           );
-        } else if (spriteData.sprites.length > 1) {
+        } else if (sprites.length > 1) {
           const timePassed =
             (new Date().getTime() -
               canvasObject.getSpriteData().startTimeFrame) /
@@ -290,14 +305,17 @@ export default class CanvasX extends VariableClass {
           const animationFrame = Math.floor(
             (timePassed * spriteData.animationSpeed) % spriteData.sprites.length
           );
-
-          this.#ctx.drawImage(
-            spriteData.sprites[animationFrame],
-            position.x,
-            position.y,
-            dimensions.width,
-            dimensions.height
-          );
+          const sprite = sprites[animationFrame];
+          if (sprite) {
+            drawSpriteCTX(
+              this.#ctx,
+              sprite,
+              position.x,
+              position.y,
+              dimensions.width,
+              dimensions.height
+            );
+          }
         }
 
         this.#ctx.restore();
@@ -334,6 +352,9 @@ export default class CanvasX extends VariableClass {
   };
 
   getCanvasSize = () => {
+    if (this.canvas === null) {
+      return { width: 0, height: 0 };
+    }
     const canvasSize = {
       width:
         typeof this.#width === "number" ? this.#width : this.canvas.clientWidth,
@@ -372,15 +393,17 @@ export default class CanvasX extends VariableClass {
   };
 
   getObjectWithId = (id: number): CanvasObject | CanvasCamera | null => {
-    return this.canvasObjects.find((canvasObject) => {
+    this.canvasObjects.find((canvasObject) => {
       return canvasObject.getId() === id;
     });
+    return null;
   };
 
   getObjectWithName = (name: string): CanvasObject | CanvasCamera | null => {
-    return this.canvasObjects.find((canvasObject) => {
+    this.canvasObjects.find((canvasObject) => {
       return canvasObject.getName() === name;
     });
+    return null;
   };
 
   createObject = (
@@ -404,8 +427,12 @@ export default class CanvasX extends VariableClass {
 
   createCamera = (
     name: string = "",
-    onCreate: (_this: CanvasCamera) => void = (_this: CanvasCamera) => {},
-    onUpdate: (_this: CanvasCamera) => void = (_this: CanvasCamera) => {}
+    onCreate: (_this: CanvasCamera | CanvasObject) => void = (
+      _this: CanvasCamera | CanvasObject
+    ) => {},
+    onUpdate: (_this: CanvasCamera | CanvasObject) => void = (
+      _this: CanvasCamera | CanvasObject
+    ) => {}
   ) => {
     this.canvasCamera = new CanvasCamera(
       ++this.#objectsCreated,
