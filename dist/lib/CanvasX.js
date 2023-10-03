@@ -9,7 +9,7 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
 };
-var _CanvasX_width, _CanvasX_height, _CanvasX_ctx, _CanvasX_objectsCreated, _CanvasX_mousePosition, _CanvasX_onUpdate, _CanvasX_wheelScroll, _CanvasX_loopId, _CanvasX_globalValues, _CanvasX_canvasUpdate, _CanvasX_logic, _CanvasX_drawCanvas, _CanvasX_destroyObjectById;
+var _CanvasX_width, _CanvasX_height, _CanvasX_ctx, _CanvasX_objectsCreated, _CanvasX_mousePosition, _CanvasX_onUpdate, _CanvasX_wheelScroll, _CanvasX_loopId, _CanvasX_globalValues, _CanvasX_window, _CanvasX_canvasUpdate, _CanvasX_logic, _CanvasX_drawCanvas, _CanvasX_destroyObjectById;
 import CanvasCamera from "./CanvasCamera.js";
 import CanvasObject from "./CanvasObject.js";
 import VariableClass from "./VariableClass.js";
@@ -35,6 +35,7 @@ export default class CanvasX extends VariableClass {
         _CanvasX_wheelScroll.set(this, { x: 0, y: 0 });
         _CanvasX_loopId.set(this, null);
         _CanvasX_globalValues.set(this, new VariableClass());
+        _CanvasX_window.set(this, null);
         this.init = (canvasId, onCreate = (_this) => { }, onUpdate = (_this) => { }) => {
             this.canvas =
                 document.getElementById(canvasId) || null;
@@ -259,9 +260,10 @@ export default class CanvasX extends VariableClass {
         });
         this.useRequestAnimationFrame = (window) => {
             clearInterval(__classPrivateFieldGet(this, _CanvasX_loopId, "f"));
+            __classPrivateFieldSet(this, _CanvasX_window, window, "f");
             const loop = () => {
                 __classPrivateFieldGet(this, _CanvasX_canvasUpdate, "f").call(this);
-                window.requestAnimationFrame(loop);
+                __classPrivateFieldSet(this, _CanvasX_loopId, window.requestAnimationFrame(loop), "f");
             };
             loop();
         };
@@ -338,7 +340,15 @@ export default class CanvasX extends VariableClass {
             this.canvasObjects.push(this.canvasCamera);
             return this.canvasCamera;
         };
+        this.terminate = () => {
+            if (__classPrivateFieldGet(this, _CanvasX_window, "f") !== null) {
+                __classPrivateFieldGet(this, _CanvasX_window, "f").cancelAnimationFrame(__classPrivateFieldGet(this, _CanvasX_loopId, "f"));
+            }
+            else {
+                clearInterval(__classPrivateFieldGet(this, _CanvasX_loopId, "f"));
+            }
+        };
     }
 }
-_CanvasX_width = new WeakMap(), _CanvasX_height = new WeakMap(), _CanvasX_ctx = new WeakMap(), _CanvasX_objectsCreated = new WeakMap(), _CanvasX_mousePosition = new WeakMap(), _CanvasX_onUpdate = new WeakMap(), _CanvasX_wheelScroll = new WeakMap(), _CanvasX_loopId = new WeakMap(), _CanvasX_globalValues = new WeakMap(), _CanvasX_canvasUpdate = new WeakMap(), _CanvasX_logic = new WeakMap(), _CanvasX_drawCanvas = new WeakMap(), _CanvasX_destroyObjectById = new WeakMap();
+_CanvasX_width = new WeakMap(), _CanvasX_height = new WeakMap(), _CanvasX_ctx = new WeakMap(), _CanvasX_objectsCreated = new WeakMap(), _CanvasX_mousePosition = new WeakMap(), _CanvasX_onUpdate = new WeakMap(), _CanvasX_wheelScroll = new WeakMap(), _CanvasX_loopId = new WeakMap(), _CanvasX_globalValues = new WeakMap(), _CanvasX_window = new WeakMap(), _CanvasX_canvasUpdate = new WeakMap(), _CanvasX_logic = new WeakMap(), _CanvasX_drawCanvas = new WeakMap(), _CanvasX_destroyObjectById = new WeakMap();
 //# sourceMappingURL=CanvasX.js.map

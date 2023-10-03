@@ -29,6 +29,7 @@ export default class CanvasX extends VariableClass {
   #wheelScroll: coordinationType = { x: 0, y: 0 };
   #loopId: any | null = null;
   #globalValues: VariableClass = new VariableClass();
+  #window: Window | null = null;
 
   init = (
     canvasId: string,
@@ -329,10 +330,11 @@ export default class CanvasX extends VariableClass {
 
   useRequestAnimationFrame = (window: Window) => {
     clearInterval(this.#loopId);
+    this.#window = window;
 
     const loop = () => {
       this.#canvasUpdate();
-      window.requestAnimationFrame(loop);
+      this.#loopId = window.requestAnimationFrame(loop);
     };
     loop();
   };
@@ -452,5 +454,13 @@ export default class CanvasX extends VariableClass {
     );
     this.canvasObjects.push(this.canvasCamera);
     return this.canvasCamera;
+  };
+
+  terminate = () => {
+    if (this.#window !== null) {
+      this.#window.cancelAnimationFrame(this.#loopId);
+    } else {
+      clearInterval(this.#loopId);
+    }
   };
 }
