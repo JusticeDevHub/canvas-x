@@ -47,6 +47,7 @@ export default class CanvasX extends VariableClass {
       }, 1000 / 60);
 
       const mouseOrClickDown = (e: MouseEvent | TouchEvent) => {
+        e.preventDefault();
         if (e instanceof MouseEvent) {
           updateCanvasMousePosition(this, e.clientX, e.clientY);
         } else if (e.touches && e.touches[0]) {
@@ -56,8 +57,6 @@ export default class CanvasX extends VariableClass {
             e.touches[0].clientY
           );
         }
-
-        e.preventDefault();
 
         this.canvasObjects.forEach((canvasObject) => {
           // Handle Global Left Click
@@ -94,6 +93,12 @@ export default class CanvasX extends VariableClass {
       const mouseOrClickUp = (e: MouseEvent | TouchEvent) => {
         e.preventDefault();
         this.canvasObjects.forEach((canvasObject) => {
+          // Handle click release
+          const clickRelease = canvasObject.getClickRelease();
+          if (clickRelease !== null) {
+            clickRelease(canvasObject);
+          }
+
           // Handle drag
           const dragData = canvasObject.getDragData();
           if (dragData.isDragged) {
@@ -117,10 +122,8 @@ export default class CanvasX extends VariableClass {
         if (this.canvas === null) {
           return;
         }
-
-        updateCanvasMousePosition(this, clientX, clientY);
-
         e.preventDefault();
+        updateCanvasMousePosition(this, clientX, clientY);
       };
 
       document.addEventListener("mousedown", (e) => {
@@ -136,13 +139,11 @@ export default class CanvasX extends VariableClass {
       });
 
       document.addEventListener("touchmove", (e: TouchEvent) => {
-        setTimeout(() => {
-          if (e && e.touches && e.touches[0]) {
-            const clientX = e.touches[0].clientX;
-            const clientY = e.touches[0].clientY;
-            mouseOrClickMove(e, clientX, clientY);
-          }
-        }, 1);
+        if (e && e.touches && e.touches[0]) {
+          const clientX = e.touches[0].clientX;
+          const clientY = e.touches[0].clientY;
+          mouseOrClickMove(e, clientX, clientY);
+        }
       });
 
       document.addEventListener("mouseup", (e) => {

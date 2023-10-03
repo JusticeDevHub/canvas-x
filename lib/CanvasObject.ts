@@ -47,6 +47,7 @@ class CanvasObject extends VariableClass {
   #onHover: Function | null = null;
   #onHoverEnd: Function | null = null;
   #onClick: { [clickType: string]: (_this: CanvasObject) => void } = {};
+  #onClickRelease: ((_this: CanvasObject) => void) | null = null;
   #rotation: number = 0;
   #moveToPosition: moveToType = null;
   #onWheelScroll:
@@ -351,14 +352,6 @@ class CanvasObject extends VariableClass {
     return this.#parent;
   };
 
-  getVisible = () => {
-    return this.#visible;
-  };
-
-  setVisible = (visible: boolean) => {
-    this.#visible = visible;
-  };
-
   setParent = (nameOrId: string | number) => {
     let parent: CanvasObject | CanvasCamera | null = null;
     if (typeof nameOrId === "string") {
@@ -367,6 +360,22 @@ class CanvasObject extends VariableClass {
       parent = this.#canvasX.getObjectWithId(nameOrId);
     }
     this.#parent = parent;
+  };
+
+  getVisible = () => {
+    return this.#visible;
+  };
+
+  setVisible = (visible: boolean) => {
+    this.#visible = visible;
+  };
+
+  getClickRelease = () => {
+    return this.#onClickRelease;
+  };
+
+  setClickRelease = (func: (_this: CanvasObject) => void) => {
+    this.#onClickRelease = func;
   };
 
   destroy = () => {
