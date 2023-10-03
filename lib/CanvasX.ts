@@ -9,6 +9,7 @@ import moveToPositionHandling from "./utils/moveToPositionHandling.js";
 import isDraggedHandling from "./utils/isDraggedHandling.js";
 import drawSpriteCTX from "./utils/drawSpriteCTX.js";
 import updateCanvasMousePosition from "./utils/updateCanvasMousePosition.js";
+import handleCollisions from "./utils/handleCollisions.js";
 
 export default class CanvasX extends VariableClass {
   #width: number | "auto" = "auto";
@@ -216,11 +217,12 @@ export default class CanvasX extends VariableClass {
     const objs = [...this.canvasObjects, this.canvasCamera];
     objs.forEach((canvasObject) => {
       const update = canvasObject.getOnUpdate();
-      update(canvasObject);
+      handleCollisions(canvasObject, this);
       moveToPositionHandling(canvasObject);
       onWheelScroll(canvasObject, { ...this.#wheelScroll });
       onHover(canvasObject, { ...this.#mousePosition });
       isDraggedHandling(canvasObject, { ...this.#mousePosition });
+      update(canvasObject);
     });
   };
 

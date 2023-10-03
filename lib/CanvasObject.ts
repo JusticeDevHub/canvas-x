@@ -57,6 +57,13 @@ class CanvasObject extends VariableClass {
     width: "auto",
     height: "auto",
   };
+  #onCollisionEnter:
+    | {
+        target: string | number;
+        func: (_this: CanvasObject) => void;
+        isCollision: boolean;
+      }[]
+    | null = null;
 
   constructor(
     id: number,
@@ -376,6 +383,25 @@ class CanvasObject extends VariableClass {
 
   setClickRelease = (func: (_this: CanvasObject) => void) => {
     this.#onClickRelease = func;
+  };
+
+  addOnCollisionEnter = (
+    targetObject_id_or_name: string | number,
+    func: (_this: CanvasObject) => void
+  ) => {
+    if (this.#onCollisionEnter === null) {
+      this.#onCollisionEnter = [];
+    }
+
+    this.#onCollisionEnter.push({
+      target: targetObject_id_or_name,
+      isCollision: false,
+      func,
+    });
+  };
+
+  getOnCollisionEnter = () => {
+    return this.#onCollisionEnter;
   };
 
   destroy = () => {
