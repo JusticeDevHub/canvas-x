@@ -47,7 +47,7 @@ export default class CanvasX extends VariableClass {
                     __classPrivateFieldGet(this, _CanvasX_canvasUpdate, "f").call(this);
                 }, 1000 / 60), "f");
                 const mouseOrClickDown = (e) => {
-                    e.preventDefault();
+                    // e.preventDefault();
                     if (e instanceof MouseEvent) {
                         updateCanvasMousePosition(this, e.clientX, e.clientY);
                     }
@@ -83,7 +83,7 @@ export default class CanvasX extends VariableClass {
                     });
                 };
                 const mouseOrClickUp = (e) => {
-                    e.preventDefault();
+                    // e.preventDefault();
                     this.canvasObjects.forEach((canvasObject) => {
                         // Handle click release
                         const clickRelease = canvasObject.getClickRelease();
@@ -108,7 +108,7 @@ export default class CanvasX extends VariableClass {
                     if (this.canvas === null) {
                         return;
                     }
-                    e.preventDefault();
+                    // e.preventDefault();
                     updateCanvasMousePosition(this, clientX, clientY);
                 };
                 document.addEventListener("mousedown", (e) => {
@@ -134,7 +134,7 @@ export default class CanvasX extends VariableClass {
                     mouseOrClickUp(e);
                 });
                 document.addEventListener("contextmenu", (e) => {
-                    e.preventDefault();
+                    // e.preventDefault();
                     this.canvasObjects.forEach((canvasObject) => {
                         const global_right_click = canvasObject.getOnClick("global_right_click");
                         if (global_right_click) {

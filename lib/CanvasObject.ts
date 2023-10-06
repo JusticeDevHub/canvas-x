@@ -208,11 +208,11 @@ class CanvasObject extends VariableClass {
       } else if (width === "auto" && typeof height === "number") {
         dimensions.height = height;
         dimensions.width =
-          (spriteDimensions.width / spriteDimensions.height) * height;
+          (spriteDimensions.width / spriteDimensions.height) * Math.abs(height);
       } else if (height === "auto" && typeof width === "number") {
         dimensions.width = width;
         dimensions.height =
-          (spriteDimensions.height / spriteDimensions.width) * width;
+          (spriteDimensions.height / spriteDimensions.width) * Math.abs(width);
       }
     }
 

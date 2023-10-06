@@ -48,7 +48,7 @@ export default class CanvasX extends VariableClass {
       }, 1000 / 60);
 
       const mouseOrClickDown = (e: MouseEvent | TouchEvent) => {
-        e.preventDefault();
+        // e.preventDefault();
         if (e instanceof MouseEvent) {
           updateCanvasMousePosition(this, e.clientX, e.clientY);
         } else if (e.touches && e.touches[0]) {
@@ -92,7 +92,7 @@ export default class CanvasX extends VariableClass {
       };
 
       const mouseOrClickUp = (e: MouseEvent | TouchEvent) => {
-        e.preventDefault();
+        // e.preventDefault();
         this.canvasObjects.forEach((canvasObject) => {
           // Handle click release
           const clickRelease = canvasObject.getClickRelease();
@@ -123,7 +123,7 @@ export default class CanvasX extends VariableClass {
         if (this.canvas === null) {
           return;
         }
-        e.preventDefault();
+        // e.preventDefault();
         updateCanvasMousePosition(this, clientX, clientY);
       };
 
@@ -156,7 +156,7 @@ export default class CanvasX extends VariableClass {
       });
 
       document.addEventListener("contextmenu", (e) => {
-        e.preventDefault();
+        // e.preventDefault();
         this.canvasObjects.forEach((canvasObject) => {
           const global_right_click =
             canvasObject.getOnClick("global_right_click");
