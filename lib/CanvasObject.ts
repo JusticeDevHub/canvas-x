@@ -1,5 +1,6 @@
 import CanvasCamera from "./CanvasCamera.js";
 import CanvasX from "./CanvasX.js";
+import TextClass from "./TextClass.js";
 import VariableClass from "./VariableClass.js";
 import {
   dimensionsType,
@@ -50,6 +51,7 @@ class CanvasObject extends VariableClass {
   #onClickRelease: ((_this: CanvasObject) => void) | null = null;
   #rotation: number = 0;
   #moveToPosition: moveToType = null;
+  #text = new TextClass();
   #onWheelScroll:
     | ((_this: CanvasObject | CanvasCamera, scroll: coordinationType) => void)
     | null = null;
@@ -383,6 +385,10 @@ class CanvasObject extends VariableClass {
 
   setClickRelease = (func: (_this: CanvasObject) => void) => {
     this.#onClickRelease = func;
+  };
+
+  getText = () => {
+    return this.#text;
   };
 
   addOnCollisionEnter = (

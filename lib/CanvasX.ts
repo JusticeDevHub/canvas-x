@@ -328,6 +328,23 @@ export default class CanvasX extends VariableClass {
 
         this.#ctx.restore();
       }
+
+      const textData = canvasObject.getText();
+      if (textData.text && this.#ctx !== null) {
+        const fontSize = textData.scaleRelativeToZoomLevel
+          ? cameraZoomLevel * textData.fontSize
+          : textData.fontSize;
+
+        this.#ctx.font = `${fontSize}px ${textData.font}`;
+        this.#ctx.fillStyle = `${textData.fontColor}`;
+        this.#ctx.textAlign = `${textData.textAlign}`;
+        this.#ctx.textBaseline = `${textData.textBaseline}`;
+        this.#ctx.fillText(
+          textData.text,
+          position.x + dimensions.width / 2,
+          position.y + dimensions.height / 2
+        );
+      }
     });
   };
 
