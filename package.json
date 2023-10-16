@@ -1,10 +1,10 @@
 {
-  "name": "canvasx",
+  "name": "canvas-x",
   "version": "1.3.2",
   "description": "Graphics rendering simplified for html canvas",
   "main": "dist/index.js",
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com/@JusticeDevHub"
+    "access": "public"
   },
   "scripts": {
     "build": "tsc",
