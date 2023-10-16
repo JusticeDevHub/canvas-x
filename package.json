@@ -1,5 +1,5 @@
 {
-  "name": "canvasx",
+  "name": "@justicedevhub/canvas-x",
   "version": "1.3.2",
   "description": "Graphics rendering simplified for html canvas",
   "main": "dist/index.js",
