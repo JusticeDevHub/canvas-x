@@ -21,7 +21,8 @@ import isDraggedHandling from "./utils/isDraggedHandling.js";
 import drawSpriteCTX from "./utils/drawSpriteCTX.js";
 import updateCanvasMousePosition from "./utils/updateCanvasMousePosition.js";
 import handleCollisions from "./utils/handleCollisions.js";
-export default class CanvasX extends VariableClass {
+import isCollisionWithMouse from "./utils/isCollisionWithMouse.js";
+class CanvasX extends VariableClass {
     constructor() {
         super(...arguments);
         _CanvasX_width.set(this, "auto");
@@ -60,7 +61,9 @@ export default class CanvasX extends VariableClass {
                         if (global_left_click) {
                             global_left_click(canvasObject);
                         }
-                        if (canvasObject.getOnHoverTrue()) {
+                        if (canvasObject.getOnHoverTrue() ||
+                            (e instanceof TouchEvent &&
+                                isCollisionWithMouse(canvasObject.getPosition(), __classPrivateFieldGet(this, _CanvasX_mousePosition, "f"), canvasObject.getDimensions()))) {
                             // Handle this Left Clicked
                             const this_left_click = canvasObject.getOnClick("this_left_click");
                             if (this_left_click) {
@@ -367,4 +370,5 @@ export default class CanvasX extends VariableClass {
     }
 }
 _CanvasX_width = new WeakMap(), _CanvasX_height = new WeakMap(), _CanvasX_ctx = new WeakMap(), _CanvasX_objectsCreated = new WeakMap(), _CanvasX_mousePosition = new WeakMap(), _CanvasX_onUpdate = new WeakMap(), _CanvasX_wheelScroll = new WeakMap(), _CanvasX_loopId = new WeakMap(), _CanvasX_globalValues = new WeakMap(), _CanvasX_window = new WeakMap(), _CanvasX_canvasUpdate = new WeakMap(), _CanvasX_logic = new WeakMap(), _CanvasX_drawCanvas = new WeakMap(), _CanvasX_destroyObjectById = new WeakMap();
+export default CanvasX;
 //# sourceMappingURL=CanvasX.js.map

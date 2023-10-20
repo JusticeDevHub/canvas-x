@@ -1,5 +1,6 @@
 import CanvasObject from "../CanvasObject.js";
 import { coordinationType } from "../types.js";
+import isCollisionWithMouse from "./isCollisionWithMouse.js";
 
 const onHover = (
   canvasObject: CanvasObject,
@@ -15,13 +16,11 @@ const onHover = (
     objPosition.y += parentPosition.y;
   }
 
-  let inCollisionWithMouse = false;
-  if (
-    Math.abs(objPosition.x - mousePosition.x) < objDimensions.width / 2 &&
-    Math.abs(objPosition.y - mousePosition.y) < objDimensions.height / 2
-  ) {
-    inCollisionWithMouse = true;
-  }
+  const inCollisionWithMouse = isCollisionWithMouse(
+    objPosition,
+    mousePosition,
+    objDimensions
+  );
 
   if (inCollisionWithMouse && !onHoverTrue) {
     // Mouse Entered Collision Box

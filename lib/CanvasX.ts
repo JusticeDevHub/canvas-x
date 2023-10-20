@@ -10,6 +10,7 @@ import isDraggedHandling from "./utils/isDraggedHandling.js";
 import drawSpriteCTX from "./utils/drawSpriteCTX.js";
 import updateCanvasMousePosition from "./utils/updateCanvasMousePosition.js";
 import handleCollisions from "./utils/handleCollisions.js";
+import isCollisionWithMouse from "./utils/isCollisionWithMouse.js";
 
 export default class CanvasX extends VariableClass {
   #width: number | "auto" = "auto";
@@ -67,7 +68,15 @@ export default class CanvasX extends VariableClass {
             global_left_click(canvasObject);
           }
 
-          if (canvasObject.getOnHoverTrue()) {
+          if (
+            canvasObject.getOnHoverTrue() ||
+            (e instanceof TouchEvent &&
+              isCollisionWithMouse(
+                canvasObject.getPosition(),
+                this.#mousePosition,
+                canvasObject.getDimensions()
+              ))
+          ) {
             // Handle this Left Clicked
             const this_left_click = canvasObject.getOnClick("this_left_click");
             if (this_left_click) {
