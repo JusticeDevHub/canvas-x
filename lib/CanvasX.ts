@@ -11,6 +11,7 @@ import drawSpriteCTX from "./utils/drawSpriteCTX.js";
 import updateCanvasMousePosition from "./utils/updateCanvasMousePosition.js";
 import handleCollisions from "./utils/handleCollisions.js";
 import isCollisionWithMouse from "./utils/isCollisionWithMouse.js";
+import getDistanceBetweenTwoPoints from "./utils/getDistanceBetweenTwoPoints.js";
 
 export default class CanvasX extends VariableClass {
   #width: number | "auto" = "auto";
@@ -122,7 +123,14 @@ export default class CanvasX extends VariableClass {
                   ];
 
                 // if () { // distance between two points are bigger than // TODO:
-                if (currentPosition && previousPosition) {
+                if (
+                  currentPosition &&
+                  previousPosition &&
+                  getDistanceBetweenTwoPoints(
+                    currentPosition,
+                    previousPosition
+                  ) > 30
+                ) {
                   dragData.physics.velocity = {
                     x: (currentPosition.x - previousPosition.x) * 0.1,
                     y: (currentPosition.y - previousPosition.y) * 0.1,

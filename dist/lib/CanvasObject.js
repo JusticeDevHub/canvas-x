@@ -250,7 +250,7 @@ class CanvasObject extends VariableClass {
             if (momentum !== null) {
                 __classPrivateFieldGet(this, _CanvasObject_dragData, "f").physics = {
                     momentum,
-                    savedFrames: 15,
+                    savedFrames: 10,
                     framePosition: [],
                     velocity: { x: 0, y: 0 },
                 };

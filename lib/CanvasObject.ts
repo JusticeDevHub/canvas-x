@@ -354,7 +354,7 @@ class CanvasObject extends VariableClass {
     if (momentum !== null) {
       this.#dragData.physics = {
         momentum,
-        savedFrames: 15,
+        savedFrames: 10,
         framePosition: [],
         velocity: { x: 0, y: 0 },
       };
