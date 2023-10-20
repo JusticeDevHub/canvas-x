@@ -22,7 +22,7 @@ import drawSpriteCTX from "./utils/drawSpriteCTX.js";
 import updateCanvasMousePosition from "./utils/updateCanvasMousePosition.js";
 import handleCollisions from "./utils/handleCollisions.js";
 import isCollisionWithMouse from "./utils/isCollisionWithMouse.js";
-class CanvasX extends VariableClass {
+export default class CanvasX extends VariableClass {
     constructor() {
         super(...arguments);
         _CanvasX_width.set(this, "auto");
@@ -102,11 +102,13 @@ class CanvasX extends VariableClass {
                                     const currentPosition = dragData.physics.framePosition[0];
                                     const previousPosition = dragData.physics.framePosition[dragData.physics.savedFrames - 1];
                                     // if () { // distance between two points are bigger than // TODO:
-                                    dragData.physics.velocity = {
-                                        x: (currentPosition.x - previousPosition.x) * 0.1,
-                                        y: (currentPosition.y - previousPosition.y) * 0.1,
-                                        // };
-                                    };
+                                    if (currentPosition && previousPosition) {
+                                        dragData.physics.velocity = {
+                                            x: (currentPosition.x - previousPosition.x) * 0.1,
+                                            y: (currentPosition.y - previousPosition.y) * 0.1,
+                                        };
+                                    }
+                                    // };
                                 }
                                 catch { }
                             }
@@ -398,5 +400,4 @@ class CanvasX extends VariableClass {
     }
 }
 _CanvasX_width = new WeakMap(), _CanvasX_height = new WeakMap(), _CanvasX_ctx = new WeakMap(), _CanvasX_objectsCreated = new WeakMap(), _CanvasX_mousePosition = new WeakMap(), _CanvasX_onUpdate = new WeakMap(), _CanvasX_wheelScroll = new WeakMap(), _CanvasX_loopId = new WeakMap(), _CanvasX_globalValues = new WeakMap(), _CanvasX_window = new WeakMap(), _CanvasX_canvasUpdate = new WeakMap(), _CanvasX_logic = new WeakMap(), _CanvasX_drawCanvas = new WeakMap(), _CanvasX_destroyObjectById = new WeakMap();
-export default CanvasX;
 //# sourceMappingURL=CanvasX.js.map

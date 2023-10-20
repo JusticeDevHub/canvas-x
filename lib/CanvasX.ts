@@ -122,11 +122,13 @@ export default class CanvasX extends VariableClass {
                   ];
 
                 // if () { // distance between two points are bigger than // TODO:
-                dragData.physics.velocity = {
-                  x: (currentPosition.x - previousPosition.x) * 0.1,
-                  y: (currentPosition.y - previousPosition.y) * 0.1,
-                  // };
-                };
+                if (currentPosition && previousPosition) {
+                  dragData.physics.velocity = {
+                    x: (currentPosition.x - previousPosition.x) * 0.1,
+                    y: (currentPosition.y - previousPosition.y) * 0.1,
+                  };
+                }
+                // };
               } catch {}
             }
 
