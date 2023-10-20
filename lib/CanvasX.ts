@@ -339,7 +339,7 @@ export default class CanvasX extends VariableClass {
       }
 
       const textData = canvasObject.getText();
-      if (textData.text && this.#ctx !== null) {
+      if (textData.text !== null && this.#ctx !== null) {
         const fontSize = textData.scaleRelativeToZoomLevel
           ? cameraZoomLevel * textData.fontSize
           : textData.fontSize;
