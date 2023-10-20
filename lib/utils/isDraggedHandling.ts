@@ -16,6 +16,12 @@ const isDraggedHandling = (
 
       dragData.physics.velocity.x *= dragData.physics.momentum;
       dragData.physics.velocity.y *= dragData.physics.momentum;
+
+      const framePosition = [mousePosition, ...dragData.physics.framePosition];
+      if (framePosition.length > dragData.physics.savedFrames) {
+        framePosition.splice(-1);
+      }
+      dragData.physics.framePosition = framePosition;
     }
 
     const smoothness = dragData.smoothness;

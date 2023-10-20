@@ -133,19 +133,6 @@ export default class CanvasX extends VariableClass {
                     }
                     // e.preventDefault();
                     updateCanvasMousePosition(this, clientX, clientY);
-                    this.canvasObjects.forEach((canvasObject) => {
-                        const dragData = canvasObject.getDragData();
-                        if (dragData.physics !== null) {
-                            const framePosition = [
-                                __classPrivateFieldGet(this, _CanvasX_mousePosition, "f"),
-                                ...dragData.physics.framePosition,
-                            ];
-                            if (framePosition.length > dragData.physics.savedFrames) {
-                                framePosition.splice(-1);
-                            }
-                            dragData.physics.framePosition = framePosition;
-                        }
-                    });
                 };
                 document.addEventListener("mousedown", (e) => {
                     mouseOrClickDown(e);
@@ -299,6 +286,7 @@ export default class CanvasX extends VariableClass {
                 }
                 const textData = canvasObject.getText();
                 if (textData.text !== null && __classPrivateFieldGet(this, _CanvasX_ctx, "f") !== null) {
+                    __classPrivateFieldGet(this, _CanvasX_ctx, "f").save();
                     const fontSize = textData.scaleRelativeToZoomLevel
                         ? cameraZoomLevel * textData.fontSize
                         : textData.fontSize;
@@ -307,6 +295,7 @@ export default class CanvasX extends VariableClass {
                     __classPrivateFieldGet(this, _CanvasX_ctx, "f").textAlign = `${textData.textAlign}`;
                     __classPrivateFieldGet(this, _CanvasX_ctx, "f").textBaseline = `${textData.textBaseline}`;
                     __classPrivateFieldGet(this, _CanvasX_ctx, "f").fillText(textData.text, position.x + dimensions.width / 2, position.y + dimensions.height / 2);
+                    __classPrivateFieldGet(this, _CanvasX_ctx, "f").restore();
                 }
             });
         });

@@ -163,20 +163,6 @@ export default class CanvasX extends VariableClass {
         }
         // e.preventDefault();
         updateCanvasMousePosition(this, clientX, clientY);
-
-        this.canvasObjects.forEach((canvasObject) => {
-          const dragData = canvasObject.getDragData();
-          if (dragData.physics !== null) {
-            const framePosition = [
-              this.#mousePosition,
-              ...dragData.physics.framePosition,
-            ];
-            if (framePosition.length > dragData.physics.savedFrames) {
-              framePosition.splice(-1);
-            }
-            dragData.physics.framePosition = framePosition;
-          }
-        });
       };
 
       document.addEventListener("mousedown", (e) => {
@@ -383,6 +369,7 @@ export default class CanvasX extends VariableClass {
 
       const textData = canvasObject.getText();
       if (textData.text !== null && this.#ctx !== null) {
+        this.#ctx.save();
         const fontSize = textData.scaleRelativeToZoomLevel
           ? cameraZoomLevel * textData.fontSize
           : textData.fontSize;
@@ -396,6 +383,7 @@ export default class CanvasX extends VariableClass {
           position.x + dimensions.width / 2,
           position.y + dimensions.height / 2
         );
+        this.#ctx.restore();
       }
     });
   };
