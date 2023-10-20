@@ -8,6 +8,7 @@ import {
   spriteDataType,
   moveToType,
   onClickType,
+  dragDataPhysicsType,
 } from "./types.js";
 
 class CanvasObject extends VariableClass {
@@ -30,12 +31,14 @@ class CanvasObject extends VariableClass {
     smoothness: number;
     objPosition: coordinationType;
     targetPosition: coordinationType;
+    physics: dragDataPhysicsType;
   } = {
     dragPositionOffset: { x: 0, y: 0 },
     isDragged: false,
     smoothness: 0,
     objPosition: { x: 0, y: 0 },
     targetPosition: { x: 0, y: 0 },
+    physics: null,
   };
   #onUpdate: Function;
   #onDestroy: Function;
@@ -338,11 +341,24 @@ class CanvasObject extends VariableClass {
     return this.#draggable;
   };
 
-  setDraggable = (draggable: boolean, smoothness: number = 0) => {
+  setDraggable = (
+    draggable: boolean,
+    smoothness: number = 0,
+    momentum: number | null = null
+  ) => {
     this.#draggable = draggable;
     this.#dragData.smoothness = smoothness;
     this.#dragData.objPosition = this.getPosition();
     this.#dragData.targetPosition = this.getPosition();
+
+    if (momentum !== null) {
+      this.#dragData.physics = {
+        momentum,
+        savedFrames: 15,
+        framePosition: [],
+        velocity: { x: 0, y: 0 },
+      };
+    }
   };
 
   getDragData = () => {
@@ -353,6 +369,7 @@ class CanvasObject extends VariableClass {
     dragPositionOffset: coordinationType;
     isDragged: boolean;
     smoothness: number;
+    physics: dragDataPhysicsType;
   }) => {
     this.#dragData = { ...this.#dragData, ...dragData };
   };

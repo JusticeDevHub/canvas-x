@@ -34,6 +34,7 @@ class CanvasObject extends VariableClass {
             smoothness: 0,
             objPosition: { x: 0, y: 0 },
             targetPosition: { x: 0, y: 0 },
+            physics: null,
         });
         _CanvasObject_onUpdate.set(this, void 0);
         _CanvasObject_onDestroy.set(this, void 0);
@@ -241,11 +242,19 @@ class CanvasObject extends VariableClass {
         this.getDraggable = () => {
             return __classPrivateFieldGet(this, _CanvasObject_draggable, "f");
         };
-        this.setDraggable = (draggable, smoothness = 0) => {
+        this.setDraggable = (draggable, smoothness = 0, momentum = null) => {
             __classPrivateFieldSet(this, _CanvasObject_draggable, draggable, "f");
             __classPrivateFieldGet(this, _CanvasObject_dragData, "f").smoothness = smoothness;
             __classPrivateFieldGet(this, _CanvasObject_dragData, "f").objPosition = this.getPosition();
             __classPrivateFieldGet(this, _CanvasObject_dragData, "f").targetPosition = this.getPosition();
+            if (momentum !== null) {
+                __classPrivateFieldGet(this, _CanvasObject_dragData, "f").physics = {
+                    momentum,
+                    savedFrames: 15,
+                    framePosition: [],
+                    velocity: { x: 0, y: 0 },
+                };
+            }
         };
         this.getDragData = () => {
             return __classPrivateFieldGet(this, _CanvasObject_dragData, "f");

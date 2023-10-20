@@ -94,6 +94,7 @@ export default class CanvasX extends VariableClass {
                 },
                 isDragged: true,
                 smoothness: dragData.smoothness,
+                physics: dragData.physics,
               });
             }
           }
@@ -112,6 +113,23 @@ export default class CanvasX extends VariableClass {
           // Handle drag
           const dragData = canvasObject.getDragData();
           if (dragData.isDragged) {
+            if (dragData.physics !== null) {
+              try {
+                const currentPosition = dragData.physics.framePosition[0];
+                const previousPosition =
+                  dragData.physics.framePosition[
+                    dragData.physics.savedFrames - 1
+                  ];
+
+                // if () { // distance between two points are bigger than // TODO:
+                dragData.physics.velocity = {
+                  x: (currentPosition.x - previousPosition.x) * 0.1,
+                  y: (currentPosition.y - previousPosition.y) * 0.1,
+                  // };
+                };
+              } catch {}
+            }
+
             canvasObject.setDragData({
               dragPositionOffset: {
                 x: 0,
@@ -119,6 +137,7 @@ export default class CanvasX extends VariableClass {
               },
               isDragged: false,
               smoothness: dragData.smoothness,
+              physics: dragData.physics,
             });
           }
         });
@@ -134,6 +153,20 @@ export default class CanvasX extends VariableClass {
         }
         // e.preventDefault();
         updateCanvasMousePosition(this, clientX, clientY);
+
+        this.canvasObjects.forEach((canvasObject) => {
+          const dragData = canvasObject.getDragData();
+          if (dragData.physics !== null) {
+            const framePosition = [
+              this.#mousePosition,
+              ...dragData.physics.framePosition,
+            ];
+            if (framePosition.length > dragData.physics.savedFrames) {
+              framePosition.splice(-1);
+            }
+            dragData.physics.framePosition = framePosition;
+          }
+        });
       };
 
       document.addEventListener("mousedown", (e) => {

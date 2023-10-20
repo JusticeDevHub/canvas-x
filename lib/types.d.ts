@@ -22,6 +22,13 @@ export type moveToType = {
   method: "linear";
 } | null;
 
+export type dragDataPhysicsType = {
+  momentum: number;
+  savedFrames: number;
+  framePosition: coordinationType[];
+  velocity: coordinationType;
+} | null;
+
 export type onClickType =
   | "this_left_click"
   | "this_right_click"

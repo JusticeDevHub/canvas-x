@@ -10,6 +10,14 @@ const isDraggedHandling = (
     const objPosition = dragData.objPosition;
     const targetPosition = dragData.targetPosition;
 
+    if (dragData.physics !== null) {
+      targetPosition.x += dragData.physics.velocity.x;
+      targetPosition.y += dragData.physics.velocity.y;
+
+      dragData.physics.velocity.x *= dragData.physics.momentum;
+      dragData.physics.velocity.y *= dragData.physics.momentum;
+    }
+
     const smoothness = dragData.smoothness;
     objPosition.x =
       objPosition.x + (targetPosition.x - objPosition.x) * smoothness;
