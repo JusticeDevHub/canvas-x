@@ -1,6 +1,6 @@
 {
   "name": "@justicedevhub/canvas-x",
-  "version": "1.3.5",
+  "version": "1.3.6",
   "description": "Graphics rendering simplified for html canvas",
   "main": "dist/index.js",
   "publishConfig": {
