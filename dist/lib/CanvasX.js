@@ -258,9 +258,11 @@ export default class CanvasX extends VariableClass {
                 position.x += canvasSize.width / 2;
                 position.y += canvasSize.height / 2;
                 if (backgroundColor && __classPrivateFieldGet(this, _CanvasX_ctx, "f") !== null) {
+                    __classPrivateFieldGet(this, _CanvasX_ctx, "f").save();
                     __classPrivateFieldGet(this, _CanvasX_ctx, "f").globalAlpha = canvasObject.getOpacity();
                     __classPrivateFieldGet(this, _CanvasX_ctx, "f").fillStyle = backgroundColor;
                     __classPrivateFieldGet(this, _CanvasX_ctx, "f").fillRect(position.x, position.y, dimensions.width, dimensions.height);
+                    __classPrivateFieldGet(this, _CanvasX_ctx, "f").restore();
                 }
                 if (spriteData.sprites && __classPrivateFieldGet(this, _CanvasX_ctx, "f") !== null) {
                     __classPrivateFieldGet(this, _CanvasX_ctx, "f").save();

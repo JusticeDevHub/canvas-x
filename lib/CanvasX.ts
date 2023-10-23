@@ -310,6 +310,7 @@ export default class CanvasX extends VariableClass {
       position.y += canvasSize.height / 2;
 
       if (backgroundColor && this.#ctx !== null) {
+        this.#ctx.save();
         this.#ctx.globalAlpha = canvasObject.getOpacity();
         this.#ctx.fillStyle = backgroundColor;
         this.#ctx.fillRect(
@@ -318,6 +319,7 @@ export default class CanvasX extends VariableClass {
           dimensions.width,
           dimensions.height
         );
+        this.#ctx.restore();
       }
 
       if (spriteData.sprites && this.#ctx !== null) {
