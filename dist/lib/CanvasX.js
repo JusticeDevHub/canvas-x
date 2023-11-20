@@ -23,7 +23,7 @@ import updateCanvasMousePosition from "./utils/updateCanvasMousePosition.js";
 import handleCollisions from "./utils/handleCollisions.js";
 import isCollisionWithMouse from "./utils/isCollisionWithMouse.js";
 import getDistanceBetweenTwoPoints from "./utils/getDistanceBetweenTwoPoints.js";
-export default class CanvasX extends VariableClass {
+class CanvasX extends VariableClass {
     constructor() {
         super(...arguments);
         _CanvasX_width.set(this, "auto");
@@ -286,6 +286,17 @@ export default class CanvasX extends VariableClass {
                     }
                     __classPrivateFieldGet(this, _CanvasX_ctx, "f").restore();
                 }
+                const drawData = canvasObject.drawCircle();
+                if (drawData.getRender() && __classPrivateFieldGet(this, _CanvasX_ctx, "f") !== null) {
+                    __classPrivateFieldGet(this, _CanvasX_ctx, "f").save();
+                    __classPrivateFieldGet(this, _CanvasX_ctx, "f").globalAlpha = canvasObject.getOpacity();
+                    __classPrivateFieldGet(this, _CanvasX_ctx, "f").strokeStyle = drawData.getColor();
+                    __classPrivateFieldGet(this, _CanvasX_ctx, "f").lineWidth = drawData.getStrokeWidth();
+                    __classPrivateFieldGet(this, _CanvasX_ctx, "f").beginPath();
+                    __classPrivateFieldGet(this, _CanvasX_ctx, "f").arc(position.x, position.y, drawData.getRadius(), 0, 2 * Math.PI);
+                    __classPrivateFieldGet(this, _CanvasX_ctx, "f").stroke();
+                    __classPrivateFieldGet(this, _CanvasX_ctx, "f").restore();
+                }
                 const textData = canvasObject.getText();
                 if (textData.text !== null && __classPrivateFieldGet(this, _CanvasX_ctx, "f") !== null) {
                     __classPrivateFieldGet(this, _CanvasX_ctx, "f").save();
@@ -394,4 +405,5 @@ export default class CanvasX extends VariableClass {
     }
 }
 _CanvasX_width = new WeakMap(), _CanvasX_height = new WeakMap(), _CanvasX_ctx = new WeakMap(), _CanvasX_objectsCreated = new WeakMap(), _CanvasX_mousePosition = new WeakMap(), _CanvasX_onUpdate = new WeakMap(), _CanvasX_wheelScroll = new WeakMap(), _CanvasX_loopId = new WeakMap(), _CanvasX_globalValues = new WeakMap(), _CanvasX_window = new WeakMap(), _CanvasX_canvasUpdate = new WeakMap(), _CanvasX_logic = new WeakMap(), _CanvasX_drawCanvas = new WeakMap(), _CanvasX_destroyObjectById = new WeakMap();
+export default CanvasX;
 //# sourceMappingURL=CanvasX.js.map

@@ -369,6 +369,26 @@ export default class CanvasX extends VariableClass {
         this.#ctx.restore();
       }
 
+      const drawData = canvasObject.drawCircle();
+      if (drawData.getRender() && this.#ctx !== null) {
+        this.#ctx.save();
+
+        this.#ctx.globalAlpha = canvasObject.getOpacity();
+        this.#ctx.strokeStyle = drawData.getColor();
+        this.#ctx.lineWidth = drawData.getStrokeWidth();
+        this.#ctx.beginPath();
+        this.#ctx.arc(
+          position.x,
+          position.y,
+          drawData.getRadius(),
+          0,
+          2 * Math.PI
+        );
+        this.#ctx.stroke();
+
+        this.#ctx.restore();
+      }
+
       const textData = canvasObject.getText();
       if (textData.text !== null && this.#ctx !== null) {
         this.#ctx.save();

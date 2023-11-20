@@ -4,7 +4,7 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
 };
 var _VariableClass_variables;
-export default class VariableClass {
+class VariableClass {
     constructor() {
         _VariableClass_variables.set(this, {});
         this.getVariableValue = (key) => {
@@ -16,4 +16,5 @@ export default class VariableClass {
     }
 }
 _VariableClass_variables = new WeakMap();
+export default VariableClass;
 //# sourceMappingURL=VariableClass.js.map
