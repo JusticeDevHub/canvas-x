@@ -380,7 +380,7 @@ export default class CanvasX extends VariableClass {
         this.#ctx.arc(
           position.x,
           position.y,
-          drawData.getRadius(),
+          drawData.getRadius() * cameraZoomLevel,
           0,
           2 * Math.PI
         );

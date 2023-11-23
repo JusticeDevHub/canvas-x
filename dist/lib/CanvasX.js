@@ -293,7 +293,7 @@ class CanvasX extends VariableClass {
                     __classPrivateFieldGet(this, _CanvasX_ctx, "f").strokeStyle = drawData.getColor();
                     __classPrivateFieldGet(this, _CanvasX_ctx, "f").lineWidth = drawData.getStrokeWidth();
                     __classPrivateFieldGet(this, _CanvasX_ctx, "f").beginPath();
-                    __classPrivateFieldGet(this, _CanvasX_ctx, "f").arc(position.x, position.y, drawData.getRadius(), 0, 2 * Math.PI);
+                    __classPrivateFieldGet(this, _CanvasX_ctx, "f").arc(position.x, position.y, drawData.getRadius() * cameraZoomLevel, 0, 2 * Math.PI);
                     __classPrivateFieldGet(this, _CanvasX_ctx, "f").stroke();
                     __classPrivateFieldGet(this, _CanvasX_ctx, "f").restore();
                 }
