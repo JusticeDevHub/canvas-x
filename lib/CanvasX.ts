@@ -369,23 +369,23 @@ export default class CanvasX extends VariableClass {
         this.#ctx.restore();
       }
 
-      const drawData = canvasObject.drawCircle();
-      if (drawData.getRender() && this.#ctx !== null) {
+      const drawCircleData = canvasObject.draw.circle;
+      if (drawCircleData.getRender() && this.#ctx !== null) {
         this.#ctx.save();
 
         this.#ctx.globalAlpha = canvasObject.getOpacity();
 
-        const color = drawData.getColor();
+        const color = drawCircleData.getColor();
         if (color !== null) {
           this.#ctx.strokeStyle = color;
         }
 
-        const lineWidth = drawData.getStrokeWidth();
+        const lineWidth = drawCircleData.getStrokeWidth();
         if (lineWidth !== null) {
           this.#ctx.lineWidth = lineWidth;
         }
 
-        const radius = drawData.getRadius();
+        const radius = drawCircleData.getRadius();
         if (radius !== null) {
           this.#ctx.beginPath();
           this.#ctx.arc(
@@ -394,6 +394,42 @@ export default class CanvasX extends VariableClass {
             radius * cameraZoomLevel,
             0,
             2 * Math.PI
+          );
+          this.#ctx.stroke();
+        }
+
+        this.#ctx.restore();
+      }
+
+      const drawLineData = canvasObject.draw.line;
+      if (drawLineData !== null && this.#ctx !== null) {
+        this.#ctx.save();
+
+        this.#ctx.globalAlpha = canvasObject.getOpacity();
+
+        const drawLineData = canvasObject.draw.line.getLineData();
+
+        const color = drawLineData.color;
+        if (color !== null) {
+          this.#ctx.strokeStyle = color;
+        }
+
+        const lineWidth = drawLineData.lineWidth;
+        if (lineWidth !== null) {
+          this.#ctx.lineWidth = lineWidth * cameraZoomLevel;
+        }
+
+        const fromPosition = drawLineData.fromPosition;
+        const toPosition = drawLineData.toPosition;
+        if (fromPosition !== null && toPosition !== null) {
+          this.#ctx.beginPath();
+          this.#ctx.moveTo(
+            fromPosition.x * cameraZoomLevel + canvasSize.width / 2,
+            fromPosition.y * cameraZoomLevel + canvasSize.height / 2
+          );
+          this.#ctx.lineTo(
+            toPosition.x * cameraZoomLevel + canvasSize.width / 2,
+            toPosition.y * cameraZoomLevel + canvasSize.height / 2
           );
           this.#ctx.stroke();
         }

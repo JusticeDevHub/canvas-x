@@ -286,22 +286,45 @@ class CanvasX extends VariableClass {
                     }
                     __classPrivateFieldGet(this, _CanvasX_ctx, "f").restore();
                 }
-                const drawData = canvasObject.drawCircle();
-                if (drawData.getRender() && __classPrivateFieldGet(this, _CanvasX_ctx, "f") !== null) {
+                const drawCircleData = canvasObject.draw.circle;
+                if (drawCircleData.getRender() && __classPrivateFieldGet(this, _CanvasX_ctx, "f") !== null) {
                     __classPrivateFieldGet(this, _CanvasX_ctx, "f").save();
                     __classPrivateFieldGet(this, _CanvasX_ctx, "f").globalAlpha = canvasObject.getOpacity();
-                    const color = drawData.getColor();
+                    const color = drawCircleData.getColor();
                     if (color !== null) {
                         __classPrivateFieldGet(this, _CanvasX_ctx, "f").strokeStyle = color;
                     }
-                    const lineWidth = drawData.getStrokeWidth();
+                    const lineWidth = drawCircleData.getStrokeWidth();
                     if (lineWidth !== null) {
                         __classPrivateFieldGet(this, _CanvasX_ctx, "f").lineWidth = lineWidth;
                     }
-                    const radius = drawData.getRadius();
+                    const radius = drawCircleData.getRadius();
                     if (radius !== null) {
                         __classPrivateFieldGet(this, _CanvasX_ctx, "f").beginPath();
                         __classPrivateFieldGet(this, _CanvasX_ctx, "f").arc(position.x, position.y, radius * cameraZoomLevel, 0, 2 * Math.PI);
+                        __classPrivateFieldGet(this, _CanvasX_ctx, "f").stroke();
+                    }
+                    __classPrivateFieldGet(this, _CanvasX_ctx, "f").restore();
+                }
+                const drawLineData = canvasObject.draw.line;
+                if (drawLineData !== null && __classPrivateFieldGet(this, _CanvasX_ctx, "f") !== null) {
+                    __classPrivateFieldGet(this, _CanvasX_ctx, "f").save();
+                    __classPrivateFieldGet(this, _CanvasX_ctx, "f").globalAlpha = canvasObject.getOpacity();
+                    const drawLineData = canvasObject.draw.line.getLineData();
+                    const color = drawLineData.color;
+                    if (color !== null) {
+                        __classPrivateFieldGet(this, _CanvasX_ctx, "f").strokeStyle = color;
+                    }
+                    const lineWidth = drawLineData.lineWidth;
+                    if (lineWidth !== null) {
+                        __classPrivateFieldGet(this, _CanvasX_ctx, "f").lineWidth = lineWidth * cameraZoomLevel;
+                    }
+                    const fromPosition = drawLineData.fromPosition;
+                    const toPosition = drawLineData.toPosition;
+                    if (fromPosition !== null && toPosition !== null) {
+                        __classPrivateFieldGet(this, _CanvasX_ctx, "f").beginPath();
+                        __classPrivateFieldGet(this, _CanvasX_ctx, "f").moveTo(fromPosition.x * cameraZoomLevel + canvasSize.width / 2, fromPosition.y * cameraZoomLevel + canvasSize.height / 2);
+                        __classPrivateFieldGet(this, _CanvasX_ctx, "f").lineTo(toPosition.x * cameraZoomLevel + canvasSize.width / 2, toPosition.y * cameraZoomLevel + canvasSize.height / 2);
                         __classPrivateFieldGet(this, _CanvasX_ctx, "f").stroke();
                     }
                     __classPrivateFieldGet(this, _CanvasX_ctx, "f").restore();

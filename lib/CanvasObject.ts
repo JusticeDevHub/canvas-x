@@ -4,6 +4,7 @@ import { MoveToClass } from "./MoveToClass.js";
 import TextClass from "./TextClass.js";
 import VariableClass from "./VariableClass.js";
 import CircleClass from "./drawClass.js";
+import LineClass from "./drawLine.js";
 import {
   dimensionsType,
   coordinationType,
@@ -55,7 +56,10 @@ class CanvasObject extends VariableClass {
   #onClickRelease: ((_this: CanvasObject) => void) | null = null;
   #rotation: number = 0;
   #moveToPosition: MoveToClass | null = null;
-  #draw = new CircleClass();
+  draw = {
+    circle: new CircleClass(),
+    line: new LineClass(),
+  };
   #text = new TextClass();
   #onWheelScroll:
     | ((_this: CanvasObject | CanvasCamera, scroll: coordinationType) => void)
@@ -416,10 +420,6 @@ class CanvasObject extends VariableClass {
 
   getText = () => {
     return this.#text;
-  };
-
-  drawCircle = () => {
-    return this.#draw;
   };
 
   addOnCollisionEnter = (
