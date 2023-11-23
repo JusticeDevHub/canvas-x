@@ -15,13 +15,6 @@ export type spriteDataType = {
   startTimeFrame: number;
 };
 
-export type moveToType = {
-  x: number;
-  y: number;
-  speed: number;
-  method: "linear";
-} | null;
-
 export type dragDataPhysicsType = {
   momentum: number;
   savedFrames: number;

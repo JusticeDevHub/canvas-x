@@ -1,7 +1,7 @@
 class CircleClass {
   #render = false;
   #radius: number | null = null;
-  #color: string | null = null;
+  #color: string | CanvasGradient | CanvasPattern | null = null;
   #strokeWidth: number | null = null;
 
   getRender = () => this.#render;
@@ -46,7 +46,7 @@ class CircleClass {
 
   getColor = () => this.#color;
 
-  setColor = (color: string) => {
+  setColor = (color: string | CanvasGradient | CanvasPattern) => {
     this.#color = color;
     this.updateDefaultValues();
     return this;

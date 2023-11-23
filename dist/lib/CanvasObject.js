@@ -10,6 +10,7 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
 };
 var _CanvasObject_id, _CanvasObject_position, _CanvasObject_parent, _CanvasObject_dimensions, _CanvasObject_spriteData, _CanvasObject_canvasX, _CanvasObject_name, _CanvasObject_draggable, _CanvasObject_dragData, _CanvasObject_onUpdate, _CanvasObject_onDestroy, _CanvasObject_destroyById, _CanvasObject_backgroundColor, _CanvasObject_opacity, _CanvasObject_visible, _CanvasObject_onHoverTrue, _CanvasObject_onHoverEndTrue, _CanvasObject_onHover, _CanvasObject_onHoverEnd, _CanvasObject_onClick, _CanvasObject_onClickRelease, _CanvasObject_rotation, _CanvasObject_moveToPosition, _CanvasObject_draw, _CanvasObject_text, _CanvasObject_onWheelScroll, _CanvasObject_setDimensionsData, _CanvasObject_onCollisionEnter;
+import { MoveToClass } from "./MoveToClass.js";
 import TextClass from "./TextClass.js";
 import VariableClass from "./VariableClass.js";
 import CircleClass from "./drawClass.js";
@@ -75,15 +76,14 @@ class CanvasObject extends VariableClass {
             }, "f");
         };
         this.setMoveToPosition = (x, y, speed, method) => {
-            __classPrivateFieldSet(this, _CanvasObject_moveToPosition, {
-                x,
-                y,
-                speed,
-                method,
-            }, "f");
+            __classPrivateFieldSet(this, _CanvasObject_moveToPosition, new MoveToClass(), "f");
+            __classPrivateFieldGet(this, _CanvasObject_moveToPosition, "f").setMoveTo(__classPrivateFieldGet(this, _CanvasObject_position, "f").x, __classPrivateFieldGet(this, _CanvasObject_position, "f").y, x, y, method, speed);
         };
         this.getMoveToPosition = () => {
             return __classPrivateFieldGet(this, _CanvasObject_moveToPosition, "f");
+        };
+        this.setMoveToPositionToNull = () => {
+            __classPrivateFieldSet(this, _CanvasObject_moveToPosition, null, "f");
         };
         this.getSpriteData = () => {
             return __classPrivateFieldGet(this, _CanvasObject_spriteData, "f");

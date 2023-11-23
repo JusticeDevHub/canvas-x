@@ -1,39 +1,41 @@
+import getDistanceBetweenTwoPoints from "./getDistanceBetweenTwoPoints.js";
 const moveToPositionHandling = (canvasObject) => {
     const moveToPosition = canvasObject.getMoveToPosition();
     if (moveToPosition !== null && moveToPosition.speed !== 0) {
-        const position = canvasObject.getPosition();
-        const speed = moveToPosition.speed;
-        const method = moveToPosition.method;
-        const x = moveToPosition.x;
-        const y = moveToPosition.y;
-        const xDiff = x - position.x;
-        const yDiff = y - position.y;
-        const distance = Math.sqrt(xDiff * xDiff + yDiff * yDiff);
-        if (distance <= 0) {
+        const position = {
+            startX: moveToPosition.startX,
+            startY: moveToPosition.startY,
+            targetX: moveToPosition.targetX,
+            targetY: moveToPosition.targetY,
+            currentX: 0,
+            currentY: 0,
+        };
+        const timestamp = moveToPosition.getMoveToData().timestamp;
+        if (timestamp === null) {
             return;
         }
-        const xSpeed = (speed * xDiff) / distance;
-        const ySpeed = (speed * yDiff) / distance;
-        const xSpeedAbs = Math.abs(xSpeed);
-        const ySpeedAbs = Math.abs(ySpeed);
-        if (method === "linear") {
-            if (xSpeedAbs >= Math.abs(xDiff)) {
-                position.x = x;
-            }
-            else {
-                position.x += xSpeed;
-            }
-            if (ySpeedAbs >= Math.abs(yDiff)) {
-                position.y = y;
-            }
-            else {
-                position.y += ySpeed;
-            }
-            if (position.x === x && position.y === y) {
-                canvasObject.setMoveToPosition(x, y, 0, "linear");
-            }
+        const timePassed = (Date.now() - timestamp) / 1000;
+        const movementDistance = getDistanceBetweenTwoPoints({
+            x: position.startX,
+            y: position.startY,
+        }, {
+            x: position.targetX,
+            y: position.targetY,
+        });
+        const totalTimeToMove = movementDistance / moveToPosition.speed;
+        if (timePassed > totalTimeToMove) {
+            position.currentX = position.targetX;
+            position.currentY = position.targetY;
+            canvasObject.setMoveToPositionToNull();
         }
-        canvasObject.setPosition(position.x, position.y, position.z);
+        else {
+            const percentage = timePassed / totalTimeToMove;
+            position.currentX =
+                position.startX + (position.targetX - position.startX) * percentage;
+            position.currentY =
+                position.startY + (position.targetY - position.startY) * percentage;
+        }
+        canvasObject.setPosition(position.currentX, position.currentY, canvasObject.getPosition().z);
     }
 };
 export default moveToPositionHandling;

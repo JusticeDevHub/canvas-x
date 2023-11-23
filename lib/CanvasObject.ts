@@ -1,5 +1,6 @@
 import CanvasCamera from "./CanvasCamera.js";
 import CanvasX from "./CanvasX.js";
+import { MoveToClass } from "./MoveToClass.js";
 import TextClass from "./TextClass.js";
 import VariableClass from "./VariableClass.js";
 import CircleClass from "./drawClass.js";
@@ -7,7 +8,6 @@ import {
   dimensionsType,
   coordinationType,
   spriteDataType,
-  moveToType,
   onClickType,
   dragDataPhysicsType,
 } from "./types.js";
@@ -54,7 +54,7 @@ class CanvasObject extends VariableClass {
   #onClick: { [clickType: string]: (_this: CanvasObject) => void } = {};
   #onClickRelease: ((_this: CanvasObject) => void) | null = null;
   #rotation: number = 0;
-  #moveToPosition: moveToType = null;
+  #moveToPosition: MoveToClass | null = null;
   #draw = new CircleClass();
   #text = new TextClass();
   #onWheelScroll:
@@ -116,16 +116,24 @@ class CanvasObject extends VariableClass {
     speed: number,
     method: "linear"
   ) => {
-    this.#moveToPosition = {
+    this.#moveToPosition = new MoveToClass();
+
+    this.#moveToPosition.setMoveTo(
+      this.#position.x,
+      this.#position.y,
       x,
       y,
-      speed,
       method,
-    };
+      speed
+    );
   };
 
-  getMoveToPosition = (): moveToType => {
+  getMoveToPosition = (): MoveToClass | null => {
     return this.#moveToPosition;
+  };
+
+  setMoveToPositionToNull = () => {
+    this.#moveToPosition = null;
   };
 
   getSpriteData = (): spriteDataType => {
