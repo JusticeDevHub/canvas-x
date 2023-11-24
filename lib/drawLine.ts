@@ -6,6 +6,13 @@ class LineClass {
   #toPosition: coordinationType | null = null;
   #color: string | null = null;
 
+  setNull = () => {
+    this.#lineWidth = 1;
+    this.#fromPosition = null;
+    this.#toPosition = null;
+    this.#color = null;
+  };
+
   setLine = (fromPosition: coordinationType, toPosition: coordinationType) => {
     this.#fromPosition = fromPosition;
     this.#toPosition = toPosition;

@@ -16,6 +16,12 @@ class LineClass {
         _LineClass_fromPosition.set(this, null);
         _LineClass_toPosition.set(this, null);
         _LineClass_color.set(this, null);
+        this.setNull = () => {
+            __classPrivateFieldSet(this, _LineClass_lineWidth, 1, "f");
+            __classPrivateFieldSet(this, _LineClass_fromPosition, null, "f");
+            __classPrivateFieldSet(this, _LineClass_toPosition, null, "f");
+            __classPrivateFieldSet(this, _LineClass_color, null, "f");
+        };
         this.setLine = (fromPosition, toPosition) => {
             __classPrivateFieldSet(this, _LineClass_fromPosition, fromPosition, "f");
             __classPrivateFieldSet(this, _LineClass_toPosition, toPosition, "f");
