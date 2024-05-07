@@ -2,7 +2,6 @@ import CanvasCamera from "./CanvasCamera.js";
 import CanvasObject from "./CanvasObject.js";
 import VariableClass from "./VariableClass.js";
 import Log from "./log.js";
-import { coordinationType } from "./types.js";
 import onHover from "./utils/onHover.js";
 import onWheelScroll from "./utils/onWheelScroll.js";
 import moveToPositionHandling from "./utils/moveToPositionHandling.js";
@@ -12,6 +11,10 @@ import updateCanvasMousePosition from "./utils/updateCanvasMousePosition.js";
 import handleCollisions from "./utils/handleCollisions.js";
 import isCollisionWithMouse from "./utils/isCollisionWithMouse.js";
 import getDistanceBetweenTwoPoints from "./utils/getDistanceBetweenTwoPoints.js";
+import TextClass from "./TextClass.js";
+import CircleClass from "./drawClass.js";
+import LineClass from "./drawLine.js";
+import { coordinationType, dimensionsType, spriteDataType } from "./types.js";
 
 export default class CanvasX extends VariableClass {
   #width: number | "auto" = "auto";
@@ -252,8 +255,7 @@ export default class CanvasX extends VariableClass {
   #logic = () => {
     this.#onUpdate(this);
 
-    const objs = [...this.canvasObjects, this.canvasCamera];
-    objs.forEach((canvasObject) => {
+    [...this.canvasObjects, this.canvasCamera].forEach((canvasObject) => {
       const update = canvasObject.getOnUpdate();
       handleCollisions(canvasObject, this);
       moveToPositionHandling(canvasObject);
@@ -271,97 +273,125 @@ export default class CanvasX extends VariableClass {
 
     const canvasSize = this.getCanvasSize();
     this.#ctx.clearRect(0, 0, canvasSize.width, canvasSize.height);
+    const cameraZoomLevel = this.canvasCamera.getZoomLevel();
+    const cameraPositionOffset = this.canvasCamera.getPosition();
 
-    const canvasObjectsDrawOrder: CanvasObject[] = [];
-    this.canvasObjects.forEach((canvasObject) => {
-      const obj: any = { ...canvasObject };
+    const canvasObjectsDrawOrder: {
+      position: { x: number; y: number; z: number };
+      spriteData: spriteDataType;
+      backgroundColor: string | null;
+      dimensions: dimensionsType;
+      rotation: number;
+      parent: CanvasObject | CanvasCamera | null;
+      opacity: number;
+      text: TextClass;
+      draw: {
+        circle: CircleClass;
+        line: LineClass;
+      };
+    }[] = this.canvasObjects.map((canvasObject) => {
       if (canvasObject.getVisible()) {
-        canvasObjectsDrawOrder.push(obj);
+        return {
+          position: canvasObject.getPosition(),
+          spriteData: canvasObject.getSpriteData(),
+          backgroundColor: canvasObject.getBackgroundColor(),
+          dimensions: canvasObject.getDimensions(),
+          rotation: canvasObject.getRotation(),
+          parent: canvasObject.getParent(),
+          opacity: canvasObject.getOpacity(),
+          text: canvasObject.getText(),
+          draw: canvasObject.draw,
+        };
       }
     });
+
     canvasObjectsDrawOrder.sort((a, b) => {
-      return a.getPosition().z - b.getPosition().z;
+      return a.position.z - b.position.z;
     });
 
     canvasObjectsDrawOrder.forEach((canvasObject) => {
-      const spriteData = canvasObject.getSpriteData();
-      const backgroundColor = canvasObject.getBackgroundColor();
-      const cameraZoomLevel = this.canvasCamera.getZoomLevel();
-      const cameraPositionOffset = this.canvasCamera.getPosition();
-      const position = canvasObject.getPosition();
-      const dimensions = canvasObject.getDimensions();
-      const rotation = canvasObject.getRotation();
-      const parent = canvasObject.getParent();
-      if (parent) {
-        const parentPosition = parent.getPosition();
-        position.x += parentPosition.x;
-        position.y += parentPosition.y;
+      if (canvasObject.parent !== null) {
+        const parentPosition = canvasObject.parent.getPosition();
+        canvasObject.position.x += parentPosition.x;
+        canvasObject.position.y += parentPosition.y;
       }
 
-      dimensions.width *= cameraZoomLevel;
-      dimensions.height *= cameraZoomLevel;
-      position.x -= cameraPositionOffset.x;
-      position.y -= cameraPositionOffset.y;
-      position.x *= cameraZoomLevel;
-      position.y *= cameraZoomLevel;
-      position.x -= dimensions.width / 2;
-      position.y -= dimensions.height / 2;
-      position.x += canvasSize.width / 2;
-      position.y += canvasSize.height / 2;
+      canvasObject.dimensions.width *= cameraZoomLevel;
+      canvasObject.dimensions.height *= cameraZoomLevel;
+      canvasObject.position.x -= cameraPositionOffset.x;
+      canvasObject.position.y -= cameraPositionOffset.y;
+      canvasObject.position.x *= cameraZoomLevel;
+      canvasObject.position.y *= cameraZoomLevel;
+      canvasObject.position.x -= canvasObject.dimensions.width / 2;
+      canvasObject.position.y -= canvasObject.dimensions.height / 2;
+      canvasObject.position.x += canvasSize.width / 2;
+      canvasObject.position.y += canvasSize.height / 2;
 
-      if (backgroundColor && this.#ctx !== null) {
+      if (
+        canvasObject.position.x < -canvasObject.dimensions.width * 2 ||
+        canvasObject.position.y < -canvasObject.dimensions.height * 2 ||
+        canvasObject.position.x >
+          canvasSize.width + canvasObject.dimensions.width * 2 ||
+        canvasObject.position.y >
+          canvasSize.height + canvasObject.dimensions.height * 2
+      ) {
+        return;
+      }
+
+      if (canvasObject.backgroundColor && this.#ctx !== null) {
         this.#ctx.save();
-        this.#ctx.globalAlpha = canvasObject.getOpacity();
-        this.#ctx.fillStyle = backgroundColor;
+        this.#ctx.globalAlpha = canvasObject.opacity;
+        this.#ctx.fillStyle = canvasObject.backgroundColor;
         this.#ctx.fillRect(
-          position.x,
-          position.y,
-          dimensions.width,
-          dimensions.height
+          canvasObject.position.x,
+          canvasObject.position.y,
+          canvasObject.dimensions.width,
+          canvasObject.dimensions.height
         );
         this.#ctx.restore();
       }
 
-      if (spriteData.sprites && this.#ctx !== null) {
+      if (canvasObject.spriteData.sprites && this.#ctx !== null) {
         this.#ctx.save();
-        this.#ctx.globalAlpha = canvasObject.getOpacity();
+        this.#ctx.globalAlpha = canvasObject.opacity;
         this.#ctx.translate(
-          position.x + dimensions.width / 2,
-          position.y + dimensions.height / 2
+          canvasObject.position.x + canvasObject.dimensions.width / 2,
+          canvasObject.position.y + canvasObject.dimensions.height / 2
         );
-        this.#ctx.rotate(rotation * (Math.PI / 180));
+        this.#ctx.rotate(canvasObject.rotation * (Math.PI / 180));
         this.#ctx.translate(
-          -(position.x + dimensions.width / 2),
-          -(position.y + dimensions.height / 2)
+          -(canvasObject.position.x + canvasObject.dimensions.width / 2),
+          -(canvasObject.position.y + canvasObject.dimensions.height / 2)
         );
 
-        const sprites: HTMLImageElement[] | undefined = spriteData.sprites;
+        const sprites: HTMLImageElement[] | undefined =
+          canvasObject.spriteData.sprites;
         if (sprites && sprites[0] && sprites.length === 1) {
           drawSpriteCTX(
             this.#ctx,
             sprites[0],
-            position.x,
-            position.y,
-            dimensions.width,
-            dimensions.height
+            canvasObject.position.x,
+            canvasObject.position.y,
+            canvasObject.dimensions.width,
+            canvasObject.dimensions.height
           );
         } else if (sprites.length > 1) {
           const timePassed =
-            (new Date().getTime() -
-              canvasObject.getSpriteData().startTimeFrame) /
+            (new Date().getTime() - canvasObject.spriteData.startTimeFrame) /
             1000;
           const animationFrame = Math.floor(
-            (timePassed * spriteData.animationSpeed) % spriteData.sprites.length
+            (timePassed * canvasObject.spriteData.animationSpeed) %
+              canvasObject.spriteData.sprites.length
           );
           const sprite = sprites[animationFrame];
           if (sprite) {
             drawSpriteCTX(
               this.#ctx,
               sprite,
-              position.x,
-              position.y,
-              dimensions.width,
-              dimensions.height
+              canvasObject.position.x,
+              canvasObject.position.y,
+              canvasObject.dimensions.width,
+              canvasObject.dimensions.height
             );
           }
         }
@@ -373,7 +403,7 @@ export default class CanvasX extends VariableClass {
       if (drawCircleData.getRender() && this.#ctx !== null) {
         this.#ctx.save();
 
-        this.#ctx.globalAlpha = canvasObject.getOpacity();
+        this.#ctx.globalAlpha = canvasObject.opacity;
 
         const color = drawCircleData.getColor();
         if (color !== null) {
@@ -389,8 +419,8 @@ export default class CanvasX extends VariableClass {
         if (radius !== null) {
           this.#ctx.beginPath();
           this.#ctx.arc(
-            position.x,
-            position.y,
+            canvasObject.position.x,
+            canvasObject.position.y,
             radius * cameraZoomLevel,
             0,
             2 * Math.PI
@@ -405,7 +435,7 @@ export default class CanvasX extends VariableClass {
       if (drawLineData !== null && this.#ctx !== null) {
         this.#ctx.save();
 
-        this.#ctx.globalAlpha = canvasObject.getOpacity();
+        this.#ctx.globalAlpha = canvasObject.opacity;
 
         const drawLineData = canvasObject.draw.line.getLineData();
 
@@ -437,7 +467,7 @@ export default class CanvasX extends VariableClass {
         this.#ctx.restore();
       }
 
-      const textData = canvasObject.getText();
+      const textData = canvasObject.text;
       if (textData.text !== null && this.#ctx !== null) {
         this.#ctx.save();
         const fontSize = textData.scaleRelativeToZoomLevel
@@ -450,8 +480,8 @@ export default class CanvasX extends VariableClass {
         this.#ctx.textBaseline = `${textData.textBaseline}`;
         this.#ctx.fillText(
           textData.text,
-          position.x + dimensions.width / 2,
-          position.y + dimensions.height / 2
+          canvasObject.position.x + canvasObject.dimensions.width / 2,
+          canvasObject.position.y + canvasObject.dimensions.height / 2
         );
         this.#ctx.restore();
       }

@@ -206,8 +206,7 @@ class CanvasX extends VariableClass {
         });
         _CanvasX_logic.set(this, () => {
             __classPrivateFieldGet(this, _CanvasX_onUpdate, "f").call(this, this);
-            const objs = [...this.canvasObjects, this.canvasCamera];
-            objs.forEach((canvasObject) => {
+            [...this.canvasObjects, this.canvasCamera].forEach((canvasObject) => {
                 const update = canvasObject.getOnUpdate();
                 handleCollisions(canvasObject, this);
                 moveToPositionHandling(canvasObject);
@@ -223,65 +222,75 @@ class CanvasX extends VariableClass {
             }
             const canvasSize = this.getCanvasSize();
             __classPrivateFieldGet(this, _CanvasX_ctx, "f").clearRect(0, 0, canvasSize.width, canvasSize.height);
-            const canvasObjectsDrawOrder = [];
-            this.canvasObjects.forEach((canvasObject) => {
-                const obj = { ...canvasObject };
+            const cameraZoomLevel = this.canvasCamera.getZoomLevel();
+            const cameraPositionOffset = this.canvasCamera.getPosition();
+            const canvasObjectsDrawOrder = this.canvasObjects.map((canvasObject) => {
                 if (canvasObject.getVisible()) {
-                    canvasObjectsDrawOrder.push(obj);
+                    return {
+                        position: canvasObject.getPosition(),
+                        spriteData: canvasObject.getSpriteData(),
+                        backgroundColor: canvasObject.getBackgroundColor(),
+                        dimensions: canvasObject.getDimensions(),
+                        rotation: canvasObject.getRotation(),
+                        parent: canvasObject.getParent(),
+                        opacity: canvasObject.getOpacity(),
+                        text: canvasObject.getText(),
+                        draw: canvasObject.draw,
+                    };
                 }
             });
             canvasObjectsDrawOrder.sort((a, b) => {
-                return a.getPosition().z - b.getPosition().z;
+                return a.position.z - b.position.z;
             });
             canvasObjectsDrawOrder.forEach((canvasObject) => {
-                const spriteData = canvasObject.getSpriteData();
-                const backgroundColor = canvasObject.getBackgroundColor();
-                const cameraZoomLevel = this.canvasCamera.getZoomLevel();
-                const cameraPositionOffset = this.canvasCamera.getPosition();
-                const position = canvasObject.getPosition();
-                const dimensions = canvasObject.getDimensions();
-                const rotation = canvasObject.getRotation();
-                const parent = canvasObject.getParent();
-                if (parent) {
-                    const parentPosition = parent.getPosition();
-                    position.x += parentPosition.x;
-                    position.y += parentPosition.y;
+                if (canvasObject.parent !== null) {
+                    const parentPosition = canvasObject.parent.getPosition();
+                    canvasObject.position.x += parentPosition.x;
+                    canvasObject.position.y += parentPosition.y;
                 }
-                dimensions.width *= cameraZoomLevel;
-                dimensions.height *= cameraZoomLevel;
-                position.x -= cameraPositionOffset.x;
-                position.y -= cameraPositionOffset.y;
-                position.x *= cameraZoomLevel;
-                position.y *= cameraZoomLevel;
-                position.x -= dimensions.width / 2;
-                position.y -= dimensions.height / 2;
-                position.x += canvasSize.width / 2;
-                position.y += canvasSize.height / 2;
-                if (backgroundColor && __classPrivateFieldGet(this, _CanvasX_ctx, "f") !== null) {
+                canvasObject.dimensions.width *= cameraZoomLevel;
+                canvasObject.dimensions.height *= cameraZoomLevel;
+                canvasObject.position.x -= cameraPositionOffset.x;
+                canvasObject.position.y -= cameraPositionOffset.y;
+                canvasObject.position.x *= cameraZoomLevel;
+                canvasObject.position.y *= cameraZoomLevel;
+                canvasObject.position.x -= canvasObject.dimensions.width / 2;
+                canvasObject.position.y -= canvasObject.dimensions.height / 2;
+                canvasObject.position.x += canvasSize.width / 2;
+                canvasObject.position.y += canvasSize.height / 2;
+                if (canvasObject.position.x < -canvasObject.dimensions.width * 2 ||
+                    canvasObject.position.y < -canvasObject.dimensions.height * 2 ||
+                    canvasObject.position.x >
+                        canvasSize.width + canvasObject.dimensions.width * 2 ||
+                    canvasObject.position.y >
+                        canvasSize.height + canvasObject.dimensions.height * 2) {
+                    return;
+                }
+                if (canvasObject.backgroundColor && __classPrivateFieldGet(this, _CanvasX_ctx, "f") !== null) {
                     __classPrivateFieldGet(this, _CanvasX_ctx, "f").save();
-                    __classPrivateFieldGet(this, _CanvasX_ctx, "f").globalAlpha = canvasObject.getOpacity();
-                    __classPrivateFieldGet(this, _CanvasX_ctx, "f").fillStyle = backgroundColor;
-                    __classPrivateFieldGet(this, _CanvasX_ctx, "f").fillRect(position.x, position.y, dimensions.width, dimensions.height);
+                    __classPrivateFieldGet(this, _CanvasX_ctx, "f").globalAlpha = canvasObject.opacity;
+                    __classPrivateFieldGet(this, _CanvasX_ctx, "f").fillStyle = canvasObject.backgroundColor;
+                    __classPrivateFieldGet(this, _CanvasX_ctx, "f").fillRect(canvasObject.position.x, canvasObject.position.y, canvasObject.dimensions.width, canvasObject.dimensions.height);
                     __classPrivateFieldGet(this, _CanvasX_ctx, "f").restore();
                 }
-                if (spriteData.sprites && __classPrivateFieldGet(this, _CanvasX_ctx, "f") !== null) {
+                if (canvasObject.spriteData.sprites && __classPrivateFieldGet(this, _CanvasX_ctx, "f") !== null) {
                     __classPrivateFieldGet(this, _CanvasX_ctx, "f").save();
-                    __classPrivateFieldGet(this, _CanvasX_ctx, "f").globalAlpha = canvasObject.getOpacity();
-                    __classPrivateFieldGet(this, _CanvasX_ctx, "f").translate(position.x + dimensions.width / 2, position.y + dimensions.height / 2);
-                    __classPrivateFieldGet(this, _CanvasX_ctx, "f").rotate(rotation * (Math.PI / 180));
-                    __classPrivateFieldGet(this, _CanvasX_ctx, "f").translate(-(position.x + dimensions.width / 2), -(position.y + dimensions.height / 2));
-                    const sprites = spriteData.sprites;
+                    __classPrivateFieldGet(this, _CanvasX_ctx, "f").globalAlpha = canvasObject.opacity;
+                    __classPrivateFieldGet(this, _CanvasX_ctx, "f").translate(canvasObject.position.x + canvasObject.dimensions.width / 2, canvasObject.position.y + canvasObject.dimensions.height / 2);
+                    __classPrivateFieldGet(this, _CanvasX_ctx, "f").rotate(canvasObject.rotation * (Math.PI / 180));
+                    __classPrivateFieldGet(this, _CanvasX_ctx, "f").translate(-(canvasObject.position.x + canvasObject.dimensions.width / 2), -(canvasObject.position.y + canvasObject.dimensions.height / 2));
+                    const sprites = canvasObject.spriteData.sprites;
                     if (sprites && sprites[0] && sprites.length === 1) {
-                        drawSpriteCTX(__classPrivateFieldGet(this, _CanvasX_ctx, "f"), sprites[0], position.x, position.y, dimensions.width, dimensions.height);
+                        drawSpriteCTX(__classPrivateFieldGet(this, _CanvasX_ctx, "f"), sprites[0], canvasObject.position.x, canvasObject.position.y, canvasObject.dimensions.width, canvasObject.dimensions.height);
                     }
                     else if (sprites.length > 1) {
-                        const timePassed = (new Date().getTime() -
-                            canvasObject.getSpriteData().startTimeFrame) /
+                        const timePassed = (new Date().getTime() - canvasObject.spriteData.startTimeFrame) /
                             1000;
-                        const animationFrame = Math.floor((timePassed * spriteData.animationSpeed) % spriteData.sprites.length);
+                        const animationFrame = Math.floor((timePassed * canvasObject.spriteData.animationSpeed) %
+                            canvasObject.spriteData.sprites.length);
                         const sprite = sprites[animationFrame];
                         if (sprite) {
-                            drawSpriteCTX(__classPrivateFieldGet(this, _CanvasX_ctx, "f"), sprite, position.x, position.y, dimensions.width, dimensions.height);
+                            drawSpriteCTX(__classPrivateFieldGet(this, _CanvasX_ctx, "f"), sprite, canvasObject.position.x, canvasObject.position.y, canvasObject.dimensions.width, canvasObject.dimensions.height);
                         }
                     }
                     __classPrivateFieldGet(this, _CanvasX_ctx, "f").restore();
@@ -289,7 +298,7 @@ class CanvasX extends VariableClass {
                 const drawCircleData = canvasObject.draw.circle;
                 if (drawCircleData.getRender() && __classPrivateFieldGet(this, _CanvasX_ctx, "f") !== null) {
                     __classPrivateFieldGet(this, _CanvasX_ctx, "f").save();
-                    __classPrivateFieldGet(this, _CanvasX_ctx, "f").globalAlpha = canvasObject.getOpacity();
+                    __classPrivateFieldGet(this, _CanvasX_ctx, "f").globalAlpha = canvasObject.opacity;
                     const color = drawCircleData.getColor();
                     if (color !== null) {
                         __classPrivateFieldGet(this, _CanvasX_ctx, "f").strokeStyle = color;
@@ -301,7 +310,7 @@ class CanvasX extends VariableClass {
                     const radius = drawCircleData.getRadius();
                     if (radius !== null) {
                         __classPrivateFieldGet(this, _CanvasX_ctx, "f").beginPath();
-                        __classPrivateFieldGet(this, _CanvasX_ctx, "f").arc(position.x, position.y, radius * cameraZoomLevel, 0, 2 * Math.PI);
+                        __classPrivateFieldGet(this, _CanvasX_ctx, "f").arc(canvasObject.position.x, canvasObject.position.y, radius * cameraZoomLevel, 0, 2 * Math.PI);
                         __classPrivateFieldGet(this, _CanvasX_ctx, "f").stroke();
                     }
                     __classPrivateFieldGet(this, _CanvasX_ctx, "f").restore();
@@ -309,7 +318,7 @@ class CanvasX extends VariableClass {
                 const drawLineData = canvasObject.draw.line;
                 if (drawLineData !== null && __classPrivateFieldGet(this, _CanvasX_ctx, "f") !== null) {
                     __classPrivateFieldGet(this, _CanvasX_ctx, "f").save();
-                    __classPrivateFieldGet(this, _CanvasX_ctx, "f").globalAlpha = canvasObject.getOpacity();
+                    __classPrivateFieldGet(this, _CanvasX_ctx, "f").globalAlpha = canvasObject.opacity;
                     const drawLineData = canvasObject.draw.line.getLineData();
                     const color = drawLineData.color;
                     if (color !== null) {
@@ -329,7 +338,7 @@ class CanvasX extends VariableClass {
                     }
                     __classPrivateFieldGet(this, _CanvasX_ctx, "f").restore();
                 }
-                const textData = canvasObject.getText();
+                const textData = canvasObject.text;
                 if (textData.text !== null && __classPrivateFieldGet(this, _CanvasX_ctx, "f") !== null) {
                     __classPrivateFieldGet(this, _CanvasX_ctx, "f").save();
                     const fontSize = textData.scaleRelativeToZoomLevel
@@ -339,7 +348,7 @@ class CanvasX extends VariableClass {
                     __classPrivateFieldGet(this, _CanvasX_ctx, "f").fillStyle = `${textData.fontColor}`;
                     __classPrivateFieldGet(this, _CanvasX_ctx, "f").textAlign = `${textData.textAlign}`;
                     __classPrivateFieldGet(this, _CanvasX_ctx, "f").textBaseline = `${textData.textBaseline}`;
-                    __classPrivateFieldGet(this, _CanvasX_ctx, "f").fillText(textData.text, position.x + dimensions.width / 2, position.y + dimensions.height / 2);
+                    __classPrivateFieldGet(this, _CanvasX_ctx, "f").fillText(textData.text, canvasObject.position.x + canvasObject.dimensions.width / 2, canvasObject.position.y + canvasObject.dimensions.height / 2);
                     __classPrivateFieldGet(this, _CanvasX_ctx, "f").restore();
                 }
             });
