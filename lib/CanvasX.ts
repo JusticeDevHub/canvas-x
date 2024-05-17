@@ -256,13 +256,12 @@ export default class CanvasX extends VariableClass {
     this.#onUpdate(this);
 
     [...this.canvasObjects, this.canvasCamera].forEach((canvasObject) => {
-      const update = canvasObject.getOnUpdate();
       handleCollisions(canvasObject, this);
       moveToPositionHandling(canvasObject);
       onWheelScroll(canvasObject, { ...this.#wheelScroll });
       onHover(canvasObject, { ...this.#mousePosition });
       isDraggedHandling(canvasObject, { ...this.#mousePosition });
-      update(canvasObject);
+      canvasObject.getOnUpdate()(canvasObject);
     });
   };
 
@@ -431,13 +430,10 @@ export default class CanvasX extends VariableClass {
         this.#ctx.restore();
       }
 
-      const drawLineData = canvasObject.draw.line;
+      const drawLineData = canvasObject.draw.line.getLineData();
       if (drawLineData !== null && this.#ctx !== null) {
         this.#ctx.save();
-
         this.#ctx.globalAlpha = canvasObject.opacity;
-
-        const drawLineData = canvasObject.draw.line.getLineData();
 
         const color = drawLineData.color;
         if (color !== null) {

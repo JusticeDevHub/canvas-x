@@ -27,6 +27,8 @@ export type onClickType =
   | "this_right_click"
   | "global_left_click"
   | "global_right_click"
+  // | "global_left_hold"
+  // | "global_right_hold"
   | "this_touch1"
   | "this_touch2"
   | "this_touch3"

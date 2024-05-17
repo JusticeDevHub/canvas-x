@@ -207,13 +207,12 @@ class CanvasX extends VariableClass {
         _CanvasX_logic.set(this, () => {
             __classPrivateFieldGet(this, _CanvasX_onUpdate, "f").call(this, this);
             [...this.canvasObjects, this.canvasCamera].forEach((canvasObject) => {
-                const update = canvasObject.getOnUpdate();
                 handleCollisions(canvasObject, this);
                 moveToPositionHandling(canvasObject);
                 onWheelScroll(canvasObject, { ...__classPrivateFieldGet(this, _CanvasX_wheelScroll, "f") });
                 onHover(canvasObject, { ...__classPrivateFieldGet(this, _CanvasX_mousePosition, "f") });
                 isDraggedHandling(canvasObject, { ...__classPrivateFieldGet(this, _CanvasX_mousePosition, "f") });
-                update(canvasObject);
+                canvasObject.getOnUpdate()(canvasObject);
             });
         });
         _CanvasX_drawCanvas.set(this, () => {
@@ -315,11 +314,10 @@ class CanvasX extends VariableClass {
                     }
                     __classPrivateFieldGet(this, _CanvasX_ctx, "f").restore();
                 }
-                const drawLineData = canvasObject.draw.line;
+                const drawLineData = canvasObject.draw.line.getLineData();
                 if (drawLineData !== null && __classPrivateFieldGet(this, _CanvasX_ctx, "f") !== null) {
                     __classPrivateFieldGet(this, _CanvasX_ctx, "f").save();
                     __classPrivateFieldGet(this, _CanvasX_ctx, "f").globalAlpha = canvasObject.opacity;
-                    const drawLineData = canvasObject.draw.line.getLineData();
                     const color = drawLineData.color;
                     if (color !== null) {
                         __classPrivateFieldGet(this, _CanvasX_ctx, "f").strokeStyle = color;
